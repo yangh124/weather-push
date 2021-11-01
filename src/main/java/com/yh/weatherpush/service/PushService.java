@@ -12,10 +12,11 @@ public interface PushService {
 
     /**
      * 发送消息
-     *
      */
-    void pushMsg();
+    void pushMsg(String token, List<Tag> tags);
 
 
     List<Tag> getTags(String token);
+
+    String getToken();
 }

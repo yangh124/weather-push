@@ -49,7 +49,7 @@ public class GetWeatherServiceImpl implements GetWeatherService {
             String[] valueArr = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
             String dateString = date.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"));
             Tag tag = tagMap.get(tagid).get(0);
-            StringBuilder builder = new StringBuilder("【天气预报】【" + tag.getTagname() + "】\n");
+            StringBuilder builder = new StringBuilder("【实时天气】【" + tag.getTagname() + "】\n");
             builder.append(dateString).append("  ").append(valueArr[value - 1]).append("\n\n");
             builder.append(now.getText()).append("\n");
             builder.append("气温：").append(now.getTemp()).append("度\n");

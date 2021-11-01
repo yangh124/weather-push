@@ -28,13 +28,12 @@ public class PushServiceImpl implements PushService {
     @Autowired
     private GetWeatherService getWeatherService;
 
+
     @Override
-    public void pushMsg() {
-        String token = getToken();
-        List<Tag> tags = getTags(token);
+    public void pushMsg(String token, List<Tag> tags) {
         Map<Integer, String> locations = getWeatherService.getLocations(tags);
         Map<Integer, List<Tag>> tagMap = tags.stream().collect(Collectors.groupingBy(Tag::getTagid));
-        Map<Integer, String> weatherMap = getWeatherService.getWeather(locations,tagMap);
+        Map<Integer, String> weatherMap = getWeatherService.getWeather(locations, tagMap);
         for (Integer tagid : weatherMap.keySet()) {
             String msg = weatherMap.get(tagid);
             String sendUrl = qywxConfig.getSendUrl();
@@ -72,7 +71,8 @@ public class PushServiceImpl implements PushService {
      *
      * @return access_token
      */
-    private String getToken() {
+    @Override
+    public String getToken() {
         ResponseEntity<TokenResp> response = restTemplate.getForEntity(qywxConfig.getTokenUrl(), TokenResp.class);
         TokenResp body = response.getBody();
         if (null == body) {
