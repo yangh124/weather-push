@@ -1,6 +1,5 @@
 package com.yh.weatherpush.schdule;
 
-import com.yh.weatherpush.service.GetWeatherService;
 import com.yh.weatherpush.service.PushService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
