@@ -19,7 +19,7 @@ public class ScheduledTask {
     @Autowired
     private PushService pushService;
 
-    @Scheduled(cron = "0 5 8 * * ?")
+    @Scheduled(cron = "0 10 7 * * ?")
     public void scheduledTask() {
         pushService.pushMsg();
         LocalDateTime now = LocalDateTime.now();
