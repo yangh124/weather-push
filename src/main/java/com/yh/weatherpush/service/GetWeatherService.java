@@ -17,7 +17,7 @@ public interface GetWeatherService {
      * @param map 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> getWeather(Map<Integer, String> map,Map<Integer, List<Tag>> tagMap);
+    Map<Integer, String> getWeather(Map<Integer, String> map, Map<Integer, List<Tag>> tagMap);
 
     /**
      * 通过地名查询 location  code
