@@ -14,10 +14,13 @@ public interface PushService {
     /**
      * 发送消息
      */
-    void pushMsg(String token, List<TagLocation> tags);
+    void pushWeatherMsg(String token, List<TagLocation> tags);
 
 
     List<Tag> getTags(String token);
 
     String getToken();
+
+
+    void pushWarningMsg(String token, List<TagLocation> tags);
 }

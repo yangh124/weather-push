@@ -27,4 +27,7 @@ public interface GetWeatherService {
      * @return {椒江=101210101, 嘉定=101210101, 杭州=101210101, 开化=101210101}
      */
     Map<Integer, String> getLocations(List<Tag> cityList);
+
+
+
 }

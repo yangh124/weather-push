@@ -30,7 +30,7 @@ public class ScheduledTask {
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         List<TagLocation> collect = list.stream().filter(a -> "嘉定".equals(a.getTagname())).collect(Collectors.toList());
-        pushService.pushMsg(token, collect);
+        pushService.pushWeatherMsg(token, collect);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         System.out.println(format + " -> 天气推送成功");
@@ -42,7 +42,7 @@ public class ScheduledTask {
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         List<TagLocation> collect = list.stream().filter(a -> !"嘉定".equals(a.getTagname())).collect(Collectors.toList());
-        pushService.pushMsg(token, collect);
+        pushService.pushWeatherMsg(token, collect);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         System.out.println(format + " -> 天气推送成功");

@@ -31,7 +31,7 @@ public class PushServiceImpl implements PushService {
 
 
     @Override
-    public void pushMsg(String token, List<TagLocation> tags) {
+    public void pushWeatherMsg(String token, List<TagLocation> tags) {
         Map<Integer, String> weatherMap = getWeatherService.getWeather(tags);
         for (Integer tagid : weatherMap.keySet()) {
             String msg = weatherMap.get(tagid);
@@ -82,5 +82,10 @@ public class PushServiceImpl implements PushService {
             throw new RuntimeException("获取token失败! -> " + body);
         }
         return body.getAccess_token();
+    }
+
+    @Override
+    public void pushWarningMsg(String token, List<TagLocation> tags) {
+
     }
 }

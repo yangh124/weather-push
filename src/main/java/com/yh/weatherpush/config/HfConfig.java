@@ -35,5 +35,15 @@ public class HfConfig {
     /**
      * 未来24h天气
      */
-    private String rainUrl;
+    private String hourUrl;
+
+    /**
+     * 天气指数
+     */
+    private String indexUrl;
+
+    /**
+     * 天气预警
+     */
+    private String warnUrl;
 }

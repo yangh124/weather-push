@@ -14,6 +14,7 @@ import java.util.List;
 @Data
 public class WeatherSource implements Serializable {
 
+    private static final long serialVersionUID = -3236263363777900168L;
     /**
      * 原始数据来源，或数据源说明，可能为空
      */
