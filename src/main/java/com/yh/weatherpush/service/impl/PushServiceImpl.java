@@ -1,6 +1,7 @@
 package com.yh.weatherpush.service.impl;
 
 import com.yh.weatherpush.config.QywxConfig;
+import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.dto.qxwx.*;
 import com.yh.weatherpush.service.GetWeatherService;
 import com.yh.weatherpush.service.PushService;
@@ -30,10 +31,8 @@ public class PushServiceImpl implements PushService {
 
 
     @Override
-    public void pushMsg(String token, List<Tag> tags) {
-        Map<Integer, String> locations = getWeatherService.getLocations(tags);
-        Map<Integer, List<Tag>> tagMap = tags.stream().collect(Collectors.groupingBy(Tag::getTagid));
-        Map<Integer, String> weatherMap = getWeatherService.getWeather(locations, tagMap);
+    public void pushMsg(String token, List<TagLocation> tags) {
+        Map<Integer, String> weatherMap = getWeatherService.getWeather(tags);
         for (Integer tagid : weatherMap.keySet()) {
             String msg = weatherMap.get(tagid);
             String sendUrl = qywxConfig.getSendUrl();

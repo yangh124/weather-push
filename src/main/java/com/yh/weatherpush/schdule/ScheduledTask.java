@@ -1,5 +1,7 @@
 package com.yh.weatherpush.schdule;
 
+import com.yh.weatherpush.config.JsonConfig;
+import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.dto.qxwx.Tag;
 import com.yh.weatherpush.service.PushService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,14 @@ public class ScheduledTask {
 
     @Autowired
     private PushService pushService;
+    @Autowired
+    private JsonConfig jsonConfig;
 
     @Scheduled(cron = "0 10 7 * * ?")
     public void scheduledTask1() {
         String token = pushService.getToken();
-        List<Tag> tags = pushService.getTags(token);
-        List<Tag> collect = tags.stream().filter(a -> "嘉定".equals(a.getTagname())).collect(Collectors.toList());
+        List<TagLocation> list = jsonConfig.getList();
+        List<TagLocation> collect = list.stream().filter(a -> "嘉定".equals(a.getTagname())).collect(Collectors.toList());
         pushService.pushMsg(token, collect);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -36,8 +40,8 @@ public class ScheduledTask {
     @Scheduled(cron = "0 5 8 * * ?")
     public void scheduledTask2() {
         String token = pushService.getToken();
-        List<Tag> tags = pushService.getTags(token);
-        List<Tag> collect = tags.stream().filter(a -> !"嘉定".equals(a.getTagname())).collect(Collectors.toList());
+        List<TagLocation> list = jsonConfig.getList();
+        List<TagLocation> collect = list.stream().filter(a -> !"嘉定".equals(a.getTagname())).collect(Collectors.toList());
         pushService.pushMsg(token, collect);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));

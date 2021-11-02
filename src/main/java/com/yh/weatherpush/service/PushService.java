@@ -1,5 +1,6 @@
 package com.yh.weatherpush.service;
 
+import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.dto.qxwx.Tag;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface PushService {
     /**
      * 发送消息
      */
-    void pushMsg(String token, List<Tag> tags);
+    void pushMsg(String token, List<TagLocation> tags);
 
 
     List<Tag> getTags(String token);

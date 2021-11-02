@@ -1,15 +1,16 @@
 package com.yh.weatherpush;
 
-import com.alibaba.fastjson.JSONObject;
-import com.yh.weatherpush.dto.qxwx.Tag;
-import com.yh.weatherpush.service.GetWeatherService;
+import com.yh.weatherpush.config.JsonConfig;
+import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.service.PushService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -17,15 +18,18 @@ class WeatherPushApplicationTests {
     @Autowired
     private PushService pushService;
     @Autowired
-    private GetWeatherService getWeatherService;
+    private JsonConfig jsonConfig;
 
     @Test
     void contextLoads() {
         String token = pushService.getToken();
-        List<Tag> tags = pushService.getTags(token);
-        Map<Integer, String> locations = getWeatherService.getLocations(tags);
-        String s = JSONObject.toJSONString(locations);
-        System.out.println(s);
+        List<TagLocation> list = jsonConfig.getList();
+        List<TagLocation> collect = list.stream().filter(a -> "杭州".equals(a.getTagname())).collect(Collectors.toList());
+        pushService.pushMsg(token, collect);
+        LocalDateTime now = LocalDateTime.now();
+        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        System.out.println(format + " -> 天气推送成功");
+
     }
 
 

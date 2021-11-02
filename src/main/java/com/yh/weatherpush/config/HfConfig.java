@@ -17,9 +17,23 @@ public class HfConfig {
 
     private String key;
 
+    /**
+     * 实时天气
+     */
     private String getUrl;
 
+    /**
+     * 查询城市code
+     */
     private String cityUrl;
 
+    /**
+     * 天气插件地址
+     */
     private String pluginUrl;
+
+    /**
+     * 未来24h天气
+     */
+    private String rainUrl;
 }

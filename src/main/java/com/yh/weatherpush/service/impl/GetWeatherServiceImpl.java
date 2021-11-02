@@ -1,6 +1,7 @@
 package com.yh.weatherpush.service.impl;
 
 import com.yh.weatherpush.config.HfConfig;
+import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.dto.hfweather.HfCityResp;
 import com.yh.weatherpush.dto.hfweather.HfWeatherResp;
 import com.yh.weatherpush.dto.hfweather.WeatherNow;
@@ -31,10 +32,12 @@ public class GetWeatherServiceImpl implements GetWeatherService {
     private RestTemplate restTemplate;
 
     @Override
-    public Map<Integer, String> getWeather(Map<Integer, String> map, Map<Integer, List<Tag>> tagMap) {
+    public Map<Integer, String> getWeather(List<TagLocation> tags) {
         Map<Integer, String> res = new HashMap<>();
-        for (Integer tagid : map.keySet()) {
-            String code = map.get(tagid);
+        for (TagLocation tagLocation : tags) {
+            Integer tagid = tagLocation.getTagid();
+            String tagname = tagLocation.getTagname();
+            String code = tagLocation.getCode();
             String getUrl = hfConfig.getGetUrl();
             getUrl = getUrl.replace("code", code);
             ResponseEntity<HfWeatherResp> response = restTemplate.getForEntity(getUrl, HfWeatherResp.class);
@@ -48,8 +51,7 @@ public class GetWeatherServiceImpl implements GetWeatherService {
             int value = dayOfWeek.getValue();
             String[] valueArr = {"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
             String dateString = date.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日"));
-            Tag tag = tagMap.get(tagid).get(0);
-            StringBuilder builder = new StringBuilder("【实时天气】【" + tag.getTagname() + "】\n");
+            StringBuilder builder = new StringBuilder("【实时天气】【" + tagname + "】\n");
             builder.append(dateString).append("  ").append(valueArr[value - 1]).append("\n\n");
             builder.append(now.getText()).append("\n");
             builder.append("气温：").append(now.getTemp()).append("度\n");
@@ -61,7 +63,6 @@ public class GetWeatherServiceImpl implements GetWeatherService {
             builder.append("详细天气请查看 -> ").append("<a href=\"").append(pluginUrl).append("\">和风天气</a>");
             res.put(tagid, builder.toString());
         }
-
         return res;
     }
 
