@@ -4,6 +4,7 @@ import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.dto.qxwx.Tag;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author : yh
@@ -14,7 +15,7 @@ public interface PushService {
     /**
      * 发送消息
      */
-    void pushWeatherMsg(String token, List<TagLocation> tags);
+    void pushWeatherMsg(String token, Map<Integer, String> weatherMap);
 
 
     List<Tag> getTags(String token);

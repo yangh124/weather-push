@@ -28,3 +28,5 @@ hfweather:
   index-url: https://devapi.qweather.com/v7/indices/1d?type=3&location=code&key=${hfweather.key}
   # 天气预警
   warn-url: https://devapi.qweather.com/v7/warning/now?location=code&key=${hfweather.key}
+  # 3天天气
+  day-url: https://devapi.qweather.com/v7/weather/3d?location=code&key=${hfweather.key}

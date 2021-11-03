@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -28,7 +29,8 @@ class WeatherPushApplicationTests {
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         List<TagLocation> collect = list.stream().filter(a -> "杭州".equals(a.getTagname())).collect(Collectors.toList());
-        pushService.pushWeatherMsg(token, collect);
+        Map<Integer, String> map = getWeatherService.geTomWeather(collect);
+        pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         System.out.println(format + " -> 天气推送成功");

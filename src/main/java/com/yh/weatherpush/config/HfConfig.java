@@ -46,4 +46,9 @@ public class HfConfig {
      * 天气预警
      */
     private String warnUrl;
+
+    /**
+     * 3天天气
+     */
+    private String dayUrl;
 }

@@ -26,13 +26,10 @@ public class PushServiceImpl implements PushService {
     private QywxConfig qywxConfig;
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private GetWeatherService getWeatherService;
 
 
     @Override
-    public void pushWeatherMsg(String token, List<TagLocation> tags) {
-        Map<Integer, String> weatherMap = getWeatherService.getWeather(tags);
+    public void pushWeatherMsg(String token, Map<Integer, String> weatherMap) {
         for (Integer tagid : weatherMap.keySet()) {
             String msg = weatherMap.get(tagid);
             String sendUrl = qywxConfig.getSendUrl();

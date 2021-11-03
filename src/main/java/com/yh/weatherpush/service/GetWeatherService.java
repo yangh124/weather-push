@@ -15,10 +15,19 @@ public interface GetWeatherService {
 
 
     /**
+     * 今日天气
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> getWeather(List<TagLocation> tags);
+    Map<Integer, String> geTodayWeather(List<TagLocation> tags);
+
+    /**
+     * 明日天气
+     * @param tags 1 : 杭州 : 101210101
+     * @return 杭州 : 天气信息
+     */
+    Map<Integer, String> geTomWeather(List<TagLocation> tags);
+
 
     /**
      * 通过地名查询 location  code

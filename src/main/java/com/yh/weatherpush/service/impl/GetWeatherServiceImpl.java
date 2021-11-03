@@ -31,8 +31,8 @@ public class GetWeatherServiceImpl implements GetWeatherService {
     private RestTemplate restTemplate;
 
     @Override
-    public Map<Integer, String> getWeather(List<TagLocation> tags) {
-        Map<Integer, String> res = new HashMap<>();
+    public Map<Integer, String> geTodayWeather(List<TagLocation> tags) {
+        Map<Integer, String> res = new HashMap<>(tags.size());
         for (TagLocation tagLocation : tags) {
             Integer tagid = tagLocation.getTagid();
             String tagname = tagLocation.getTagname();
@@ -64,6 +64,35 @@ public class GetWeatherServiceImpl implements GetWeatherService {
 
             String s = covertWeatherData(tagname, weatherBody.getNow(), weatherIndexBody.getDaily(), weatherHourBody.getHourly());
             res.put(tagid, s);
+        }
+        return res;
+    }
+
+    @Override
+    public Map<Integer, String> geTomWeather(List<TagLocation> tags) {
+        Map<Integer, String> res = new HashMap<>(tags.size());
+        for (TagLocation tagLocation : tags) {
+            Integer tagid = tagLocation.getTagid();
+            String tagname = tagLocation.getTagname();
+            String code = tagLocation.getCode();
+            //实时天气
+            String url = hfConfig.getDayUrl();
+            url = url.replace("code", code);
+            ResponseEntity<HfWeatherDayResp> weatherResponse = restTemplate.getForEntity(url, HfWeatherDayResp.class);
+            HfWeatherDayResp weatherBody = weatherResponse.getBody();
+            if (null == weatherBody) {
+                throw new RuntimeException("获取3天天气异常！");
+            }
+            WeatherDay weatherDay = weatherBody.getDaily().get(1);
+            StringBuilder builder = new StringBuilder("【明日天气】【" + tagname + "】\n\n");
+            builder.append(weatherDay.getTextDay()).append("\n");
+            builder.append("气温：").append(weatherDay.getTempMin()).append("~").append(weatherDay.getTempMax()).append("度\n\n");
+            builder.append("相对湿度：").append(weatherDay.getHumidity()).append("%\n");
+            builder.append("降水量：").append(weatherDay.getPrecip()).append(" mm\n");
+            builder.append(weatherDay.getWindDirDay()).append(" ").append(weatherDay.getWindScaleDay()).append("级").append("\n\n");
+            String pluginUrl = hfConfig.getPluginUrl();
+            builder.append("详细天气请查看 -> ").append("<a href=\"").append(pluginUrl).append("\">和风天气</a>");
+            res.put(tagid, builder.toString());
         }
         return res;
     }
