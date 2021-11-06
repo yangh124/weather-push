@@ -6,8 +6,10 @@ import com.yh.weatherpush.dto.hfweather.*;
 import com.yh.weatherpush.dto.qxwx.Tag;
 import com.yh.weatherpush.service.GetWeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,9 +31,11 @@ public class GetWeatherServiceImpl implements GetWeatherService {
     private HfConfig hfConfig;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
-    public Map<Integer, String> geTodayWeather(List<TagLocation> tags) {
+    public Map<Integer, String> getTodayWeather(List<TagLocation> tags) {
         Map<Integer, String> res = new HashMap<>(tags.size());
         for (TagLocation tagLocation : tags) {
             Integer tagid = tagLocation.getTagid();
@@ -61,7 +65,6 @@ public class GetWeatherServiceImpl implements GetWeatherService {
             if (null == weatherHourBody) {
                 throw new RuntimeException("获取天气指数异常！");
             }
-
             String s = covertWeatherData(tagname, weatherBody.getNow(), weatherIndexBody.getDaily(), weatherHourBody.getHourly());
             res.put(tagid, s);
         }
@@ -69,7 +72,7 @@ public class GetWeatherServiceImpl implements GetWeatherService {
     }
 
     @Override
-    public Map<Integer, String> geTomWeather(List<TagLocation> tags) {
+    public Map<Integer, String> getTomWeather(List<TagLocation> tags) {
         Map<Integer, String> res = new HashMap<>(tags.size());
         for (TagLocation tagLocation : tags) {
             Integer tagid = tagLocation.getTagid();
@@ -155,6 +158,53 @@ public class GetWeatherServiceImpl implements GetWeatherService {
             }
             String id = body.getLocation().get(0).getId();
             map.put(tag.getTagid(), id);
+        }
+        return map;
+    }
+
+    @Override
+    public Map<Integer, String> getWeatherWarn(List<TagLocation> tags) {
+        Map<Integer, String> map = new HashMap<>();
+        for (TagLocation tag : tags) {
+            String url = hfConfig.getWarnUrl();
+            url = url.replace("code", tag.getCode());
+            ResponseEntity<HfWeatherWarnResp> response = restTemplate.getForEntity(url, HfWeatherWarnResp.class);
+            HfWeatherWarnResp body = response.getBody();
+            if (null == body) {
+                throw new RuntimeException("获取天气预警失败!");
+            }
+            String code = body.getCode();
+            if (!"200".equals(code)) {
+                throw new RuntimeException("获取天气预警失败! -> " + body);
+            }
+            String fxLink = body.getFxLink();
+            List<WeatherWarn> warning = body.getWarning();
+            if (CollectionUtils.isEmpty(warning)) {
+                continue;
+            }
+            WeatherWarn weatherWarn = warning.get(0);
+            String id = weatherWarn.getId();
+            Boolean exist;
+            try {
+                exist = redisTemplate.hasKey(id);
+                if (null != exist && exist) {
+                    continue;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+            Boolean res;
+            try {
+                res = redisTemplate.opsForValue().setIfAbsent(id, id);
+                if (null != res && res) {
+                    String text = weatherWarn.getText();
+                    String sb = text + "\n详细信息请查看 -> " + "<a href=\"" + fxLink + "\">和风天气</a>";
+                    map.put(tag.getTagid(), sb);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return map;
     }

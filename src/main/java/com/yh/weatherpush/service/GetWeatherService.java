@@ -19,14 +19,14 @@ public interface GetWeatherService {
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> geTodayWeather(List<TagLocation> tags);
+    Map<Integer, String> getTodayWeather(List<TagLocation> tags);
 
     /**
      * 明日天气
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> geTomWeather(List<TagLocation> tags);
+    Map<Integer, String> getTomWeather(List<TagLocation> tags);
 
 
     /**
@@ -38,5 +38,10 @@ public interface GetWeatherService {
     Map<Integer, String> getLocations(List<Tag> cityList);
 
 
-
+    /**
+     * 天气预警
+     * @param tags 1 : 杭州 : 101210101
+     * @return 杭州 : 天气信息
+     */
+    Map<Integer, String> getWeatherWarn(List<TagLocation> tags);
 }

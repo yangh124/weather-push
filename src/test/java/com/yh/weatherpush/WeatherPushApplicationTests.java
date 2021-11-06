@@ -7,6 +7,7 @@ import com.yh.weatherpush.service.PushService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,15 +27,19 @@ class WeatherPushApplicationTests {
 
     @Test
     void contextLoads() {
-        String token = pushService.getToken();
-        List<TagLocation> list = jsonConfig.getList();
-        List<TagLocation> collect = list.stream().filter(a -> "杭州".equals(a.getTagname())).collect(Collectors.toList());
-        Map<Integer, String> map = getWeatherService.geTomWeather(collect);
-        pushService.pushWeatherMsg(token, map);
-        LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        System.out.println(format + " -> 天气推送成功");
 
+        List<TagLocation> list = jsonConfig.getList();
+       // List<TagLocation> collect = list.stream().filter(a -> "杭州".equals(a.getTagname())).collect(Collectors.toList());
+        Map<Integer, String> map = getWeatherService.getWeatherWarn(list);
+        if (CollectionUtils.isEmpty(map)) {
+            System.out.println("不发送");
+            return;
+        }
+        // String token = pushService.getToken();
+        //pushService.pushWeatherMsg(token, map);
+        for (Integer tagid : map.keySet()) {
+            System.out.println(map.get(tagid));
+        }
 
     }
 
