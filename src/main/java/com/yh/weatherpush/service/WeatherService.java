@@ -11,18 +11,17 @@ import java.util.Map;
  * @author : yh
  * @date : 2021/10/31 14:16
  */
-public interface GetWeatherService {
-
+public interface WeatherService {
 
     /**
-     * 今日天气
+     * 获取今日天气
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
     Map<Integer, String> getTodayWeather(List<TagLocation> tags);
 
     /**
-     * 明日天气
+     *  获取明日天气
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
@@ -39,7 +38,7 @@ public interface GetWeatherService {
 
 
     /**
-     * 天气预警
+     *  获取天气灾害预警
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */

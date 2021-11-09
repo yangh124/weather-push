@@ -2,18 +2,15 @@ package com.yh.weatherpush;
 
 import com.yh.weatherpush.config.JsonConfig;
 import com.yh.weatherpush.dto.TagLocation;
-import com.yh.weatherpush.service.GetWeatherService;
 import com.yh.weatherpush.service.PushService;
+import com.yh.weatherpush.service.WeatherService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -21,14 +18,14 @@ class WeatherPushApplicationTests {
     @Autowired
     private PushService pushService;
     @Autowired
-    private GetWeatherService getWeatherService;
+    private WeatherService weatherService;
     @Autowired
     private JsonConfig jsonConfig;
 
     @Test
     void contextLoads() {
         List<TagLocation> list = jsonConfig.getList();
-        Map<Integer, String> map = getWeatherService.getWeatherWarn(list);
+        Map<Integer, String> map = weatherService.getWeatherWarn(list);
         if (CollectionUtils.isEmpty(map)) {
             return;
         }

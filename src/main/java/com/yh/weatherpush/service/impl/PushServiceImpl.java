@@ -3,7 +3,7 @@ package com.yh.weatherpush.service.impl;
 import com.yh.weatherpush.config.QywxConfig;
 import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.dto.qxwx.*;
-import com.yh.weatherpush.service.GetWeatherService;
+import com.yh.weatherpush.service.WeatherService;
 import com.yh.weatherpush.service.PushService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -79,10 +79,5 @@ public class PushServiceImpl implements PushService {
             throw new RuntimeException("获取token失败! -> " + body);
         }
         return body.getAccess_token();
-    }
-
-    @Override
-    public void pushWarningMsg(String token, List<TagLocation> tags) {
-
     }
 }

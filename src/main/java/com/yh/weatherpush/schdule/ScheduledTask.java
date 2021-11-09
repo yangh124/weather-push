@@ -2,8 +2,7 @@ package com.yh.weatherpush.schdule;
 
 import com.yh.weatherpush.config.JsonConfig;
 import com.yh.weatherpush.dto.TagLocation;
-import com.yh.weatherpush.dto.qxwx.Tag;
-import com.yh.weatherpush.service.GetWeatherService;
+import com.yh.weatherpush.service.WeatherService;
 import com.yh.weatherpush.service.PushService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,7 +25,7 @@ public class ScheduledTask {
     @Autowired
     private PushService pushService;
     @Autowired
-    private GetWeatherService getWeatherService;
+    private WeatherService weatherService;
     @Autowired
     private JsonConfig jsonConfig;
 
@@ -35,7 +34,7 @@ public class ScheduledTask {
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         List<TagLocation> collect = list.stream().filter(a -> "嘉定".equals(a.getTagname())).collect(Collectors.toList());
-        Map<Integer, String> map = getWeatherService.getTodayWeather(collect);
+        Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -43,12 +42,15 @@ public class ScheduledTask {
     }
 
 
+    /**
+     * 今日天气
+     */
     @Scheduled(cron = "0 5 8 * * ?")
     public void scheduledTask2() {
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         List<TagLocation> collect = list.stream().filter(a -> !"嘉定".equals(a.getTagname())).collect(Collectors.toList());
-        Map<Integer, String> map = getWeatherService.getTodayWeather(collect);
+        Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -62,7 +64,7 @@ public class ScheduledTask {
     public void scheduledTask3() {
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
-        Map<Integer, String> map = getWeatherService.getTomWeather(list);
+        Map<Integer, String> map = weatherService.getTomWeather(list);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -75,7 +77,7 @@ public class ScheduledTask {
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void scheduledTask4() {
         List<TagLocation> list = jsonConfig.getList();
-        Map<Integer, String> map = getWeatherService.getWeatherWarn(list);
+        Map<Integer, String> map = weatherService.getWeatherWarn(list);
         if (CollectionUtils.isEmpty(map)) {
             return;
         }
@@ -83,6 +85,6 @@ public class ScheduledTask {
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        System.out.println(format + " -> 天气推送成功");
+        System.out.println(format + " -> 天气灾害预警成功");
     }
 }

@@ -4,7 +4,7 @@ import com.yh.weatherpush.config.HfConfig;
 import com.yh.weatherpush.dto.TagLocation;
 import com.yh.weatherpush.dto.hfweather.*;
 import com.yh.weatherpush.dto.qxwx.Tag;
-import com.yh.weatherpush.service.GetWeatherService;
+import com.yh.weatherpush.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ import java.util.Map;
  * @date : 2021/10/31 14:29
  */
 @Service
-public class GetWeatherServiceImpl implements GetWeatherService {
+public class WeatherServiceImpl implements WeatherService {
 
     @Autowired
     private HfConfig hfConfig;
