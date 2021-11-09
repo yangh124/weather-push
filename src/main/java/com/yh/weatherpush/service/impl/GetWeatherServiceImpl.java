@@ -125,7 +125,11 @@ public class GetWeatherServiceImpl implements GetWeatherService {
         StringBuilder builder = new StringBuilder("【实时天气】【" + tagName + "】\n");
         builder.append(dateString).append("  ").append(valueArr[value - 1]).append("\n\n");
         builder.append(now.getText()).append("\n");
-        builder.append(pop).append("\n\n");
+        if ("0".equals(pop)) {
+            builder.append("不会下雨").append("\n\n");
+        } else {
+            builder.append(pop).append("\n\n");
+        }
         builder.append("气温：").append(now.getTemp()).append("度\n");
         builder.append("体感温度：").append(now.getFeelsLike()).append("度\n");
         builder.append("风力等级：").append(now.getWindScale()).append("级\n");
