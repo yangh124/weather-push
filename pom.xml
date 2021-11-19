@@ -83,6 +83,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <env>
+                        <TZ>Asia/Shanghai</TZ>
+                    </env>
                     <imageName>${project.artifactId}:${project.version}</imageName>
                     <dockerHost>${docker.host}</dockerHost>
                     <baseImage>java:8</baseImage>
