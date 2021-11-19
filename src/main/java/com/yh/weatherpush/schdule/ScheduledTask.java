@@ -74,7 +74,7 @@ public class ScheduledTask {
     /**
      * 天气灾害预警
      */
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    //@Scheduled(cron = "0 0 0/1 * * ?")
     public void scheduledTask4() {
         List<TagLocation> list = jsonConfig.getList();
         Map<Integer, String> map = weatherService.getWeatherWarn(list);

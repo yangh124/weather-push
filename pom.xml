@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.yh</groupId>
     <artifactId>weather-push</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <name>weather-push</name>
     <description>weather-push</description>
     <properties>
