@@ -2,6 +2,7 @@ package com.yh.weatherpush;
 
 import com.yh.weatherpush.config.JsonConfig;
 import com.yh.weatherpush.dto.TagLocation;
+import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.PushService;
 import com.yh.weatherpush.service.WeatherService;
 import org.junit.jupiter.api.Test;
@@ -20,10 +21,16 @@ class WeatherPushApplicationTests {
     @Autowired
     private WeatherService weatherService;
     @Autowired
+    private HolidayService holidayService;
+    @Autowired
     private JsonConfig jsonConfig;
 
     @Test
     void contextLoads() {
+        boolean holiday = holidayService.isHoliday(null);
+        if (holiday) {
+            return;
+        }
         List<TagLocation> list = jsonConfig.getList();
         Map<Integer, String> map = weatherService.getWeatherWarn(list);
         if (CollectionUtils.isEmpty(map)) {

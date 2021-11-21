@@ -2,6 +2,7 @@ package com.yh.weatherpush.schdule;
 
 import com.yh.weatherpush.config.JsonConfig;
 import com.yh.weatherpush.dto.TagLocation;
+import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.WeatherService;
 import com.yh.weatherpush.service.PushService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,10 +29,16 @@ public class ScheduledTask {
     @Autowired
     private WeatherService weatherService;
     @Autowired
+    private HolidayService holidayService;
+    @Autowired
     private JsonConfig jsonConfig;
 
     @Scheduled(cron = "0 10 7 * * ?")
     public void scheduledTask1() {
+        boolean holiday = holidayService.isHoliday(null);
+        if (holiday) {
+            return;
+        }
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         List<TagLocation> collect = list.stream().filter(a -> "嘉定".equals(a.getTagname())).collect(Collectors.toList());
@@ -47,6 +55,10 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 5 8 * * ?")
     public void scheduledTask2() {
+        boolean holiday = holidayService.isHoliday(null);
+        if (holiday) {
+            return;
+        }
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         List<TagLocation> collect = list.stream().filter(a -> !"嘉定".equals(a.getTagname())).collect(Collectors.toList());
@@ -62,6 +74,11 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 30 20 * * ?")
     public void scheduledTask3() {
+        LocalDate date = LocalDate.now().plusDays(1);
+        boolean holiday = holidayService.isHoliday(date);
+        if (holiday) {
+            return;
+        }
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getList();
         Map<Integer, String> map = weatherService.getTomWeather(list);
