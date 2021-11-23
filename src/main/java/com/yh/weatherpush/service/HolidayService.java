@@ -15,4 +15,10 @@ public interface HolidayService {
      * @return 是、不是
      */
     boolean isHoliday(LocalDate date);
+
+    /**
+     * 是否休息
+     * @return
+     */
+    boolean isOffDay(LocalDate date);
 }

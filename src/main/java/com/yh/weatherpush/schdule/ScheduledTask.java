@@ -35,17 +35,17 @@ public class ScheduledTask {
 
     @Scheduled(cron = "0 10 7 * * ?")
     public void scheduledTask1() {
-        boolean holiday = holidayService.isHoliday(null);
+        boolean holiday = holidayService.isOffDay(LocalDate.now());
         if (holiday) {
             return;
         }
         String token = pushService.getToken();
-        List<TagLocation> list = jsonConfig.getList();
+        List<TagLocation> list = jsonConfig.getTagLocationList();
         List<TagLocation> collect = list.stream().filter(a -> "嘉定".equals(a.getTagname())).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         System.out.println(format + " -> 天气推送成功");
     }
 
@@ -55,17 +55,17 @@ public class ScheduledTask {
      */
     @Scheduled(cron = "0 5 8 * * ?")
     public void scheduledTask2() {
-        boolean holiday = holidayService.isHoliday(null);
+        boolean holiday = holidayService.isOffDay(LocalDate.now());
         if (holiday) {
             return;
         }
         String token = pushService.getToken();
-        List<TagLocation> list = jsonConfig.getList();
+        List<TagLocation> list = jsonConfig.getTagLocationList();
         List<TagLocation> collect = list.stream().filter(a -> !"嘉定".equals(a.getTagname())).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         System.out.println(format + " -> 天气推送成功");
     }
 
@@ -75,16 +75,16 @@ public class ScheduledTask {
     @Scheduled(cron = "0 30 20 * * ?")
     public void scheduledTask3() {
         LocalDate date = LocalDate.now().plusDays(1);
-        boolean holiday = holidayService.isHoliday(date);
+        boolean holiday = holidayService.isOffDay(date);
         if (holiday) {
             return;
         }
         String token = pushService.getToken();
-        List<TagLocation> list = jsonConfig.getList();
+        List<TagLocation> list = jsonConfig.getTagLocationList();
         Map<Integer, String> map = weatherService.getTomWeather(list);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         System.out.println(format + " -> 天气推送成功");
     }
 
@@ -93,7 +93,7 @@ public class ScheduledTask {
      */
     //@Scheduled(cron = "0 0 0/1 * * ?")
     public void scheduledTask4() {
-        List<TagLocation> list = jsonConfig.getList();
+        List<TagLocation> list = jsonConfig.getTagLocationList();
         Map<Integer, String> map = weatherService.getWeatherWarn(list);
         if (CollectionUtils.isEmpty(map)) {
             return;
@@ -101,7 +101,7 @@ public class ScheduledTask {
         String token = pushService.getToken();
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         System.out.println(format + " -> 天气灾害预警成功");
     }
 }
