@@ -61,7 +61,8 @@ public class ScheduledTask {
         }
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getTagLocationList();
-        List<TagLocation> collect = list.stream().filter(a -> !"嘉定".equals(a.getTagname())).collect(Collectors.toList());
+        List<TagLocation> collect =
+                list.stream().filter(a -> !"嘉定".equals(a.getTagname()) && !"杭州".equals(a.getTagname())).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
