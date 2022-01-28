@@ -33,7 +33,7 @@ public class ScheduledTask {
     @Autowired
     private JsonConfig jsonConfig;
 
-    @Scheduled(cron = "0 10 7 * * ?")
+    // @Scheduled(cron = "0 10 7 * * ?")
     public void scheduledTask1() {
         boolean holiday = holidayService.isOffDay(LocalDate.now());
         if (holiday) {
@@ -49,11 +49,10 @@ public class ScheduledTask {
         System.out.println(format + " -> 天气推送成功");
     }
 
-
     /**
      * 今日天气
      */
-    @Scheduled(cron = "0 5 8 * * ?")
+    // @Scheduled(cron = "0 5 8 * * ?")
     public void scheduledTask2() {
         boolean holiday = holidayService.isOffDay(LocalDate.now());
         if (holiday) {
@@ -61,8 +60,8 @@ public class ScheduledTask {
         }
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getTagLocationList();
-        List<TagLocation> collect =
-                list.stream().filter(a -> !"嘉定".equals(a.getTagname()) && !"杭州".equals(a.getTagname())).collect(Collectors.toList());
+        List<TagLocation> collect = list.stream()
+            .filter(a -> !"嘉定".equals(a.getTagname()) && !"杭州".equals(a.getTagname())).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
@@ -92,7 +91,7 @@ public class ScheduledTask {
     /**
      * 天气灾害预警
      */
-    //@Scheduled(cron = "0 0 0/1 * * ?")
+    // @Scheduled(cron = "0 0 0/1 * * ?")
     public void scheduledTask4() {
         List<TagLocation> list = jsonConfig.getTagLocationList();
         Map<Integer, String> map = weatherService.getWeatherWarn(list);
