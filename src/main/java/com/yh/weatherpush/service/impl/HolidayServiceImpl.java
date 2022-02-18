@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -65,10 +64,10 @@ public class HolidayServiceImpl implements HolidayService {
         List<Holiday> holidays = map.get(date);
         if (CollectionUtils.isEmpty(holidays)) {
             int value = date.getDayOfWeek().getValue();
-            //周末放假
+            // 周末放假
             return 6 == value || 7 == value;
         } else {
-            //节假日放假
+            // 节假日放假
             Holiday holiday = holidays.get(0);
             return holiday.isOffDay();
         }

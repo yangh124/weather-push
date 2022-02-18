@@ -33,7 +33,7 @@ public class ScheduledTask {
     @Autowired
     private JsonConfig jsonConfig;
 
-    // @Scheduled(cron = "0 10 7 * * ?")
+    @Scheduled(cron = "0 10 7 * * ?")
     public void scheduledTask1() {
         boolean holiday = holidayService.isOffDay(LocalDate.now());
         if (holiday) {
@@ -41,7 +41,8 @@ public class ScheduledTask {
         }
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getTagLocationList();
-        List<TagLocation> collect = list.stream().filter(a -> "嘉定".equals(a.getTagname())).collect(Collectors.toList());
+        // 嘉定区
+        List<TagLocation> collect = list.stream().filter(a -> 3 == a.getTagid()).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
@@ -52,7 +53,7 @@ public class ScheduledTask {
     /**
      * 今日天气
      */
-    // @Scheduled(cron = "0 5 8 * * ?")
+    @Scheduled(cron = "0 5 8 * * ?")
     public void scheduledTask2() {
         boolean holiday = holidayService.isOffDay(LocalDate.now());
         if (holiday) {
@@ -60,9 +61,9 @@ public class ScheduledTask {
         }
         String token = pushService.getToken();
         List<TagLocation> list = jsonConfig.getTagLocationList();
-        List<TagLocation> collect = list.stream()
-            .filter(a -> !"嘉定".equals(a.getTagname()) && !"杭州".equals(a.getTagname())).collect(Collectors.toList());
-        Map<Integer, String> map = weatherService.getTodayWeather(collect);
+        // 嘉定除外
+        List<TagLocation> collect = list.stream().filter(a -> 3 != a.getTagid()).collect(Collectors.toList());
+        Map<Integer, String> map = weatherService.getRedisWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

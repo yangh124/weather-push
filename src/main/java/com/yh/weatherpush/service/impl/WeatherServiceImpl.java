@@ -7,6 +7,7 @@ import com.yh.weatherpush.dto.qxwx.Tag;
 import com.yh.weatherpush.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -33,6 +34,8 @@ public class WeatherServiceImpl implements WeatherService {
     private RestTemplate restTemplate;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Map<Integer, String> getTodayWeather(List<TagLocation> tags) {
@@ -41,7 +44,7 @@ public class WeatherServiceImpl implements WeatherService {
             Integer tagid = tagLocation.getTagid();
             String tagname = tagLocation.getTagname();
             String code = tagLocation.getCode();
-            //实时天气
+            // 实时天气
             String weatherUrl = hfConfig.getGetUrl();
             weatherUrl = weatherUrl.replace("code", code);
             ResponseEntity<HfWeatherResp> weatherResponse = restTemplate.getForEntity(weatherUrl, HfWeatherResp.class);
@@ -49,23 +52,26 @@ public class WeatherServiceImpl implements WeatherService {
             if (null == weatherBody) {
                 throw new RuntimeException("获取天气异常！");
             }
-            //天气指数
+            // 天气指数
             String weatherIndexUrl = hfConfig.getIndexUrl();
             weatherIndexUrl = weatherIndexUrl.replace("code", code);
-            ResponseEntity<HfWeatherIndexResp> weatherIndexResponse = restTemplate.getForEntity(weatherIndexUrl, HfWeatherIndexResp.class);
+            ResponseEntity<HfWeatherIndexResp> weatherIndexResponse =
+                restTemplate.getForEntity(weatherIndexUrl, HfWeatherIndexResp.class);
             HfWeatherIndexResp weatherIndexBody = weatherIndexResponse.getBody();
             if (null == weatherIndexBody) {
                 throw new RuntimeException("获取天气指数异常！");
             }
-            //24小时天气
+            // 24小时天气
             String weatherHourUrl = hfConfig.getHourUrl();
             weatherHourUrl = weatherHourUrl.replace("code", code);
-            ResponseEntity<HfWeatherHourResp> weatherHourResponse = restTemplate.getForEntity(weatherHourUrl, HfWeatherHourResp.class);
+            ResponseEntity<HfWeatherHourResp> weatherHourResponse =
+                restTemplate.getForEntity(weatherHourUrl, HfWeatherHourResp.class);
             HfWeatherHourResp weatherHourBody = weatherHourResponse.getBody();
             if (null == weatherHourBody) {
                 throw new RuntimeException("获取天气指数异常！");
             }
-            String s = covertWeatherData(tagname, weatherBody.getNow(), weatherIndexBody.getDaily(), weatherHourBody.getHourly());
+            String s = covertWeatherData(tagname, weatherBody.getNow(), weatherIndexBody.getDaily(),
+                weatherHourBody.getHourly());
             res.put(tagid, s);
         }
         return res;
@@ -78,7 +84,7 @@ public class WeatherServiceImpl implements WeatherService {
             Integer tagid = tagLocation.getTagid();
             String tagname = tagLocation.getTagname();
             String code = tagLocation.getCode();
-            //实时天气
+            // 实时天气
             String url = hfConfig.getDayUrl();
             url = url.replace("code", code);
             ResponseEntity<HfWeatherDayResp> weatherResponse = restTemplate.getForEntity(url, HfWeatherDayResp.class);
@@ -89,10 +95,12 @@ public class WeatherServiceImpl implements WeatherService {
             WeatherDay weatherDay = weatherBody.getDaily().get(1);
             StringBuilder builder = new StringBuilder("【明日天气】【" + tagname + "】\n\n");
             builder.append(weatherDay.getTextDay()).append("\n");
-            builder.append("气温：").append(weatherDay.getTempMin()).append("~").append(weatherDay.getTempMax()).append("度\n\n");
+            builder.append("气温：").append(weatherDay.getTempMin()).append("~").append(weatherDay.getTempMax())
+                .append("度\n\n");
             builder.append("相对湿度：").append(weatherDay.getHumidity()).append("%\n");
             builder.append("降水量：").append(weatherDay.getPrecip()).append(" mm\n");
-            builder.append(weatherDay.getWindDirDay()).append(" ").append(weatherDay.getWindScaleDay()).append("级").append("\n\n");
+            builder.append(weatherDay.getWindDirDay()).append(" ").append(weatherDay.getWindScaleDay()).append("级")
+                .append("\n\n");
             String pluginUrl = hfConfig.getPluginUrl();
             builder.append("详细天气请查看 -> ").append("<a href=\"").append(pluginUrl).append("\">和风天气</a>");
             res.put(tagid, builder.toString());
@@ -100,16 +108,33 @@ public class WeatherServiceImpl implements WeatherService {
         return res;
     }
 
+    @Override
+    public Map<Integer, String> getRedisWeather(List<TagLocation> tags) {
+        Map<Integer, String> res = new HashMap<>();
+        LocalDate now = LocalDate.now();
+        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        for (TagLocation tag : tags) {
+            Integer tagid = tag.getTagid();
+            String key = format + ":" + tagid;
+            String s = stringRedisTemplate.opsForValue().get(key);
+            if (null != s) {
+                res.put(tagid, s);
+            }
+        }
+        return res;
+    }
+
     /**
-     * @param tagName   城市名
-     * @param now       实时天气
+     * @param tagName 城市名
+     * @param now 实时天气
      * @param indexList 天气指数
-     * @param hourList  逐小时天气
+     * @param hourList 逐小时天气
      * @return 天气预报
      */
-    private String covertWeatherData(String tagName, WeatherNow now, List<WeatherIndex> indexList, List<WeatherHour> hourList) {
+    private String covertWeatherData(String tagName, WeatherNow now, List<WeatherIndex> indexList,
+        List<WeatherHour> hourList) {
 
-        //降雨预报  未来一小时降雨
+        // 降雨预报 未来一小时降雨
         WeatherHour weatherHour = hourList.get(0);
         String pop = weatherHour.getPop();
         if (!StringUtils.isEmpty(pop)) {
@@ -134,7 +159,7 @@ public class WeatherServiceImpl implements WeatherService {
         builder.append("体感温度：").append(now.getFeelsLike()).append("度\n");
         builder.append("风力等级：").append(now.getWindScale()).append("级\n");
         builder.append("相对湿度：").append(now.getHumidity()).append("%\n\n");
-        //天气指数
+        // 天气指数
         for (WeatherIndex index : indexList) {
             builder.append(index.getName()).append("：").append(index.getCategory()).append("\n");
             builder.append(index.getText()).append("\n\n");
