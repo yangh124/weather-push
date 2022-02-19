@@ -88,7 +88,8 @@
                     </env>
                     <imageName>${project.artifactId}:${project.version}</imageName>
                     <dockerHost>${docker.host}</dockerHost>
-                    <baseImage>java:8</baseImage>
+                    <!-- java:8 -->
+                    <baseImage>houwm/jdk8:arm64</baseImage>
                     <entryPoint>["java", "-jar","/${project.build.finalName}.jar","-Xms128m -Xmx128m"]</entryPoint>
                     <resources>
                         <resource>
