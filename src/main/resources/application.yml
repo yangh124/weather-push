@@ -1,0 +1,45 @@
+server:
+  port: 6666
+spring:
+  profiles:
+    active: dev
+  application:
+    name: weather-push
+
+mybatis-plus:
+  mapper-locations:
+    - classpath:mapper/*.xml
+    - classpath*:com/**/mapper/*.xml
+
+#企业微信
+qywx:
+  corpid:
+  corpsecret:
+  agentid:
+  token-url: https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${qywx.corpid}&corpsecret=${qywx.corpsecret}
+  send-url: https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN
+  label-url: https://qyapi.weixin.qq.com/cgi-bin/tag/list?access_token=ACCESS_TOKEN
+
+#和风天气
+hfweather:
+  key:
+  #实时天气
+  get-url: https://devapi.qweather.com/v7/weather/now?location=code&key=${hfweather.key}
+  #城市信息
+  city-url: https://geoapi.qweather.com/v2/city/lookup?location=cityName&key=${hfweather.key}&number=1
+  #天气插件
+  plugin-url: https://widget-page.qweather.net/h5/index.html?md=0531246&bg=1&lc=accu&key=7e8db955560a4c039db1010ec54ceadd&v=_1635759709176
+  #24h天气
+  hour-url: https://devapi.qweather.com/v7/weather/24h?location=code&key=${hfweather.key}
+  # 穿衣指数  type=3
+  index-url: https://devapi.qweather.com/v7/indices/1d?type=3&location=code&key=${hfweather.key}
+  # 天气预警
+  warn-url: https://devapi.qweather.com/v7/warning/now?location=code&key=${hfweather.key}
+  # 3天天气
+  day-url: https://devapi.qweather.com/v7/weather/3d?location=code&key=${hfweather.key}
+
+# http://www.apihubs.cn/#/holiday 判断工作日接口
+holiday:
+  date-url: https://api.apihubs.cn/holiday/get?field=workday&date=dateStr&cn=1&page=1&size=1
+
+
