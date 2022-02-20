@@ -17,6 +17,7 @@
         <java.version>1.8</java.version>
         <docker.maven.plugin.version>1.2.2</docker.maven.plugin.version>
         <docker.host>http://192.168.3.3:2375</docker.host>
+        <!--        <docker.host>http://101.43.11.186:4396</docker.host>-->
         <log4j2.version>2.15.0</log4j2.version>
     </properties>
     <dependencies>
@@ -133,7 +134,7 @@
                     </env>
                     <imageName>${project.artifactId}:${project.version}</imageName>
                     <dockerHost>${docker.host}</dockerHost>
-                    <!-- java:8 -->
+                    <!--                    <baseImage>java:8</baseImage>-->
                     <baseImage>houwm/jdk8:arm64</baseImage>
                     <entryPoint>["java", "-jar",
                         "-Dspring.profiles.active=prod","/${project.build.finalName}.jar","-Xms128m -Xmx128m"]
