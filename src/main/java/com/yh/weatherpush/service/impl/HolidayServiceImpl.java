@@ -1,10 +1,13 @@
 package com.yh.weatherpush.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.config.HolidayConfig;
-import com.yh.weatherpush.config.JsonConfig;
-import com.yh.weatherpush.dto.Holiday;
+import com.yh.weatherpush.entity.Holiday;
+import com.yh.weatherpush.mapper.HolidayMapper;
+import com.yh.weatherpush.service.RedisService;
 import com.yh.weatherpush.service.HolidayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +26,16 @@ import java.util.stream.Collectors;
  * @date : 2021/11/21 14:34
  */
 @Service
-public class HolidayServiceImpl implements HolidayService {
+public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> implements HolidayService {
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
-    private HolidayConfig holidayConfig;
+    private RedisService redisService;
 
     @Autowired
-    private JsonConfig jsonConfig;
+    private HolidayConfig holidayConfig;
 
     @Override
     public boolean isHoliday(LocalDate date) {
@@ -59,17 +62,14 @@ public class HolidayServiceImpl implements HolidayService {
 
     @Override
     public boolean isOffDay(LocalDate date) {
-        List<Holiday> holidayList = jsonConfig.getHolidayList();
-        Map<LocalDate, List<Holiday>> map = holidayList.stream().collect(Collectors.groupingBy(Holiday::getDate));
-        List<Holiday> holidays = map.get(date);
-        if (CollectionUtils.isEmpty(holidays)) {
+        Holiday holiday = redisService.redisHolidayByKey(date);
+        if (ObjectUtil.isNull(holiday)) {
             int value = date.getDayOfWeek().getValue();
             // 周末放假
             return 6 == value || 7 == value;
         } else {
             // 节假日放假
-            Holiday holiday = holidays.get(0);
-            return holiday.isOffDay();
+            return holiday.getIsOffDay();
         }
     }
 

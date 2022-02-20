@@ -1,7 +1,7 @@
 package com.yh.weatherpush.service;
 
-import com.yh.weatherpush.dto.TagLocation;
-import com.yh.weatherpush.dto.qxwx.Tag;
+
+import com.yh.weatherpush.entity.Tag;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,7 @@ public interface WeatherService {
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> getTodayWeather(List<TagLocation> tags);
+    Map<Integer, String> getTodayWeather(List<Tag> tags);
 
     /**
      * 获取明日天气
@@ -26,7 +26,7 @@ public interface WeatherService {
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> getTomWeather(List<TagLocation> tags);
+    Map<Integer, String> getTomWeather(List<Tag> tags);
 
     /**
      * 获取redis天气
@@ -34,7 +34,7 @@ public interface WeatherService {
      * @param tags
      * @return
      */
-    Map<Integer, String> getRedisWeather(List<TagLocation> tags);
+    Map<Integer, String> getRedisWeather(List<Tag> tags);
 
     /**
      * 通过地名查询 location code
@@ -50,5 +50,5 @@ public interface WeatherService {
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> getWeatherWarn(List<TagLocation> tags);
+    Map<Integer, String> getWeatherWarn(List<Tag> tags);
 }

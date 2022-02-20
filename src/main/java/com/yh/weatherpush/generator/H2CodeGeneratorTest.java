@@ -1,6 +1,7 @@
 package com.yh.weatherpush.generator;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.fill.Column;
@@ -27,7 +28,7 @@ public class H2CodeGeneratorTest {
     /**
      * 执行初始化数据库脚本
      */
-    //@BeforeAll
+    // @BeforeAll
     public static void before() throws SQLException {
         Connection conn = DATA_SOURCE_CONFIG.getConn();
         InputStream inputStream = H2CodeGeneratorTest.class.getResourceAsStream("/sql/init.sql");
@@ -48,14 +49,15 @@ public class H2CodeGeneratorTest {
      * 策略配置
      */
     private StrategyConfig.Builder strategyConfig() {
-        return new StrategyConfig.Builder().addInclude("fc_timing_category"); // 设置需要生成的表名
+        // 设置需要生成的表名
+        return new StrategyConfig.Builder().addInclude("sys_tag", "sys_holiday").addTablePrefix("sys_");
     }
 
     /**
      * 全局配置
      */
     private GlobalConfig.Builder globalConfig() {
-        return new GlobalConfig.Builder().fileOverride()
+        return new GlobalConfig.Builder().enableSwagger()
             .outputDir("/Users/yh/Documents/study/gitProj/weather-push/src/main/java").author("yh");
     }
 
@@ -89,7 +91,8 @@ public class H2CodeGeneratorTest {
     @Test
     public void testSimple() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
-        generator.strategy(strategyConfig().build());
+        generator.strategy(strategyConfig().entityBuilder().enableLombok().idType(IdType.ASSIGN_ID)
+            .logicDeleteColumnName("is_delete").build());
         generator.global(globalConfig().build());
         generator.packageInfo(packageConfig().build());
         generator.template(templateConfig().build());
@@ -102,7 +105,7 @@ public class H2CodeGeneratorTest {
     @Test
     public void testTablePrefix() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
-        generator.strategy(strategyConfig().addTablePrefix("t_", "c_").build());
+        generator.strategy(strategyConfig().addTablePrefix("sys_").build());
         generator.global(globalConfig().build());
         generator.execute();
     }

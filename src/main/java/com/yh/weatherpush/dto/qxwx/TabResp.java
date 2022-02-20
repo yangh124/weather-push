@@ -1,5 +1,6 @@
 package com.yh.weatherpush.dto.qxwx;
 
+import com.yh.weatherpush.entity.Tag;
 import lombok.Data;
 
 import java.io.Serializable;

@@ -1,8 +1,8 @@
 package com.yh.weatherpush.schdule;
 
-import com.yh.weatherpush.config.JsonConfig;
-import com.yh.weatherpush.dto.TagLocation;
+import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.service.HolidayService;
+import com.yh.weatherpush.service.RedisService;
 import com.yh.weatherpush.service.WeatherService;
 import com.yh.weatherpush.service.PushService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class ScheduledTask {
     @Autowired
     private HolidayService holidayService;
     @Autowired
-    private JsonConfig jsonConfig;
+    private RedisService redisService;
 
     @Scheduled(cron = "0 10 7 * * ?")
     public void scheduledTask1() {
@@ -40,9 +40,9 @@ public class ScheduledTask {
             return;
         }
         String token = pushService.getToken();
-        List<TagLocation> list = jsonConfig.getTagLocationList();
+        List<Tag> list = redisService.redisTagList();
         // 嘉定区
-        List<TagLocation> collect = list.stream().filter(a -> 3 == a.getTagid()).collect(Collectors.toList());
+        List<Tag> collect = list.stream().filter(a -> 3 == a.getTagId()).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getTodayWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
@@ -60,9 +60,9 @@ public class ScheduledTask {
             return;
         }
         String token = pushService.getToken();
-        List<TagLocation> list = jsonConfig.getTagLocationList();
+        List<Tag> list = redisService.redisTagList();
         // 嘉定除外
-        List<TagLocation> collect = list.stream().filter(a -> 3 != a.getTagid()).collect(Collectors.toList());
+        List<Tag> collect = list.stream().filter(a -> 3 != a.getTagId()).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getRedisWeather(collect);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
@@ -81,7 +81,7 @@ public class ScheduledTask {
             return;
         }
         String token = pushService.getToken();
-        List<TagLocation> list = jsonConfig.getTagLocationList();
+        List<Tag> list = redisService.redisTagList();
         Map<Integer, String> map = weatherService.getTomWeather(list);
         pushService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
@@ -94,7 +94,7 @@ public class ScheduledTask {
      */
     // @Scheduled(cron = "0 0 0/1 * * ?")
     public void scheduledTask4() {
-        List<TagLocation> list = jsonConfig.getTagLocationList();
+        List<Tag> list = redisService.redisTagList();
         Map<Integer, String> map = weatherService.getWeatherWarn(list);
         if (CollectionUtils.isEmpty(map)) {
             return;

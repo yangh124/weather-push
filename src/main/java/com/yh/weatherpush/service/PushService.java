@@ -1,6 +1,7 @@
 package com.yh.weatherpush.service;
 
-import com.yh.weatherpush.dto.qxwx.Tag;
+
+import com.yh.weatherpush.entity.Tag;
 
 import java.util.List;
 import java.util.Map;

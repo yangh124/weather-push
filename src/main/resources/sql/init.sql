@@ -1,35 +1,51 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : zeda
+ Source Server         : mysql8
  Source Server Type    : MySQL
- Source Server Version : 50736
- Source Host           : 47.114.72.36:13333
- Source Schema         : zdassistant_dev
+ Source Server Version : 80024
+ Source Host           : 192.168.3.3:3306
+ Source Schema         : weather
 
  Target Server Type    : MySQL
- Target Server Version : 50736
+ Target Server Version : 80024
  File Encoding         : 65001
 
- Date: 19/02/2022 15:39:27
+ Date: 19/02/2022 21:39:01
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for fc_timing_category
+-- Table structure for sys_holiday
 -- ----------------------------
-DROP TABLE IF EXISTS `fc_timing_category`;
-CREATE TABLE `fc_timing_category` (
-                                      `id` int(11) NOT NULL AUTO_INCREMENT,
-                                      `uuid` varchar(32) NOT NULL,
-                                      `law_firm_id` varchar(32) NOT NULL DEFAULT '0' COMMENT '律所(分所)id',
-                                      `name` varchar(200) NOT NULL COMMENT '类型名称',
-                                      `is_disable` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态（0-启用 1-禁用）',
-                                      `create_time` datetime(6) NOT NULL COMMENT '创建时间',
-                                      PRIMARY KEY (`id`),
-                                      UNIQUE KEY `uniq_index` (`uuid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='计时类型表';
+DROP TABLE IF EXISTS `sys_holiday`;
+CREATE TABLE `sys_holiday` (
+                               `id` bigint NOT NULL,
+                               `holiday_name` varchar(50) NOT NULL DEFAULT '' COMMENT '节假日名称',
+                               `holiday_date` date NOT NULL COMMENT '日期',
+                               `is_off_day` tinyint(1) NOT NULL COMMENT '是否放假（0-补班 1-放假）',
+                               `year` char(4) NOT NULL DEFAULT '' COMMENT '所在年份',
+                               `ctime` timestamp NOT NULL COMMENT '创建时间',
+                               `utime` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+                               `is_delete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
+                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='节假日';
+
+-- ----------------------------
+-- Table structure for sys_tag
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_tag`;
+CREATE TABLE `sys_tag` (
+                           `id` bigint NOT NULL,
+                           `tag_id` int NOT NULL DEFAULT '0' COMMENT '企业微信tag_id（城市id）',
+                           `tag_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '企业微信tag_name（城市name）',
+                           `code` char(9) NOT NULL DEFAULT '' COMMENT '地区编码',
+                           `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+                           `utime` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+                           `is_delete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
+                           PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='企业微信标签';
 
 SET FOREIGN_KEY_CHECKS = 1;
