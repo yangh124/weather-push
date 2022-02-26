@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
  * @since 2022-02-19
  */
 @Controller
-@RequestMapping("/weatherpush/holiday")
+@RequestMapping("/holiday")
 public class HolidayController {
 
 }

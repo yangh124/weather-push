@@ -28,11 +28,6 @@ public class HfConfig {
     private String cityUrl;
 
     /**
-     * 天气插件地址
-     */
-    private String pluginUrl;
-
-    /**
      * 未来24h天气
      */
     private String hourUrl;

@@ -12,5 +12,5 @@ echo "old_image=" $old_image
 docker stop $old_container
 docker rm $old_container
 docker rmi $old_image
-new_container=`docker run -d -p 6666:6666 --name="weather-push" $1`
+new_container=`docker run -d -p 8080:8080 --name="weather-push" $1`
 echo "new_container=" $new_container

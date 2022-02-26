@@ -3,6 +3,7 @@ package com.yh.weatherpush.service.impl;
 import com.yh.weatherpush.config.HfConfig;
 import com.yh.weatherpush.dto.hfweather.*;
 import com.yh.weatherpush.entity.Tag;
+import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -49,7 +50,7 @@ public class WeatherServiceImpl implements WeatherService {
             ResponseEntity<HfWeatherResp> weatherResponse = restTemplate.getForEntity(weatherUrl, HfWeatherResp.class);
             HfWeatherResp weatherBody = weatherResponse.getBody();
             if (null == weatherBody) {
-                throw new RuntimeException("获取天气异常！");
+                throw new ApiException("获取天气异常！");
             }
             // 天气指数
             String weatherIndexUrl = hfConfig.getIndexUrl();
@@ -58,7 +59,7 @@ public class WeatherServiceImpl implements WeatherService {
                 restTemplate.getForEntity(weatherIndexUrl, HfWeatherIndexResp.class);
             HfWeatherIndexResp weatherIndexBody = weatherIndexResponse.getBody();
             if (null == weatherIndexBody) {
-                throw new RuntimeException("获取天气指数异常！");
+                throw new ApiException("获取天气指数异常！");
             }
             // 24小时天气
             String weatherHourUrl = hfConfig.getHourUrl();
@@ -67,7 +68,7 @@ public class WeatherServiceImpl implements WeatherService {
                 restTemplate.getForEntity(weatherHourUrl, HfWeatherHourResp.class);
             HfWeatherHourResp weatherHourBody = weatherHourResponse.getBody();
             if (null == weatherHourBody) {
-                throw new RuntimeException("获取天气指数异常！");
+                throw new ApiException("获取天气指数异常！");
             }
             String s = covertWeatherData(tagname, weatherBody.getNow(), weatherIndexBody.getDaily(),
                 weatherHourBody.getHourly());
@@ -89,7 +90,7 @@ public class WeatherServiceImpl implements WeatherService {
             ResponseEntity<HfWeatherDayResp> weatherResponse = restTemplate.getForEntity(url, HfWeatherDayResp.class);
             HfWeatherDayResp weatherBody = weatherResponse.getBody();
             if (null == weatherBody) {
-                throw new RuntimeException("获取3天天气异常！");
+                throw new ApiException("获取3天天气异常！");
             }
             WeatherDay weatherDay = weatherBody.getDaily().get(1);
             StringBuilder builder = new StringBuilder("【明日天气】【" + tagname + "】\n\n");
@@ -99,9 +100,7 @@ public class WeatherServiceImpl implements WeatherService {
             builder.append("相对湿度：").append(weatherDay.getHumidity()).append("%\n");
             builder.append("降水量：").append(weatherDay.getPrecip()).append(" mm\n");
             builder.append(weatherDay.getWindDirDay()).append(" ").append(weatherDay.getWindScaleDay()).append("级")
-                .append("\n\n");
-            String pluginUrl = hfConfig.getPluginUrl();
-            builder.append("详细天气请查看 -> ").append("<a href=\"").append(pluginUrl).append("\">和风天气</a>");
+                .append("\n");
             res.put(tagid, builder.toString());
         }
         return res;
@@ -163,31 +162,25 @@ public class WeatherServiceImpl implements WeatherService {
             builder.append(index.getName()).append("：").append(index.getCategory()).append("\n");
             builder.append(index.getText()).append("\n\n");
         }
-        String pluginUrl = hfConfig.getPluginUrl();
-        builder.append("详细天气请查看 -> ").append("<a href=\"").append(pluginUrl).append("\">和风天气</a>");
 
         return builder.toString();
     }
 
     @Override
-    public Map<Integer, String> getLocations(List<Tag> cityList) {
-        Map<Integer, String> map = new HashMap<>();
-        for (Tag tag : cityList) {
-            String cityUrl = hfConfig.getCityUrl();
-            cityUrl = cityUrl.replace("cityName", tag.getTagName());
-            ResponseEntity<HfCityResp> response = restTemplate.getForEntity(cityUrl, HfCityResp.class);
-            HfCityResp body = response.getBody();
-            if (null == body) {
-                throw new RuntimeException("获取标签失败!");
-            }
-            String code = body.getCode();
-            if (!"200".equals(code)) {
-                throw new RuntimeException("获取token失败! -> " + body);
-            }
-            String id = body.getLocation().get(0).getId();
-            map.put(tag.getTagId(), id);
+    public String getLocation(String name) {
+        String cityUrl = hfConfig.getCityUrl();
+        cityUrl = cityUrl.replace("cityName", name);
+        ResponseEntity<HfCityResp> response = restTemplate.getForEntity(cityUrl, HfCityResp.class);
+        HfCityResp body = response.getBody();
+        if (null == body) {
+            throw new ApiException("获取地区信息失败!");
         }
-        return map;
+        String code = body.getCode();
+        if (!"200".equals(code)) {
+            throw new ApiException("获取地区信息失败! -> " + body);
+        }
+        Location location = body.getLocation().get(0);
+        return location.getId();
     }
 
     @Override
@@ -199,11 +192,11 @@ public class WeatherServiceImpl implements WeatherService {
             ResponseEntity<HfWeatherWarnResp> response = restTemplate.getForEntity(url, HfWeatherWarnResp.class);
             HfWeatherWarnResp body = response.getBody();
             if (null == body) {
-                throw new RuntimeException("获取天气预警失败!");
+                throw new ApiException("获取天气预警失败!");
             }
             String code = body.getCode();
             if (!"200".equals(code)) {
-                throw new RuntimeException("获取天气预警失败! -> " + body);
+                throw new ApiException("获取天气预警失败! -> " + body);
             }
             String fxLink = body.getFxLink();
             List<WeatherWarn> warning = body.getWarning();

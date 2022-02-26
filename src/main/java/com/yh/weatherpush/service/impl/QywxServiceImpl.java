@@ -1,10 +1,12 @@
 package com.yh.weatherpush.service.impl;
 
 import cn.hutool.core.util.BooleanUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.yh.weatherpush.config.QywxConfig;
-import com.yh.weatherpush.dto.qxwx.*;
+import com.yh.weatherpush.dto.qywx.*;
 import com.yh.weatherpush.entity.Tag;
-import com.yh.weatherpush.service.PushService;
+import com.yh.weatherpush.exception.ApiException;
+import com.yh.weatherpush.service.QywxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @date : 2021/10/31 13:14
  */
 @Service
-public class PushServiceImpl implements PushService {
+public class QywxServiceImpl implements QywxService {
 
     @Autowired
     private QywxConfig qywxConfig;
@@ -41,23 +43,49 @@ public class PushServiceImpl implements PushService {
         }
     }
 
+    @Override
+    public Tag createTag(Integer tagId, String tagName) {
+        String createUrl = qywxConfig.getLabel().getCreateUrl();
+        String token = getToken();
+        createUrl = createUrl.replace("ACCESS_TOKEN", token);
+        JSONObject param = new JSONObject();
+        if (null != tagId) {
+            param.put("tagid", tagId);
+        }
+        param.put("tagname", tagName);
+        ResponseEntity<JSONObject> response = restTemplate.postForEntity(createUrl, param, JSONObject.class);
+        JSONObject body = response.getBody();
+        if (null == body) {
+            throw new ApiException("创建标签失败!");
+        }
+        Integer errcode = body.getInteger("errcode");
+        if (!errcode.equals(0)) {
+            throw new ApiException("创建标签失败! -> " + body.getString("errmsg"));
+        }
+        tagId = body.getInteger("tagid");
+        Tag tag = new Tag();
+        tag.setTagId(tagId);
+        tag.setTagName(tagName);
+        return tag;
+    }
+
     /**
-     * 
-     * @param token
+     *
      * @return
      */
     @Override
-    public List<Tag> getTags(String token) {
-        String labelUrl = qywxConfig.getLabelUrl();
+    public List<Tag> getAllTags() {
+        String labelUrl = qywxConfig.getLabel().getListUrl();
+        String token = getToken();
         labelUrl = labelUrl.replace("ACCESS_TOKEN", token);
         ResponseEntity<TabResp> response = restTemplate.getForEntity(labelUrl, TabResp.class);
         TabResp body = response.getBody();
         if (null == body) {
-            throw new RuntimeException("获取标签失败!");
+            throw new ApiException("获取标签失败!");
         }
         Integer errcode = body.getErrcode();
         if (!errcode.equals(0)) {
-            throw new RuntimeException("获取token失败! -> " + body);
+            throw new ApiException("获取token失败! -> " + body);
         }
         return body.getTaglist();
     }
@@ -78,11 +106,11 @@ public class PushServiceImpl implements PushService {
         ResponseEntity<TokenResp> response = restTemplate.getForEntity(qywxConfig.getTokenUrl(), TokenResp.class);
         TokenResp body = response.getBody();
         if (null == body) {
-            throw new RuntimeException("获取token失败!");
+            throw new ApiException("获取token失败!");
         }
         String errcode = body.getErrcode();
         if (!"0".equals(errcode)) {
-            throw new RuntimeException("获取token失败! -> " + body);
+            throw new ApiException("获取token失败! -> " + body);
         }
         String access_token = body.getAccess_token();
         redisTemplate.opsForValue().set("access_token", access_token, 1, TimeUnit.HOURS);

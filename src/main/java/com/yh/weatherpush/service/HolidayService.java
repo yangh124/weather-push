@@ -12,14 +12,6 @@ import java.time.LocalDate;
 public interface HolidayService extends IService<Holiday> {
 
     /**
-     * 是否为节假日
-     *
-     * @param date 日期
-     * @return 是、不是
-     */
-    boolean isHoliday(LocalDate date);
-
-    /**
      * 是否休息
      * @return
      */

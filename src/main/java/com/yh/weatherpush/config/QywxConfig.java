@@ -26,5 +26,6 @@ public class QywxConfig {
 
     private String agentid;
 
-    private String labelUrl;
+    private LabelConfig label;
 }
+

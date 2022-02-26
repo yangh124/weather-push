@@ -1,6 +1,5 @@
 package com.yh.weatherpush.service;
 
-
 import com.yh.weatherpush.entity.Tag;
 
 import java.util.List;
@@ -39,10 +38,10 @@ public interface WeatherService {
     /**
      * 通过地名查询 location code
      *
-     * @param cityList
+     * @param tag
      * @return {椒江=101210101, 嘉定=101210101, 杭州=101210101, 开化=101210101}
      */
-    Map<Integer, String> getLocations(List<Tag> cityList);
+    String getLocation(String name);
 
     /**
      * 获取天气灾害预警

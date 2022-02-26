@@ -1,4 +1,4 @@
-package com.yh.weatherpush.dto.qxwx;
+package com.yh.weatherpush.dto.qywx;
 
 import com.yh.weatherpush.entity.Tag;
 import lombok.Data;

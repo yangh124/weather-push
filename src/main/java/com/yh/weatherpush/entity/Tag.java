@@ -44,10 +44,4 @@ public class Tag implements Serializable {
 
     @ApiModelProperty("修改时间")
     private LocalDateTime utime;
-
-    @ApiModelProperty("0-正常 1-删除")
-    @TableLogic
-    private Boolean isDelete;
-
-
 }

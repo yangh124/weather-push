@@ -1,5 +1,6 @@
 package com.yh.weatherpush.service;
 
+import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.entity.Tag;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2022-02-19
  */
 public interface TagService extends IService<Tag> {
+
+    void create(AddTagParam param);
 
 }
