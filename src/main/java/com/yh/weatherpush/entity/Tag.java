@@ -27,7 +27,7 @@ public class Tag implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-      @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
     @ApiModelProperty("企业微信tag_id（城市id）")

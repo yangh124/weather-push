@@ -9,4 +9,6 @@ public class LabelConfig {
     private String createUrl;
 
     private String listUrl;
+
+    private String deleteUrl;
 }

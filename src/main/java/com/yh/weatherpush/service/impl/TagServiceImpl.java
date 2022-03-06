@@ -1,8 +1,15 @@
 package com.yh.weatherpush.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
+import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.Tag;
+import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.mapper.TagMapper;
 import com.yh.weatherpush.service.QywxService;
 import com.yh.weatherpush.service.TagService;
@@ -12,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -35,6 +44,36 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         Tag tag = qywxService.createTag(param.getTagId(), param.getTagName());
         tag.setCode(code);
         tag.setCtime(LocalDateTime.now());
-        save(tag);
+        super.save(tag);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Tag tag = super.getById(id);
+        if (null == tag) {
+            throw new ApiException("标签不存在");
+        }
+        qywxService.deleteTag(tag.getTagId());
+        super.removeById(id);
+    }
+
+    @Override
+    public IPage<TagDTO> pageList(PageParam pageParam) {
+        IPage<Tag> page = new Page<>(pageParam.getCurrentPage(), pageParam.getPageSize());
+        super.page(page);
+        List<Tag> records = page.getRecords();
+        if (CollUtil.isEmpty(records)) {
+            return new Page<>();
+        }
+        List<TagDTO> list = new ArrayList<>(records.size());
+        for (Tag tag : records) {
+            TagDTO tagDTO = new TagDTO();
+            BeanUtil.copyProperties(tag, tagDTO);
+            list.add(tagDTO);
+        }
+        IPage<TagDTO> res = new Page<>();
+        BeanUtil.copyProperties(page, res);
+        res.setRecords(list);
+        return res;
     }
 }

@@ -69,6 +69,22 @@ public class QywxServiceImpl implements QywxService {
         return tag;
     }
 
+    @Override
+    public void deleteTag(Integer tagId) {
+        String deleteUrl = qywxConfig.getLabel().getDeleteUrl();
+        String token = getToken();
+        deleteUrl = deleteUrl.replace("ACCESS_TOKEN", token).replace("TAG_ID", String.valueOf(tagId));
+        ResponseEntity<JSONObject> response = restTemplate.getForEntity(deleteUrl, JSONObject.class);
+        JSONObject body = response.getBody();
+        if (null == body) {
+            throw new ApiException("删除标签失败!");
+        }
+        Integer errcode = body.getInteger("errcode");
+        if (!errcode.equals(0)) {
+            throw new ApiException("删除标签失败! -> " + body.getString("errmsg"));
+        }
+    }
+
     /**
      *
      * @return

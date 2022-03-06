@@ -1,17 +1,16 @@
 package com.yh.weatherpush.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.tag.AddTagParam;
+import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -23,17 +22,31 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = "标签管理")
 @RestController
-@RequestMapping("/tag")
+@RequestMapping("/tags")
 public class TagController {
 
     @Autowired
     private TagService tagService;
 
     @ApiOperation("创建标签")
-    @PostMapping("/create")
+    @PostMapping()
     public Result<Void> create(@Validated @RequestBody AddTagParam param) {
         tagService.create(param);
         return Result.success();
+    }
+
+    @ApiOperation("删除标签")
+    @DeleteMapping("/{id}")
+    public Result<Void> delete(@PathVariable("id") Long id) {
+        tagService.delete(id);
+        return Result.success();
+    }
+
+    @ApiOperation("获取所有标签")
+    @GetMapping()
+    public Result<IPage<TagDTO>> pageList(@Validated PageParam pageParam) {
+        IPage<TagDTO> res = tagService.pageList(pageParam);
+        return Result.success(res);
     }
 
 }

@@ -26,6 +26,13 @@ public interface QywxService {
     Tag createTag(Integer tagId, String tagName);
 
     /**
+     * 删除tag
+     *
+     * @param tagId
+     */
+    void deleteTag(Integer tagId);
+
+    /**
      * 获取用户标签
      * 
      */

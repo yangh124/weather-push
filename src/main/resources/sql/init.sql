@@ -28,7 +28,7 @@ CREATE TABLE `sys_holiday` (
                                `is_off_day` tinyint(1) NOT NULL COMMENT '是否放假（0-补班 1-放假）',
                                `year` char(4) NOT NULL DEFAULT '' COMMENT '所在年份',
                                `ctime` timestamp NOT NULL COMMENT '创建时间',
-                               `utime` timestamp NULL DEFAULT NULL COMMENT '修改时间',
+                               `utime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
                                `is_delete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='节假日';
@@ -36,15 +36,13 @@ CREATE TABLE `sys_holiday` (
 -- ----------------------------
 -- Table structure for sys_tag
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_tag`;
 CREATE TABLE `sys_tag` (
                            `id` bigint NOT NULL,
                            `tag_id` int NOT NULL DEFAULT '0' COMMENT '企业微信tag_id（城市id）',
                            `tag_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '企业微信tag_name（城市name）',
                            `code` char(9) NOT NULL DEFAULT '' COMMENT '地区编码',
                            `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-                           `utime` timestamp NULL DEFAULT NULL COMMENT '修改时间',
-                           `is_delete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
+                           `utime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='企业微信标签';
 

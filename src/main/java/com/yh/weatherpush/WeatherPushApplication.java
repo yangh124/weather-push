@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @EnableScheduling
 @SpringBootApplication
-@MapperScan("com.yh.weatherpush.mapper")
 public class WeatherPushApplication {
 
     public static void main(String[] args) {
