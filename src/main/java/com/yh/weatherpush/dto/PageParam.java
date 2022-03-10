@@ -17,8 +17,8 @@ public class PageParam implements Serializable {
 
     private static final long serialVersionUID = -5036818331610124320L;
     @ApiModelProperty("当前页")
-    private Integer currentPage;
+    private Integer currentPage = 1;
 
     @ApiModelProperty("每页大小")
-    private Integer pageSize;
+    private Integer pageSize = 10;
 }
