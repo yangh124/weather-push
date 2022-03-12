@@ -39,9 +39,23 @@ public interface QywxService {
     List<Tag> getAllTags();
 
     /**
-     * 获取token
+     * 获取天气推送token
      * 
      * @return
      */
-    String getToken();
+    String getPushToken();
+
+    /**
+     * 获取成员管理token
+     *
+     * @return
+     */
+    String getOtherToken();
+
+    /**
+     * 获取邀请二维码
+     * 
+     * @return
+     */
+    String getJoinQrCode();
 }

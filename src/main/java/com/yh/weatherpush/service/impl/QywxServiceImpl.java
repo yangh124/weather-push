@@ -46,7 +46,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public Tag createTag(Integer tagId, String tagName) {
         String createUrl = qywxConfig.getLabel().getCreateUrl();
-        String token = getToken();
+        String token = getOtherToken();
         createUrl = createUrl.replace("ACCESS_TOKEN", token);
         JSONObject param = new JSONObject();
         if (null != tagId) {
@@ -72,7 +72,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public void deleteTag(Integer tagId) {
         String deleteUrl = qywxConfig.getLabel().getDeleteUrl();
-        String token = getToken();
+        String token = getOtherToken();
         deleteUrl = deleteUrl.replace("ACCESS_TOKEN", token).replace("TAG_ID", String.valueOf(tagId));
         ResponseEntity<JSONObject> response = restTemplate.getForEntity(deleteUrl, JSONObject.class);
         JSONObject body = response.getBody();
@@ -92,7 +92,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public List<Tag> getAllTags() {
         String labelUrl = qywxConfig.getLabel().getListUrl();
-        String token = getToken();
+        String token = getOtherToken();
         labelUrl = labelUrl.replace("ACCESS_TOKEN", token);
         ResponseEntity<TabResp> response = restTemplate.getForEntity(labelUrl, TabResp.class);
         TabResp body = response.getBody();
@@ -114,12 +114,14 @@ public class QywxServiceImpl implements QywxService {
      * @return access_token
      */
     @Override
-    public String getToken() {
-        Boolean aBoolean = redisTemplate.hasKey("access_token");
+    public String getPushToken() {
+        Boolean aBoolean = redisTemplate.hasKey("push_access_token");
         if (BooleanUtil.isTrue(aBoolean)) {
-            return (String)redisTemplate.opsForValue().get("access_token");
+            return (String)redisTemplate.opsForValue().get("push_access_token");
         }
-        ResponseEntity<TokenResp> response = restTemplate.getForEntity(qywxConfig.getTokenUrl(), TokenResp.class);
+        String tokenUrl = qywxConfig.getTokenUrl();
+        tokenUrl = tokenUrl.replace("SECRET", qywxConfig.getPushSecret());
+        ResponseEntity<TokenResp> response = restTemplate.getForEntity(tokenUrl, TokenResp.class);
         TokenResp body = response.getBody();
         if (null == body) {
             throw new ApiException("获取token失败!");
@@ -129,7 +131,46 @@ public class QywxServiceImpl implements QywxService {
             throw new ApiException("获取token失败! -> " + body);
         }
         String access_token = body.getAccess_token();
-        redisTemplate.opsForValue().set("access_token", access_token, 1, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set("push_access_token", access_token, 1, TimeUnit.HOURS);
         return access_token;
+    }
+
+    @Override
+    public String getOtherToken() {
+        Boolean aBoolean = redisTemplate.hasKey("other_access_token");
+        if (BooleanUtil.isTrue(aBoolean)) {
+            return (String)redisTemplate.opsForValue().get("other_access_token");
+        }
+        String tokenUrl = qywxConfig.getTokenUrl();
+        tokenUrl = tokenUrl.replace("SECRET", qywxConfig.getOtherSecret());
+        ResponseEntity<TokenResp> response = restTemplate.getForEntity(tokenUrl, TokenResp.class);
+        TokenResp body = response.getBody();
+        if (null == body) {
+            throw new ApiException("获取token失败!");
+        }
+        String errcode = body.getErrcode();
+        if (!"0".equals(errcode)) {
+            throw new ApiException("获取token失败! -> " + body);
+        }
+        String access_token = body.getAccess_token();
+        redisTemplate.opsForValue().set("other_access_token", access_token, 1, TimeUnit.HOURS);
+        return access_token;
+    }
+
+    @Override
+    public String getJoinQrCode() {
+        String joinQrcodeUrl = qywxConfig.getMember().getJoinQrcodeUrl();
+        String token = getOtherToken();
+        joinQrcodeUrl = joinQrcodeUrl.replace("ACCESS_TOKEN", token);
+        ResponseEntity<JSONObject> response = restTemplate.getForEntity(joinQrcodeUrl, JSONObject.class);
+        JSONObject body = response.getBody();
+        if (null == body) {
+            throw new ApiException("获取失败!");
+        }
+        Integer errcode = body.getInteger("errcode");
+        if (!errcode.equals(0)) {
+            throw new ApiException("获取失败失败! -> " + body.getString("errmsg"));
+        }
+        return body.getString("join_qrcode");
     }
 }

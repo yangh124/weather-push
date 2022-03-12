@@ -33,7 +33,7 @@ class WeatherPushApplicationTests {
         // if (holiday) {
         // return;
         // }
-        String token = qywxService.getToken();
+        String token = qywxService.getPushToken();
         List<Tag> list = redisService.redisTagList();
         List<Tag> collect = list.stream().filter(a -> 1 == a.getTagId()).collect(Collectors.toList());
         Map<Integer, String> map = weatherService.getTomWeather(collect);

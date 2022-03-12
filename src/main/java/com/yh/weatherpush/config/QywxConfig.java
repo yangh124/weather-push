@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-
 /**
  * @author : yh
  * @date : 2021/10/31 13:09
@@ -18,7 +17,9 @@ public class QywxConfig {
 
     private String corpid;
 
-    private String corpsecret;
+    private String pushSecret;
+
+    private String otherSecret;
 
     private String tokenUrl;
 
@@ -27,5 +28,6 @@ public class QywxConfig {
     private String agentid;
 
     private LabelConfig label;
-}
 
+    private MemberConfig member;
+}

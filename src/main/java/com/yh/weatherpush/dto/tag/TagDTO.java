@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 public class TagDTO implements Serializable {
 
-    private Long id;
+    private String id;
 
     @ApiModelProperty("企业微信tag_id（城市id）")
     private Integer tagId;

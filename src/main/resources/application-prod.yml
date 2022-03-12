@@ -18,7 +18,8 @@ spring:
 
 qywx:
   corpid: ww43a3e50e6f5189a4
-  corpsecret: V1TiAK4gQ00xNImsfPupVnhmPwGYjABK2p-5e2wdXqQ
+  push-secret: V1TiAK4gQ00xNImsfPupVnhmPwGYjABK2p-5e2wdXqQ
+  other-secret: 5TO0opozR9bwXcSFP1KVkQkjaEYMpEvfCKk9f13PN4w
   agentid: 1000002
 
 hfweather:

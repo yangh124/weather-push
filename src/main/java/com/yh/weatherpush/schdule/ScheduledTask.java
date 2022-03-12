@@ -39,7 +39,7 @@ public class ScheduledTask {
         if (holiday) {
             return;
         }
-        String token = qywxService.getToken();
+        String token = qywxService.getPushToken();
         List<Tag> list = redisService.redisTagList();
         // 嘉定区
         List<Tag> collect = list.stream().filter(a -> 3 == a.getTagId()).collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class ScheduledTask {
         if (holiday) {
             return;
         }
-        String token = qywxService.getToken();
+        String token = qywxService.getPushToken();
         List<Tag> list = redisService.redisTagList();
         // 嘉定除外
         List<Tag> collect = list.stream().filter(a -> 3 != a.getTagId()).collect(Collectors.toList());
@@ -80,7 +80,7 @@ public class ScheduledTask {
         if (holiday) {
             return;
         }
-        String token = qywxService.getToken();
+        String token = qywxService.getPushToken();
         List<Tag> list = redisService.redisTagList();
         Map<Integer, String> map = weatherService.getTomWeather(list);
         qywxService.pushWeatherMsg(token, map);
@@ -99,7 +99,7 @@ public class ScheduledTask {
         if (CollectionUtils.isEmpty(map)) {
             return;
         }
-        String token = qywxService.getToken();
+        String token = qywxService.getPushToken();
         qywxService.pushWeatherMsg(token, map);
         LocalDateTime now = LocalDateTime.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

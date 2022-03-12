@@ -21,10 +21,11 @@ mybatis-plus:
 #企业微信
 qywx:
   corpid:
-  corpsecret:
+  push-secret:
+  other-secret:
   agentid:
   # 获取token
-  token-url: https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${qywx.corpid}&corpsecret=${qywx.corpsecret}
+  token-url: https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${qywx.corpid}&corpsecret=SECRET
   # 发送消息
   send-url: https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN
   label:
@@ -33,7 +34,9 @@ qywx:
     # 获取标签
     list-url: https://qyapi.weixin.qq.com/cgi-bin/tag/list?access_token=ACCESS_TOKEN
     delete-url: https://qyapi.weixin.qq.com/cgi-bin/tag/delete?access_token=ACCESS_TOKEN&tagid=TAG_ID
-
+  member:
+    # 获取加入企业二维码
+    join-qrcode-url: https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode?access_token=ACCESS_TOKEN
 
 #和风天气
 hfweather:

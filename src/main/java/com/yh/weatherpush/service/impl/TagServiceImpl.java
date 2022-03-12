@@ -69,6 +69,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         for (Tag tag : records) {
             TagDTO tagDTO = new TagDTO();
             BeanUtil.copyProperties(tag, tagDTO);
+            tagDTO.setId(String.valueOf(tag.getId()));
             list.add(tagDTO);
         }
         IPage<TagDTO> res = new Page<>();
