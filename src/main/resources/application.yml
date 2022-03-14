@@ -15,7 +15,7 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
   configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
 #企业微信
@@ -37,6 +37,8 @@ qywx:
   member:
     # 获取加入企业二维码
     join-qrcode-url: https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode?access_token=ACCESS_TOKEN
+    # 获取部门成员 department_id：获取的部门id（1-根部门）； fetch_child：是否递归获取子部门下面的成员：1-递归获取，0-只获取本部门
+    simple-list-url: https://qyapi.weixin.qq.com/cgi-bin/user/simplelist?access_token=ACCESS_TOKEN&department_id=1&fetch_child=1
 
 #和风天气
 hfweather:

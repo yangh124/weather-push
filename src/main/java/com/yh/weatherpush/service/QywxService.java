@@ -1,5 +1,6 @@
 package com.yh.weatherpush.service;
 
+import com.yh.weatherpush.dto.qywx.MemberResp;
 import com.yh.weatherpush.entity.Tag;
 
 import java.util.List;
@@ -58,4 +59,10 @@ public interface QywxService {
      * @return
      */
     String getJoinQrCode();
+
+    /**
+     * 获取部门成员
+     * @return
+     */
+    List<MemberResp> memberListByDept();
 }

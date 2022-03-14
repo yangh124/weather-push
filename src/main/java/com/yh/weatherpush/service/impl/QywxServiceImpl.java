@@ -1,6 +1,8 @@
 package com.yh.weatherpush.service.impl;
 
 import cn.hutool.core.util.BooleanUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yh.weatherpush.config.QywxConfig;
 import com.yh.weatherpush.dto.qywx.*;
@@ -172,5 +174,24 @@ public class QywxServiceImpl implements QywxService {
             throw new ApiException("获取失败失败! -> " + body.getString("errmsg"));
         }
         return body.getString("join_qrcode");
+    }
+
+    @Override
+    public List<MemberResp> memberListByDept() {
+        String simpleListUrl = qywxConfig.getMember().getSimpleListUrl();
+        String token = getOtherToken();
+        simpleListUrl = simpleListUrl.replace("ACCESS_TOKEN", token);
+        ResponseEntity<JSONObject> response = restTemplate.getForEntity(simpleListUrl, JSONObject.class);
+        JSONObject body = response.getBody();
+        if (null == body) {
+            throw new ApiException("获取失败!");
+        }
+        Integer errcode = body.getInteger("errcode");
+        if (!errcode.equals(0)) {
+            throw new ApiException("获取失败失败! -> " + body.getString("errmsg"));
+        }
+        JSONArray jsonArray = body.getJSONArray("userlist");
+        List<MemberResp> memberResps = JSONArray.parseArray(jsonArray.toJSONString(), MemberResp.class);
+        return memberResps;
     }
 }

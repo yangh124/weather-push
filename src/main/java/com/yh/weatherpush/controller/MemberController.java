@@ -1,6 +1,7 @@
 package com.yh.weatherpush.controller;
 
 import com.yh.weatherpush.dto.Result;
+import com.yh.weatherpush.dto.qywx.MemberResp;
 import com.yh.weatherpush.service.QywxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author : yh
@@ -27,4 +30,12 @@ public class MemberController {
         String joinQrCode = qywxService.getJoinQrCode();
         return Result.success(joinQrCode);
     }
+
+    @ApiOperation("获取部门成员（所有成员）")
+    @GetMapping()
+    public Result<List<MemberResp>> memberList() {
+        List<MemberResp> memberResps = qywxService.memberListByDept();
+        return Result.success(memberResps);
+    }
+
 }
