@@ -9,6 +9,7 @@ import com.yh.weatherpush.entity.Admin;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,8 @@ public class AdminController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
 
     @ApiOperation("登录")
     @PostMapping("/login")
@@ -34,7 +37,7 @@ public class AdminController {
         admin.setUsername("yh");
         AdminUserDetails adminUserDetails = new AdminUserDetails(admin, CollUtil.newArrayList());
         String s = jwtTokenUtil.generateToken(adminUserDetails);
-        jsonObject.put("token", s);
+        jsonObject.put("token", tokenHead + s);
         return Result.success(jsonObject);
     }
 
