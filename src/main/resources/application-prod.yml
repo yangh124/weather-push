@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://192.168.3.3:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false&autoReconnect=true&allowMultiQueries=true
-    username: root
-    password: root
+    username: prod
+    password: prod
   redis:
     host: 192.168.3.3 # Redis服务器地址
     database: 0 # Redis数据库索引（默认为0）
@@ -17,16 +17,16 @@ spring:
         min-idle: 5       # 连接池中的最小空闲连接
 
 jwt:
-  secret: absdefg
+  secret: prod
   expiration: 7200
   tokenHeader: token
   tokenHead: Bearer
 
 qywx:
-  corpid: ww43a3e50e6f5189a4
-  push-secret: V1TiAK4gQ00xNImsfPupVnhmPwGYjABK2p-5e2wdXqQ
-  other-secret: 5TO0opozR9bwXcSFP1KVkQkjaEYMpEvfCKk9f13PN4w
-  agentid: 1000002
+  corpid: prod
+  push-secret: prod
+  other-secret: prod
+  agentid: prod
 
 hfweather:
-  key: 79e0081b48bb4f8d87f4a9a338e5cc34
+  key: prod
