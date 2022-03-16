@@ -16,6 +16,12 @@ spring:
         max-idle: 10      # 连接池中的最大空闲连接
         min-idle: 5       # 连接池中的最小空闲连接
 
+jwt:
+  secret: absdefg
+  expiration: 7200
+  tokenHeader: token
+  tokenHead: Bearer
+
 qywx:
   corpid: ww43a3e50e6f5189a4
   push-secret: V1TiAK4gQ00xNImsfPupVnhmPwGYjABK2p-5e2wdXqQ

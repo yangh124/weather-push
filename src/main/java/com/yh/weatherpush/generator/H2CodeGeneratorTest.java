@@ -50,7 +50,7 @@ public class H2CodeGeneratorTest {
      */
     private StrategyConfig.Builder strategyConfig() {
         // 设置需要生成的表名
-        return new StrategyConfig.Builder().addInclude("sys_member").addTablePrefix("sys_");
+        return new StrategyConfig.Builder().addInclude("sys_admin", "sys_permission").addTablePrefix("sys_");
     }
 
     /**
