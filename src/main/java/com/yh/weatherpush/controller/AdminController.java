@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = "系统用户")
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/admin")
+public class AdminController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
