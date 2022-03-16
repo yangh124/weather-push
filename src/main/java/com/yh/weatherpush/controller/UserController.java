@@ -1,9 +1,14 @@
 package com.yh.weatherpush.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.yh.weatherpush.component.JwtTokenUtil;
+import com.yh.weatherpush.dto.AdminUserDetails;
 import com.yh.weatherpush.dto.Result;
+import com.yh.weatherpush.entity.Admin;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @ApiOperation("登录")
     @PostMapping("/login")
     public Result<JSONObject> login() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("token", "12345");
+        Admin admin = new Admin();
+        admin.setUsername("yh");
+        AdminUserDetails adminUserDetails = new AdminUserDetails(admin, CollUtil.newArrayList());
+        String s = jwtTokenUtil.generateToken(adminUserDetails);
+        jsonObject.put("token", s);
         return Result.success(jsonObject);
     }
 
