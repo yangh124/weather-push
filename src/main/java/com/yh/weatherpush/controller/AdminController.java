@@ -37,7 +37,7 @@ public class AdminController {
         admin.setUsername("yh");
         AdminUserDetails adminUserDetails = new AdminUserDetails(admin, CollUtil.newArrayList());
         String s = jwtTokenUtil.generateToken(adminUserDetails);
-        jsonObject.put("token", tokenHead + s);
+        jsonObject.put("token", tokenHead + " " + s);
         return Result.success(jsonObject);
     }
 

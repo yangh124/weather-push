@@ -7,6 +7,7 @@ import com.yh.weatherpush.service.AdminService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,11 +23,13 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
     @Override
     public Admin getAdminByUsername(String username) {
-        return null;
+        Admin admin = new Admin();
+        admin.setUsername("yh");
+        return admin;
     }
 
     @Override
     public List<Permission> getPermissionList(Long id) {
-        return null;
+        return new ArrayList<>();
     }
 }
