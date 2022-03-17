@@ -1,19 +1,17 @@
 package com.yh.weatherpush.controller;
 
-import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.yh.weatherpush.component.JwtTokenUtil;
-import com.yh.weatherpush.dto.AdminUserDetails;
 import com.yh.weatherpush.dto.Result;
+import com.yh.weatherpush.dto.admin.LoginParam;
 import com.yh.weatherpush.entity.Admin;
+import com.yh.weatherpush.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /**
  * @author : yh
@@ -25,29 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-    @Value("${jwt.tokenHead}")
-    private String tokenHead;
+    private AdminService adminService;
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    public Result<JSONObject> login() {
-        JSONObject jsonObject = new JSONObject();
-        Admin admin = new Admin();
-        admin.setUsername("yh");
-        AdminUserDetails adminUserDetails = new AdminUserDetails(admin, CollUtil.newArrayList());
-        String s = jwtTokenUtil.generateToken(adminUserDetails);
-        jsonObject.put("token", tokenHead + " " + s);
-        return Result.success(jsonObject);
+    public Result<String> login(@Validated @RequestBody LoginParam param) {
+        String token = adminService.login(param);
+        return Result.success(token);
     }
 
     @ApiOperation("获取用户信息")
     @GetMapping("/info")
-    public Result<JSONObject> info() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", "yh");
-        jsonObject.put("avatar", "https://avatars.githubusercontent.com/u/39212389");
-        return Result.success(jsonObject);
+    public Result<JSONObject> info(Principal principal) {
+        if (principal == null) {
+            return Result.unauthorized(null);
+        }
+        String username = principal.getName();
+        Admin admin = adminService.getAdminByUsername(username);
+        JSONObject result = new JSONObject();
+        result.put("name", admin.getNickName());
+        result.put("avatar", admin.getAvatar());
+        return Result.success(result);
     }
 
     @ApiOperation("登出")
