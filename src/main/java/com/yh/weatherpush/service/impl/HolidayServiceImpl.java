@@ -1,6 +1,7 @@
 package com.yh.weatherpush.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.entity.Holiday;
 import com.yh.weatherpush.mapper.HolidayMapper;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author : yh
@@ -18,10 +20,8 @@ import java.time.LocalDate;
 @Service
 public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> implements HolidayService {
 
-
     @Autowired
     private RedisService redisService;
-
 
     @Override
     public boolean isOffDay(LocalDate date) {
@@ -34,6 +34,13 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
             // 节假日放假
             return holiday.getIsOffDay();
         }
+    }
+
+    @Override
+    public List<Holiday> getAllHolidays() {
+        int year = LocalDate.now().getYear();
+        return super.list(new QueryWrapper<Holiday>().select("holiday_name,holiday_date,is_off_day").lambda()
+            .eq(Holiday::getYear, year));
     }
 
 }

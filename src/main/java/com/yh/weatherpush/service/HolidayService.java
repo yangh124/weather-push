@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yh.weatherpush.entity.Holiday;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author : yh
@@ -13,7 +14,10 @@ public interface HolidayService extends IService<Holiday> {
 
     /**
      * 是否休息
+     * 
      * @return
      */
     boolean isOffDay(LocalDate date);
+
+    List<Holiday> getAllHolidays();
 }
