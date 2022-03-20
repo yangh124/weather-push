@@ -2,12 +2,14 @@ package com.yh.weatherpush.controller;
 
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.qywx.MemberResp;
+import com.yh.weatherpush.service.MemberService;
 import com.yh.weatherpush.service.QywxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,6 +25,8 @@ public class MemberController {
 
     @Autowired
     private QywxService qywxService;
+    @Autowired
+    private MemberService memberService;
 
     @ApiOperation("获取加入企业二维码")
     @GetMapping("/qr_code")
@@ -33,8 +37,8 @@ public class MemberController {
 
     @ApiOperation("获取部门成员（所有成员）")
     @GetMapping()
-    public Result<List<MemberResp>> memberList() {
-        List<MemberResp> memberResps = qywxService.memberListByDept();
+    public Result<List<MemberResp>> memberList(@RequestParam(required = false) Long id) {
+        List<MemberResp> memberResps = memberService.memberList(id);
         return Result.success(memberResps);
     }
 

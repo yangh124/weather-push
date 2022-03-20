@@ -65,16 +65,29 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         if (CollUtil.isEmpty(records)) {
             return new Page<>();
         }
-        List<TagDTO> list = new ArrayList<>(records.size());
-        for (Tag tag : records) {
-            TagDTO tagDTO = new TagDTO();
-            BeanUtil.copyProperties(tag, tagDTO);
-            tagDTO.setId(String.valueOf(tag.getId()));
-            list.add(tagDTO);
-        }
+        List<TagDTO> tagDTOS = covertTagDTO(records);
         IPage<TagDTO> res = new Page<>();
         BeanUtil.copyProperties(page, res);
-        res.setRecords(list);
+        res.setRecords(tagDTOS);
+        return res;
+    }
+
+    @Override
+    public List<TagDTO> getAll() {
+        List<Tag> list = super.list();
+        if (CollUtil.isEmpty(list)) {
+            return CollUtil.newArrayList();
+        }
+        return covertTagDTO(list);
+    }
+
+    private List<TagDTO> covertTagDTO(List<Tag> list) {
+        List<TagDTO> res = new ArrayList<>(list.size());
+        for (Tag tag : list) {
+            TagDTO tagDTO = new TagDTO();
+            BeanUtil.copyProperties(tag, tagDTO);
+            res.add(tagDTO);
+        }
         return res;
     }
 }

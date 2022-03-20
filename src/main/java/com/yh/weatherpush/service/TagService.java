@@ -7,6 +7,8 @@ import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.Tag;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 企业微信标签 服务类
@@ -22,4 +24,7 @@ public interface TagService extends IService<Tag> {
     void delete(Long id);
 
     IPage<TagDTO> pageList(PageParam pageParam);
+
+    List<TagDTO> getAll();
+
 }

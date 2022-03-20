@@ -31,14 +31,14 @@ public class QywxConfig {
     private String agentid;
 
     @NestedConfigurationProperty
-    private LabelConfig label;
+    private TagConfig tag;
 
     @NestedConfigurationProperty
     private MemberConfig member;
 
     @Getter
     @Setter
-    public static class LabelConfig implements Serializable {
+    public static class TagConfig implements Serializable {
 
         private static final long serialVersionUID = 6594782376511318128L;
 
@@ -64,6 +64,11 @@ public class QywxConfig {
          * 获取部门成员
          */
         private String simpleListUrl;
+
+        /**
+         * 获取标签成员
+         */
+        private String tagMemberList;
 
     }
 }

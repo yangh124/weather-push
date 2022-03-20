@@ -65,4 +65,11 @@ public interface QywxService {
      * @return
      */
     List<MemberResp> memberListByDept();
+
+
+    /**
+     * 获取标签成员
+     * @return
+     */
+    List<MemberResp> memberListByTag(Integer tagId);
 }

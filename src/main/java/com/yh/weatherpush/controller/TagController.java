@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 企业微信标签 前端控制器
@@ -42,11 +44,17 @@ public class TagController {
         return Result.success();
     }
 
-    @ApiOperation("获取所有标签")
-    @GetMapping()
-    public Result<IPage<TagDTO>> pageList(@Validated PageParam pageParam) {
+    @ApiOperation("获取标签分页")
+    @GetMapping("/page")
+    public Result<IPage<TagDTO>> pageList(PageParam pageParam) {
         IPage<TagDTO> res = tagService.pageList(pageParam);
         return Result.success(res);
     }
 
+    @ApiOperation("获取所有标签")
+    @GetMapping()
+    public Result<List<TagDTO>> pageList() {
+        List<TagDTO> res = tagService.getAll();
+        return Result.success(res);
+    }
 }

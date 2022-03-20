@@ -1,6 +1,5 @@
 package com.yh.weatherpush.service;
 
-import com.yh.weatherpush.dto.admin.AdminInfoDTO;
 import com.yh.weatherpush.dto.admin.LoginParam;
 import com.yh.weatherpush.entity.Admin;
 import com.baomidou.mybatisplus.extension.service.IService;

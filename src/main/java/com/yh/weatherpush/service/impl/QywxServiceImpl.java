@@ -47,7 +47,7 @@ public class QywxServiceImpl implements QywxService {
 
     @Override
     public Tag createTag(Integer tagId, String tagName) {
-        String createUrl = qywxConfig.getLabel().getCreateUrl();
+        String createUrl = qywxConfig.getTag().getCreateUrl();
         String token = getOtherToken();
         createUrl = createUrl.replace("ACCESS_TOKEN", token);
         JSONObject param = new JSONObject();
@@ -73,7 +73,7 @@ public class QywxServiceImpl implements QywxService {
 
     @Override
     public void deleteTag(Integer tagId) {
-        String deleteUrl = qywxConfig.getLabel().getDeleteUrl();
+        String deleteUrl = qywxConfig.getTag().getDeleteUrl();
         String token = getOtherToken();
         deleteUrl = deleteUrl.replace("ACCESS_TOKEN", token).replace("TAG_ID", String.valueOf(tagId));
         ResponseEntity<JSONObject> response = restTemplate.getForEntity(deleteUrl, JSONObject.class);
@@ -93,7 +93,7 @@ public class QywxServiceImpl implements QywxService {
      */
     @Override
     public List<Tag> getAllTags() {
-        String labelUrl = qywxConfig.getLabel().getListUrl();
+        String labelUrl = qywxConfig.getTag().getListUrl();
         String token = getOtherToken();
         labelUrl = labelUrl.replace("ACCESS_TOKEN", token);
         ResponseEntity<TabResp> response = restTemplate.getForEntity(labelUrl, TabResp.class);
@@ -182,6 +182,25 @@ public class QywxServiceImpl implements QywxService {
         String token = getOtherToken();
         simpleListUrl = simpleListUrl.replace("ACCESS_TOKEN", token);
         ResponseEntity<JSONObject> response = restTemplate.getForEntity(simpleListUrl, JSONObject.class);
+        JSONObject body = response.getBody();
+        if (null == body) {
+            throw new ApiException("获取失败!");
+        }
+        Integer errcode = body.getInteger("errcode");
+        if (!errcode.equals(0)) {
+            throw new ApiException("获取失败失败! -> " + body.getString("errmsg"));
+        }
+        JSONArray jsonArray = body.getJSONArray("userlist");
+        List<MemberResp> memberResps = JSONArray.parseArray(jsonArray.toJSONString(), MemberResp.class);
+        return memberResps;
+    }
+
+    @Override
+    public List<MemberResp> memberListByTag(Integer tagId) {
+        String url = qywxConfig.getMember().getTagMemberList();
+        String token = getOtherToken();
+        url = url.replace("ACCESS_TOKEN", token).replace("TAGID", String.valueOf(tagId));
+        ResponseEntity<JSONObject> response = restTemplate.getForEntity(url, JSONObject.class);
         JSONObject body = response.getBody();
         if (null == body) {
             throw new ApiException("获取失败!");
