@@ -1,108 +1,40 @@
 package com.yh.weatherpush.schdule;
 
-import com.yh.weatherpush.entity.Tag;
-import com.yh.weatherpush.service.HolidayService;
-import com.yh.weatherpush.service.RedisService;
-import com.yh.weatherpush.service.WeatherService;
-import com.yh.weatherpush.service.QywxService;
+import com.yh.weatherpush.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * @author : yh
  * @date : 2021/10/31 15:12
  */
+@Slf4j
 @Component
-public class ScheduledTask {
+public class ScheduledTask implements SchedulingConfigurer {
 
     @Autowired
-    private QywxService qywxService;
-    @Autowired
-    private WeatherService weatherService;
-    @Autowired
-    private HolidayService holidayService;
-    @Autowired
-    private RedisService redisService;
+    private ScheduleTaskService scheduleTaskService;
 
-    @Scheduled(cron = "0 10 7 * * ?")
-    public void scheduledTask1() {
-        boolean holiday = holidayService.isOffDay(LocalDate.now());
-        if (holiday) {
-            return;
-        }
-        String token = qywxService.getPushToken();
-        List<Tag> list = redisService.redisTagList();
-        // 嘉定区
-        List<Tag> collect = list.stream().filter(a -> 3 == a.getTagId()).collect(Collectors.toList());
-        Map<Integer, String> map = weatherService.getTodayWeather(collect);
-        qywxService.pushWeatherMsg(token, map);
-        LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        System.out.println(format + " -> 天气推送成功");
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        taskRegistrar.setScheduler(taskScheduler());
+        taskRegistrar.addCronTask(scheduleTaskService::scheduledTask1, "0 10 7 * * ?");
+        taskRegistrar.addCronTask(scheduleTaskService::scheduledTask2, "0 5 8 * * ?");
+        taskRegistrar.addCronTask(scheduleTaskService::scheduledTask3, "0 30 20 * * ?");
+        // taskRegistrar.addCronTask(scheduleTaskService::scheduledTask4, "0 0 0/1 * * ?");
     }
 
     /**
-     * 今日天气
+     * 定义线程池
+     * 
+     * @return 线程池
      */
-    @Scheduled(cron = "0 5 8 * * ?")
-    public void scheduledTask2() {
-        boolean holiday = holidayService.isOffDay(LocalDate.now());
-        if (holiday) {
-            return;
-        }
-        String token = qywxService.getPushToken();
-        List<Tag> list = redisService.redisTagList();
-        // 嘉定除外
-        List<Tag> collect = list.stream().filter(a -> 3 != a.getTagId()).collect(Collectors.toList());
-        Map<Integer, String> map = weatherService.getRedisWeather(collect);
-        qywxService.pushWeatherMsg(token, map);
-        LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        System.out.println(format + " -> 天气推送成功");
+    private ScheduledThreadPoolExecutor taskScheduler() {
+        return new ScheduledThreadPoolExecutor(10, r -> new Thread(r, "定时任务线程-" + Thread.currentThread().getId()));
     }
 
-    /**
-     * 明日天气
-     */
-    @Scheduled(cron = "0 30 20 * * ?")
-    public void scheduledTask3() {
-        LocalDate date = LocalDate.now().plusDays(1);
-        boolean holiday = holidayService.isOffDay(date);
-        if (holiday) {
-            return;
-        }
-        String token = qywxService.getPushToken();
-        List<Tag> list = redisService.redisTagList();
-        Map<Integer, String> map = weatherService.getTomWeather(list);
-        qywxService.pushWeatherMsg(token, map);
-        LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        System.out.println(format + " -> 天气推送成功");
-    }
-
-    /**
-     * 天气灾害预警
-     */
-    // @Scheduled(cron = "0 0 0/1 * * ?")
-    public void scheduledTask4() {
-        List<Tag> list = redisService.redisTagList();
-        Map<Integer, String> map = weatherService.getWeatherWarn(list);
-        if (CollectionUtils.isEmpty(map)) {
-            return;
-        }
-        String token = qywxService.getPushToken();
-        qywxService.pushWeatherMsg(token, map);
-        LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        System.out.println(format + " -> 天气灾害预警成功");
-    }
 }

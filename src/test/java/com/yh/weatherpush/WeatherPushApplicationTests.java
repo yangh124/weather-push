@@ -1,10 +1,8 @@
 package com.yh.weatherpush;
 
-import cn.hutool.core.collection.CollUtil;
-import com.yh.weatherpush.component.JwtTokenUtil;
-import com.yh.weatherpush.dto.AdminUserDetails;
-import com.yh.weatherpush.entity.Admin;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -12,17 +10,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 class WeatherPushApplicationTests {
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private RedissonClient redissonClient;
 
     @Test
     void contextLoads() {
-        Admin admin = new Admin();
-        admin.setUsername("yh");
-        AdminUserDetails adminUserDetails = new AdminUserDetails(admin, CollUtil.newArrayList());
-        String s = jwtTokenUtil.generateToken(adminUserDetails);
-        System.out.println(s);
-        boolean b = jwtTokenUtil.validateToken(s, adminUserDetails);
-        System.out.println(b);
+        RLock test = redissonClient.getLock("test");
+        try {
+            test.lock();
+        }finally {
+            test.unlock();
+        }
     }
 
 }
