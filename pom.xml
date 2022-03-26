@@ -157,8 +157,7 @@
                     <dockerHost>${docker.host}</dockerHost>
                     <!--                    <baseImage>java:8</baseImage>-->
                     <baseImage>houwm/jdk8:arm64</baseImage>
-                    <entryPoint>["java", "-jar",
-                        "-Dspring.profiles.active=prod","/${project.build.finalName}.jar","-Xms512m -Xmx512m"]
+                    <entryPoint>["java", "-jar", "-Dspring.profiles.active=prod","/${project.build.finalName}.jar","-Xms512m -Xmx512m"]
                     </entryPoint>
                     <resources>
                         <resource>
