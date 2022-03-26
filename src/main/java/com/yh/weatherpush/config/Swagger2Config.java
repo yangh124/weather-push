@@ -1,5 +1,6 @@
 package com.yh.weatherpush.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -18,9 +19,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class Swagger2Config {
+
+    @Value("${swagger.enable:false}")
+    private boolean enabled;
+
     @Bean
     public Docket createRestApi() {
-        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).enable(enabled).select()
             // 为当前包下controller生成API文档
             .apis(RequestHandlerSelectors.basePackage("com.yh.weatherpush.controller"))
             // 为有@Api注解的Controller生成API文档
