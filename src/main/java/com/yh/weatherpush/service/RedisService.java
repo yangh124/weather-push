@@ -15,4 +15,7 @@ public interface RedisService {
     List<Tag> redisTagList();
 
     Holiday redisHolidayByKey(LocalDate date);
+
+    List<Holiday> redisHolidayList(LocalDate date);
+
 }

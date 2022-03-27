@@ -18,6 +18,4 @@ public interface HolidayService extends IService<Holiday> {
      * @return
      */
     boolean isOffDay(LocalDate date);
-
-    List<Holiday> getAllHolidays();
 }

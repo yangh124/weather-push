@@ -36,11 +36,4 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
         }
     }
 
-    @Override
-    public List<Holiday> getAllHolidays() {
-        int year = LocalDate.now().getYear();
-        return super.list(new QueryWrapper<Holiday>().select("holiday_name,holiday_date,is_off_day").lambda()
-            .eq(Holiday::getYear, year));
-    }
-
 }
