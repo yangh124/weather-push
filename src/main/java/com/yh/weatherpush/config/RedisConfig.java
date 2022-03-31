@@ -35,11 +35,10 @@ public class RedisConfig {
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         // 指定序列化输入的类型，类必须是非final修饰的，final修饰的类，比如String,Integer等会跑出异常
         om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        // 支持 jdk 1.8 日期   ---- start ---
+        // 支持 jdk 1.8 日期 ---- start ---
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        om.registerModule(new Jdk8Module())
-                .registerModule(new JavaTimeModule())
-                .registerModule(new ParameterNamesModule());
+        om.registerModule(new Jdk8Module()).registerModule(new JavaTimeModule())
+            .registerModule(new ParameterNamesModule());
         // --end --
         jacksonSeial.setObjectMapper(om);
         redisTemplate.setKeySerializer(new StringRedisSerializer());

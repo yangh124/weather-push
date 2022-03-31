@@ -152,14 +152,14 @@
                 <configuration>
                     <env>
                         <TZ>Asia/Shanghai</TZ>
+                        <LANG>C.UTF-8</LANG>
                     </env>
                     <imageName>${project.artifactId}:${project.version}</imageName>
                     <dockerHost>${docker.host}</dockerHost>
                     <!--                    <baseImage>java:8</baseImage>-->
                     <baseImage>houwm/jdk8:arm64</baseImage>
                     <!--注意这里不能换行 -->
-                    <entryPoint>["java", "-jar", "-Dspring.profiles.active=prod","/${project.build.finalName}.jar","-Xms512m -Xmx512m"]
-                    </entryPoint>
+                    <entryPoint>["java", "-jar", "-Dspring.profiles.active=prod","/${project.build.finalName}.jar","-Xms512m -Xmx512m"]</entryPoint>
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
