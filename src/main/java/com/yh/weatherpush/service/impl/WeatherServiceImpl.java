@@ -1,6 +1,6 @@
 package com.yh.weatherpush.service.impl;
 
-import com.yh.weatherpush.config.HfConfig;
+import com.yh.weatherpush.config.property.HfConfigPrProperties;
 import com.yh.weatherpush.dto.hfweather.*;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
@@ -29,7 +29,7 @@ import java.util.Map;
 public class WeatherServiceImpl implements WeatherService {
 
     @Autowired
-    private HfConfig hfConfig;
+    private HfConfigPrProperties hfConfig;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired

@@ -1,6 +1,5 @@
 package com.yh.weatherpush.service.impl;
 
-import com.yh.weatherpush.config.QywxConfig;
 import com.yh.weatherpush.dto.qywx.MemberResp;
 import com.yh.weatherpush.entity.Member;
 import com.yh.weatherpush.entity.Tag;

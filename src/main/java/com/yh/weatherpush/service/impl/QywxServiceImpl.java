@@ -1,10 +1,9 @@
 package com.yh.weatherpush.service.impl;
 
 import cn.hutool.core.util.BooleanUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yh.weatherpush.config.QywxConfig;
+import com.yh.weatherpush.config.property.QywxConfigProperties;
 import com.yh.weatherpush.dto.qywx.*;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class QywxServiceImpl implements QywxService {
 
     @Autowired
-    private QywxConfig qywxConfig;
+    private QywxConfigProperties qywxConfig;
     @Autowired
     private RestTemplate restTemplate;
     @Autowired

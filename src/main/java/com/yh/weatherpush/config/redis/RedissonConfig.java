@@ -1,4 +1,4 @@
-package com.yh.weatherpush.config;
+package com.yh.weatherpush.config.redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -24,7 +24,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         String address = "redis://" + host + ":" + port;
-        config.useSingleServer().setAddress(address).setPingConnectionInterval(3000);
+        config.useSingleServer().setAddress(address).setPingConnectionInterval(30000);
         return Redisson.create(config);
     }
 }

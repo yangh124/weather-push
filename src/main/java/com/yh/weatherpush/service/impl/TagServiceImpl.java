@@ -3,7 +3,10 @@ package com.yh.weatherpush.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
@@ -60,7 +63,12 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Override
     public IPage<TagDTO> pageList(PageParam pageParam) {
         IPage<Tag> page = new Page<>(pageParam.getCurrentPage(), pageParam.getPageSize());
-        super.page(page);
+        String tagName = pageParam.getTagName();
+        LambdaQueryWrapper<Tag> queryWrapper = null;
+        if (StrUtil.isNotBlank(tagName)) {
+            queryWrapper = new QueryWrapper<Tag>().lambda().likeRight(Tag::getTagName, tagName);
+        }
+        super.page(page, queryWrapper);
         List<Tag> records = page.getRecords();
         if (CollUtil.isEmpty(records)) {
             return new Page<>();

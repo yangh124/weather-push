@@ -1,4 +1,4 @@
-package com.yh.weatherpush.config;
+package com.yh.weatherpush.config.property;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "qywx")
-public class QywxConfig {
+public class QywxConfigProperties {
 
     private String corpid;
 

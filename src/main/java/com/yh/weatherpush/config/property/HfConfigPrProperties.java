@@ -1,4 +1,4 @@
-package com.yh.weatherpush.config;
+package com.yh.weatherpush.config.property;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "hfweather")
-public class HfConfig {
+public class HfConfigPrProperties  {
 
     private String key;
 
