@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yh.weatherpush.config.property.QywxConfigProperties;
 import com.yh.weatherpush.dto.qywx.*;
+import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.service.QywxService;
@@ -170,7 +171,7 @@ public class QywxServiceImpl implements QywxService {
         }
         Integer errcode = body.getInteger("errcode");
         if (!errcode.equals(0)) {
-            throw new ApiException("获取失败失败! -> " + body.getString("errmsg"));
+            throw new ApiException("获取失败! -> " + body.getString("errmsg"));
         }
         return body.getString("join_qrcode");
     }
@@ -187,7 +188,7 @@ public class QywxServiceImpl implements QywxService {
         }
         Integer errcode = body.getInteger("errcode");
         if (!errcode.equals(0)) {
-            throw new ApiException("获取失败失败! -> " + body.getString("errmsg"));
+            throw new ApiException("获取失败! -> " + body.getString("errmsg"));
         }
         JSONArray jsonArray = body.getJSONArray("userlist");
         List<MemberResp> memberResps = JSONArray.parseArray(jsonArray.toJSONString(), MemberResp.class);
@@ -206,10 +207,42 @@ public class QywxServiceImpl implements QywxService {
         }
         Integer errcode = body.getInteger("errcode");
         if (!errcode.equals(0)) {
-            throw new ApiException("获取失败失败! -> " + body.getString("errmsg"));
+            throw new ApiException("获取失败! -> " + body.getString("errmsg"));
         }
         JSONArray jsonArray = body.getJSONArray("userlist");
         List<MemberResp> memberResps = JSONArray.parseArray(jsonArray.toJSONString(), MemberResp.class);
         return memberResps;
+    }
+
+    @Override
+    public void addTagMembers(TagMembersParam param) {
+        String url = qywxConfig.getTag().getAddTagUserUrl();
+        String token = getOtherToken();
+        url = url.replace("ACCESS_TOKEN", token);
+        ResponseEntity<JSONObject> response = restTemplate.postForEntity(url, param, JSONObject.class);
+        JSONObject body = response.getBody();
+        if (null == body) {
+            throw new ApiException("添加失败!");
+        }
+        Integer errcode = body.getInteger("errcode");
+        if (!errcode.equals(0)) {
+            throw new ApiException("添加失败! -> " + body.getString("errmsg"));
+        }
+    }
+
+    @Override
+    public void delTagMembers(TagMembersParam param) {
+        String url = qywxConfig.getTag().getDelTagUserUrl();
+        String token = getOtherToken();
+        url = url.replace("ACCESS_TOKEN", token);
+        ResponseEntity<JSONObject> response = restTemplate.postForEntity(url, param, JSONObject.class);
+        JSONObject body = response.getBody();
+        if (null == body) {
+            throw new ApiException("删除失败!");
+        }
+        Integer errcode = body.getInteger("errcode");
+        if (!errcode.equals(0)) {
+            throw new ApiException("删除失败! -> " + body.getString("errmsg"));
+        }
     }
 }

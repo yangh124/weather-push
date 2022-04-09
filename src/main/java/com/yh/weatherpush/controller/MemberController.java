@@ -37,7 +37,7 @@ public class MemberController {
 
     @ApiOperation("获取部门成员（所有成员）")
     @GetMapping()
-    public Result<List<MemberResp>> memberList(@RequestParam(required = false) Long id) {
+    public Result<List<MemberResp>> memberList(@RequestParam(required = false) Integer id) {
         List<MemberResp> memberResps = memberService.memberList(id);
         return Result.success(memberResps);
     }

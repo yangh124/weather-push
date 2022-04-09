@@ -3,6 +3,7 @@ package com.yh.weatherpush.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.Result;
+import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.service.TagService;
@@ -13,7 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -58,4 +58,19 @@ public class TagController {
         List<TagDTO> res = tagService.getAll();
         return Result.success(res);
     }
+
+    @ApiOperation("添加标签成员")
+    @PostMapping("/members")
+    public Result<Void> addTagMembers(@Validated @RequestBody TagMembersParam param) {
+        tagService.addTagMembers(param);
+        return Result.success();
+    }
+
+    @ApiOperation("删除标签成员")
+    @DeleteMapping("/members")
+    public Result<Void> delTagMembers(@Validated @RequestBody TagMembersParam param) {
+        tagService.delTagMembers(param);
+        return Result.success();
+    }
+
 }

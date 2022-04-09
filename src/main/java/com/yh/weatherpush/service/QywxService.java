@@ -1,6 +1,7 @@
 package com.yh.weatherpush.service;
 
 import com.yh.weatherpush.dto.qywx.MemberResp;
+import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.entity.Tag;
 
 import java.util.List;
@@ -62,14 +63,29 @@ public interface QywxService {
 
     /**
      * 获取部门成员
+     * 
      * @return
      */
     List<MemberResp> memberListByDept();
 
-
     /**
      * 获取标签成员
+     * 
      * @return
      */
     List<MemberResp> memberListByTag(Integer tagId);
+
+    /**
+     * 添加标签成员
+     * 
+     * @param param
+     */
+    void addTagMembers(TagMembersParam param);
+
+    /**
+     * 删除标签成员
+     * 
+     * @param param
+     */
+    void delTagMembers(TagMembersParam param);
 }

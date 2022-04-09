@@ -6,9 +6,9 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yh.weatherpush.dto.PageParam;
+import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.Tag;
@@ -97,5 +97,15 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
             res.add(tagDTO);
         }
         return res;
+    }
+
+    @Override
+    public void addTagMembers(TagMembersParam param) {
+        qywxService.addTagMembers(param);
+    }
+
+    @Override
+    public void delTagMembers(TagMembersParam param) {
+        qywxService.delTagMembers(param);
     }
 }

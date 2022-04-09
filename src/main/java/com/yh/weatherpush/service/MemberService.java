@@ -17,5 +17,5 @@ import java.util.List;
 public interface MemberService extends IService<Member> {
 
 
-    List<MemberResp> memberList(Long id);
+    List<MemberResp> memberList(Integer id);
 }

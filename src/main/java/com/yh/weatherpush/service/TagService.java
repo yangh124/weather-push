@@ -2,6 +2,7 @@ package com.yh.weatherpush.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.PageParam;
+import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.Tag;
@@ -27,4 +28,7 @@ public interface TagService extends IService<Tag> {
 
     List<TagDTO> getAll();
 
+    void addTagMembers(TagMembersParam param);
+
+    void delTagMembers(TagMembersParam param);
 }

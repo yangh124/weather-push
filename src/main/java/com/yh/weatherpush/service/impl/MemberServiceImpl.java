@@ -26,18 +26,12 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Autowired
     private QywxService qywxService;
-    @Autowired
-    private TagService tagService;
 
     @Override
-    public List<MemberResp> memberList(Long id) {
+    public List<MemberResp> memberList(Integer id) {
         if (null == id) {
             return qywxService.memberListByDept();
         }
-        Tag tag = tagService.getById(id);
-        if (null != tag) {
-            return qywxService.memberListByTag(tag.getTagId());
-        }
-        return null;
+        return qywxService.memberListByTag(id);
     }
 }

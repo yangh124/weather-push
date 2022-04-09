@@ -47,6 +47,10 @@ public class QywxConfigProperties {
         private String listUrl;
 
         private String deleteUrl;
+
+        private String addTagUserUrl;
+
+        private String delTagUserUrl;
     }
 
     @Getter
