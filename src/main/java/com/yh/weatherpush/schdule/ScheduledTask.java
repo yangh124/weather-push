@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.scheduling.config.TriggerTask;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
+
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
@@ -21,11 +24,15 @@ public class ScheduledTask implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        // 设置线程池
         taskRegistrar.setScheduler(taskScheduler());
-        taskRegistrar.addCronTask(scheduleTaskService::scheduledTask1, "0 10 7 * * ?");
-        taskRegistrar.addCronTask(scheduleTaskService::scheduledTask2, "0 5 8 * * ?");
-        taskRegistrar.addCronTask(scheduleTaskService::scheduledTask3, "0 30 20 * * ?");
-        // taskRegistrar.addCronTask(scheduleTaskService::scheduledTask4, "0 0 0/1 * * ?");
+        // 添加任务
+        taskRegistrar.addTriggerTask(new TriggerTask(scheduleTaskService::scheduledTask1,
+            triggerContext -> new CronTrigger("0 10 7 * * ?").nextExecutionTime(triggerContext)));
+        taskRegistrar.addTriggerTask(new TriggerTask(scheduleTaskService::scheduledTask2,
+            triggerContext -> new CronTrigger("0 5 8 * * ?").nextExecutionTime(triggerContext)));
+        taskRegistrar.addTriggerTask(new TriggerTask(scheduleTaskService::scheduledTask3,
+            triggerContext -> new CronTrigger("0 30 20 * * ?").nextExecutionTime(triggerContext)));
     }
 
     /**
