@@ -47,3 +47,22 @@ CREATE TABLE `sys_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='企业微信标签';
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE `sys_sch_task` (
+                                `id` bigint NOT NULL,
+                                `task_name` varchar(50) NOT NULL COMMENT '任务名称',
+                                `cron_exp` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'cron表达式',
+                                `task_desc` varchar(255) DEFAULT NULL COMMENT '任务描述',
+                                `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+                                `utime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+                                PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='定时任务';
+
+-- ----------------------------
+-- Records of sys_sch_task
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_sch_task` (`id`, `task_name`, `cron_exp`, `task_desc`, `ctime`, `utime`) VALUES (1515617545057488898, 'scheduledTask1', '0 10 7 * * ?', '', '2022-04-17 17:05:56', '2022-04-17 17:22:04');
+INSERT INTO `sys_sch_task` (`id`, `task_name`, `cron_exp`, `task_desc`, `ctime`, `utime`) VALUES (1515617635495071746, 'scheduledTask2', '0 5 8 * * ?', '', '2022-04-17 17:06:18', NULL);
+INSERT INTO `sys_sch_task` (`id`, `task_name`, `cron_exp`, `task_desc`, `ctime`, `utime`) VALUES (1515617715220402177, 'scheduledTask3', '0 30 20 * * ?', '', '2022-04-17 17:06:37', NULL);
+COMMIT;

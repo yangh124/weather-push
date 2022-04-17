@@ -24,7 +24,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         String address = "redis://" + host + ":" + port;
-        config.useSingleServer().setAddress(address).setPingConnectionInterval(30000);
+        config.useSingleServer().setAddress(address).setPingConnectionInterval(60000);
         return Redisson.create(config);
     }
 }

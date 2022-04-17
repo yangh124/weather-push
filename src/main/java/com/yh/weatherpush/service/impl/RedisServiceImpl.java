@@ -5,7 +5,9 @@ import cn.hutool.core.util.BooleanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yh.weatherpush.entity.Holiday;
+import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.entity.Tag;
+import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.RedisService;
 import com.yh.weatherpush.service.TagService;
@@ -32,6 +34,8 @@ public class RedisServiceImpl implements RedisService {
     private TagService tagService;
     @Autowired
     private HolidayService holidayService;
+    @Autowired
+    private SchTaskMapper schTaskMapper;
 
     @Override
     public List<Tag> redisTagList() {
@@ -100,6 +104,23 @@ public class RedisServiceImpl implements RedisService {
                 return null;
             }
         }
+    }
+
+    @Override
+    public Map<String, SchTask> redisSchTask() {
+        String key = "task:map";
+        Boolean b = redisTemplate.hasKey(key);
+        if (!BooleanUtil.isTrue(b)) {
+            List<SchTask> tasks = schTaskMapper.selectList(new QueryWrapper<>());
+            if (CollUtil.isNotEmpty(tasks)) {
+                for (SchTask task : tasks) {
+                    String taskName = task.getTaskName();
+                    redisTemplate.opsForHash().put(key, taskName, task);
+                }
+            }
+        }
+        Map<String, SchTask> entries = redisTemplate.opsForHash().entries(key);
+        return entries;
     }
 
 }

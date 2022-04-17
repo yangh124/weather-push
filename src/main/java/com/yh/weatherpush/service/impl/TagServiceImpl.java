@@ -11,6 +11,7 @@ import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
+import com.yh.weatherpush.dto.tag.TagPageParam;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.mapper.TagMapper;
@@ -61,7 +62,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     }
 
     @Override
-    public IPage<TagDTO> pageList(PageParam pageParam) {
+    public IPage<TagDTO> pageList(TagPageParam pageParam) {
         IPage<Tag> page = new Page<>(pageParam.getCurrentPage(), pageParam.getPageSize());
         String tagName = pageParam.getTagName();
         LambdaQueryWrapper<Tag> queryWrapper = null;

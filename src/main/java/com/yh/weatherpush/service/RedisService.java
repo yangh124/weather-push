@@ -1,10 +1,12 @@
 package com.yh.weatherpush.service;
 
 import com.yh.weatherpush.entity.Holiday;
+import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.entity.Tag;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author : yh
@@ -17,5 +19,7 @@ public interface RedisService {
     Holiday redisHolidayByKey(LocalDate date);
 
     List<Holiday> redisHolidayList(LocalDate date);
+
+    Map<String, SchTask> redisSchTask();
 
 }

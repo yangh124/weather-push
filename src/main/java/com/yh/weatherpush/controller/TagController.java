@@ -6,6 +6,7 @@ import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
+import com.yh.weatherpush.dto.tag.TagPageParam;
 import com.yh.weatherpush.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +48,7 @@ public class TagController {
 
     @ApiOperation("获取标签分页")
     @GetMapping("/page")
-    public Result<IPage<TagDTO>> pageList(PageParam pageParam) {
+    public Result<IPage<TagDTO>> pageList(TagPageParam pageParam) {
         IPage<TagDTO> res = tagService.pageList(pageParam);
         return Result.success(res);
     }

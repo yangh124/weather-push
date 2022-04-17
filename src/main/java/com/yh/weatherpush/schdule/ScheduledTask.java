@@ -1,5 +1,7 @@
 package com.yh.weatherpush.schdule;
 
+import cn.hutool.core.collection.CollUtil;
+import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,9 @@ import org.springframework.scheduling.config.TriggerTask;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
@@ -20,6 +25,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class ScheduledTask implements SchedulingConfigurer {
 
     @Autowired
+    private RedisService redisService;
+    @Autowired
     private ScheduleTaskService scheduleTaskService;
 
     @Override
@@ -27,12 +34,20 @@ public class ScheduledTask implements SchedulingConfigurer {
         // 设置线程池
         taskRegistrar.setScheduler(taskScheduler());
         // 添加任务
-        taskRegistrar.addTriggerTask(new TriggerTask(scheduleTaskService::scheduledTask1,
-            triggerContext -> new CronTrigger("0 10 7 * * ?").nextExecutionTime(triggerContext)));
-        taskRegistrar.addTriggerTask(new TriggerTask(scheduleTaskService::scheduledTask2,
-            triggerContext -> new CronTrigger("0 5 8 * * ?").nextExecutionTime(triggerContext)));
-        taskRegistrar.addTriggerTask(new TriggerTask(scheduleTaskService::scheduledTask3,
-            triggerContext -> new CronTrigger("0 30 20 * * ?").nextExecutionTime(triggerContext)));
+        Map<String, SchTask> schTaskMap = redisService.redisSchTask();
+        if (CollUtil.isNotEmpty(schTaskMap)) {
+            for (String s : schTaskMap.keySet()) {
+                SchTask schTask = schTaskMap.get(s);
+                taskRegistrar.addTriggerTask(new TriggerTask(() -> {
+                    try {
+                        Method method = scheduleTaskService.getClass().getMethod(s);
+                        method.invoke(scheduleTaskService);
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }, triggerContext -> new CronTrigger(schTask.getCronExp()).nextExecutionTime(triggerContext)));
+            }
+        }
     }
 
     /**

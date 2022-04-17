@@ -23,6 +23,4 @@ public class PageParam implements Serializable {
 
     @ApiModelProperty("每页大小")
     private Integer pageSize = 10;
-
-    private String tagName;
 }
