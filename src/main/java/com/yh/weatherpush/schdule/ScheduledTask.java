@@ -5,6 +5,8 @@ import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.config.TriggerTask;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -38,14 +41,14 @@ public class ScheduledTask implements SchedulingConfigurer {
         if (CollUtil.isNotEmpty(schTaskMap)) {
             for (String s : schTaskMap.keySet()) {
                 SchTask schTask = schTaskMap.get(s);
-                taskRegistrar.addTriggerTask(new TriggerTask(() -> {
+                taskRegistrar.addCronTask(() -> {
                     try {
                         Method method = scheduleTaskService.getClass().getMethod(s);
                         method.invoke(scheduleTaskService);
                     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         log.error(e.getMessage(), e);
                     }
-                }, triggerContext -> new CronTrigger(schTask.getCronExp()).nextExecutionTime(triggerContext)));
+                }, schTask.getCronExp());
             }
         }
     }
