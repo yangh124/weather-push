@@ -3,7 +3,6 @@ package com.yh.weatherpush.quartz.job;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.QywxService;
-import com.yh.weatherpush.service.RedisService;
 import com.yh.weatherpush.service.WeatherService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
@@ -18,9 +17,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
+ * 今日天气
+ * 
  * @author : yh
  * @date : 2022/4/18 21:26
  */
@@ -34,28 +34,25 @@ public class WeatherTodayJob implements Job {
     private WeatherService weatherService;
     @Autowired
     private HolidayService holidayService;
-    @Autowired
-    private RedisService redisService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-
-        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
-
         log.info("============= WeatherTodayJob start =============");
-        boolean holiday = holidayService.isOffDay(LocalDate.now());
-        if (holiday) {
-            return;
+        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
+        Object obj = jobDataMap.get("tagList");
+        if (null != obj) {
+            List<Tag> tagList = (List<Tag>)obj;
+            boolean holiday = holidayService.isOffDay(LocalDate.now());
+            if (holiday) {
+                return;
+            }
+            String token = qywxService.getPushToken();
+            Map<Integer, String> map = weatherService.getTodayWeather(tagList);
+            qywxService.pushWeatherMsg(token, map);
+            LocalDateTime now = LocalDateTime.now();
+            String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            log.info(format + " -> 天气推送成功");
         }
-        String token = qywxService.getPushToken();
-        List<Tag> list = redisService.redisTagList();
-        // 嘉定区
-        List<Tag> collect = list.stream().filter(a -> 3 == a.getTagId()).collect(Collectors.toList());
-        Map<Integer, String> map = weatherService.getTodayWeather(collect);
-        qywxService.pushWeatherMsg(token, map);
-        LocalDateTime now = LocalDateTime.now();
-        String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        log.info(format + " -> 天气推送成功");
         log.info("============= WeatherTodayJob end =============");
     }
 
