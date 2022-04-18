@@ -15,6 +15,12 @@ spring:
     port: 6379 # Redis服务器连接端口
     # password: # Redis服务器连接密码（默认为空）
     timeout: 3000ms # 连接超时时间（毫秒）
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org.quartz.scheduler.instance-id: AUTO
+      org.quartz.scheduler.instance-name: weather_scheduler
+      org.quartz.job-store.class: org.quartz.impl.jdbcjobstore.JobStoreTX
 
 mybatis-plus:
   mapper-locations:

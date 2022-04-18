@@ -15,6 +15,7 @@ import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.service.SchTaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.quartz.Job;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
