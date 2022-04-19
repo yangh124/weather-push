@@ -20,4 +20,8 @@ public interface SchTaskService extends IService<SchTask> {
     IPage<SchTask> pageList(PageParam pageParam);
 
     void create(AddTaskParam param);
+
+    void delete(Long id);
+
+    void updateStatus(Long id, Integer status);
 }

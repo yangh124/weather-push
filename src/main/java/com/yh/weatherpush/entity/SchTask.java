@@ -2,6 +2,7 @@ package com.yh.weatherpush.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -44,5 +45,6 @@ public class SchTask implements Serializable {
     @ApiModelProperty("修改时间")
     private LocalDateTime utime;
 
-
+    @ApiModelProperty("0-启动 1-暂停")
+    private Integer status;
 }

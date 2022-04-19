@@ -8,15 +8,20 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yh.weatherpush.dto.PageParam;
+import com.yh.weatherpush.dto.QuartzBean;
 import com.yh.weatherpush.dto.schtask.AddTaskParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.mapper.SchTaskMapper;
+import com.yh.weatherpush.quartz.QuartzClient;
+import com.yh.weatherpush.quartz.job.WeatherTodayJob;
 import com.yh.weatherpush.service.SchTaskService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.quartz.Job;
+import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,17 +37,48 @@ import java.util.List;
 @Service
 public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> implements SchTaskService {
 
+    @Autowired
+    private Scheduler scheduler;
+    @Autowired
+    private QuartzClient quartzClient;
+
     @Override
     public IPage<SchTask> pageList(PageParam pageParam) {
         IPage<SchTask> page = new Page<>(pageParam.getCurrentPage(), pageParam.getPageSize());
         return super.page(page);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void create(AddTaskParam param) {
         SchTask schTask = new SchTask();
         BeanUtil.copyProperties(param, schTask);
         schTask.setCtime(LocalDateTime.now());
         super.save(schTask);
+        QuartzBean quartzBean = new QuartzBean();
+        BeanUtil.copyProperties(schTask, quartzBean);
+        quartzBean.setId(String.valueOf(schTask.getId()));
+        quartzClient.create(scheduler, quartzBean);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(Long id) {
+        super.removeById(id);
+        quartzClient.delete(scheduler, String.valueOf(id));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        SchTask schTask = new SchTask();
+        schTask.setId(id);
+        schTask.setStatus(status);
+        super.updateById(schTask);
+        if (0 == status) {
+            quartzClient.start(scheduler, String.valueOf(id));
+        } else {
+            quartzClient.stop(scheduler, String.valueOf(id));
+        }
     }
 }
