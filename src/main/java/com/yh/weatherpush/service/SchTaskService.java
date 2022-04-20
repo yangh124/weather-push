@@ -3,6 +3,7 @@ package com.yh.weatherpush.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.schtask.AddTaskParam;
+import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.SchTask;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -23,5 +24,6 @@ public interface SchTaskService extends IService<SchTask> {
 
     void delete(Long id);
 
-    void updateStatus(Long id, Integer status);
+    void updateTask(Long id, UpdateTaskDTO dto);
+
 }

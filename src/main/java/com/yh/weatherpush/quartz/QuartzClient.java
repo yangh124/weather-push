@@ -33,10 +33,10 @@ public class QuartzClient {
             Class<? extends Job> aClass = (Class<? extends Job>)bean.getClass();
             TriggerKey triggerKey = TriggerKey.triggerKey(id);
             JobKey jobKey = JobKey.jobKey(id);
-            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withIdentity(taskName)
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey)
                 .withSchedule(CronScheduleBuilder.cronSchedule(cronExp)).build();
-            JobDetail jobDetail = JobBuilder.newJob(aClass).withIdentity(taskName).withIdentity(jobKey)
-                .withDescription(quartzBean.getTaskDesc()).build();
+            JobDetail jobDetail =
+                JobBuilder.newJob(aClass).withIdentity(jobKey).withDescription(quartzBean.getTaskDesc()).build();
             scheduler.scheduleJob(jobDetail, cronTrigger);
         } catch (SchedulerException e) {
             throw new ApiException(e);

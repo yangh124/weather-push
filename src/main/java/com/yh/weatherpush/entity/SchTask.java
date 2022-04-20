@@ -1,5 +1,7 @@
 package com.yh.weatherpush.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -27,6 +29,7 @@ public class SchTask implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JSONField(serializeUsing = ToStringSerializer.class)
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Long id;
 
@@ -39,9 +42,11 @@ public class SchTask implements Serializable {
     @ApiModelProperty("任务描述")
     private String taskDesc;
 
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("创建时间")
     private LocalDateTime ctime;
 
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("修改时间")
     private LocalDateTime utime;
 

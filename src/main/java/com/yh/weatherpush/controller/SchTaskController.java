@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.schtask.AddTaskParam;
+import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
 import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.service.SchTaskService;
 import io.swagger.annotations.Api;
@@ -42,10 +43,10 @@ public class SchTaskController {
         return Result.success();
     }
 
-    @ApiOperation("停止/启动任务")
+    @ApiOperation("修改定时任务")
     @PatchMapping("/{id}")
-    public Result<Void> updateStatus(@PathVariable Long id, @RequestParam Integer status) {
-        schTaskService.updateStatus(id, status);
+    public Result<Void> updateStatus(@PathVariable Long id, @RequestBody UpdateTaskDTO dto) {
+        schTaskService.updateTask(id, dto);
         return Result.success();
     }
 
