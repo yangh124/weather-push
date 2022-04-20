@@ -1,7 +1,6 @@
 package com.yh.weatherpush.quartz;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.sun.istack.internal.NotNull;
 import com.yh.weatherpush.dto.QuartzBean;
 import com.yh.weatherpush.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ public class QuartzClient {
      * @param scheduler 调度器
      * @param quartzBean 任务信息
      */
-    public void create(@NotNull Scheduler scheduler, @NotNull QuartzBean quartzBean) {
+    public void create(Scheduler scheduler, QuartzBean quartzBean) {
         String id = quartzBean.getId();
         String taskName = quartzBean.getTaskName();
         String cronExp = quartzBean.getCronExp();
@@ -49,7 +48,7 @@ public class QuartzClient {
      * @param scheduler 调度器
      * @param taskId 任务信息
      */
-    public void stop(@NotNull Scheduler scheduler, @NotNull String taskId) {
+    public void stop(Scheduler scheduler, String taskId) {
         JobKey jobKey = JobKey.jobKey(taskId);
         try {
             scheduler.pauseJob(jobKey);
@@ -64,7 +63,7 @@ public class QuartzClient {
      * @param scheduler 调度器
      * @param taskId 任务信息
      */
-    public void start(@NotNull Scheduler scheduler, @NotNull String taskId) {
+    public void start(Scheduler scheduler, String taskId) {
         JobKey jobKey = JobKey.jobKey(taskId);
         try {
             scheduler.resumeJob(jobKey);
@@ -81,7 +80,7 @@ public class QuartzClient {
      * @param scheduler 调度器
      * @param quartzBean 任务信息
      */
-    public void update(@NotNull Scheduler scheduler, @NotNull QuartzBean quartzBean) {
+    public void update(Scheduler scheduler, QuartzBean quartzBean) {
         String id = quartzBean.getId();
         String cronExp = quartzBean.getCronExp();
         try {
@@ -103,7 +102,7 @@ public class QuartzClient {
      * @param scheduler 调度器
      * @param taskId 任务id
      */
-    public void delete(@NotNull Scheduler scheduler, @NotNull String taskId) {
+    public void delete(Scheduler scheduler, String taskId) {
         try {
             JobKey jobKey = JobKey.jobKey(taskId);
             scheduler.deleteJob(jobKey);
