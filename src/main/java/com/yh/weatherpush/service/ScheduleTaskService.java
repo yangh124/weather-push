@@ -6,11 +6,4 @@ package com.yh.weatherpush.service;
  */
 public interface ScheduleTaskService {
 
-    void scheduledTask1();
-
-    void scheduledTask2();
-
-    void scheduledTask3();
-
-    void scheduledTask4();
 }
