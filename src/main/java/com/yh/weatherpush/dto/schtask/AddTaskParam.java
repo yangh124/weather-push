@@ -3,8 +3,10 @@ package com.yh.weatherpush.dto.schtask;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author : yh
@@ -25,5 +27,9 @@ public class AddTaskParam implements Serializable {
 
     @ApiModelProperty("任务描述")
     private String taskDesc;
+
+    @NotEmpty(message = "关联地区不能为空")
+    @ApiModelProperty("地区id")
+    private List<Long> tagIds;
 
 }

@@ -1,12 +1,13 @@
 package com.yh.weatherpush.quartz.job;
 
+import cn.hutool.core.collection.CollUtil;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.QywxService;
+import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +35,15 @@ public class WeatherTomorrowJob implements Job {
     private WeatherService weatherService;
     @Autowired
     private HolidayService holidayService;
+    @Autowired
+    private TagService tagService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        // todo
         log.info("============= WeatherTomorrowJob start =============");
-        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
-        Object obj = jobDataMap.get("tagList");
-        if (null != obj) {
-            List<Tag> tagList = (List<Tag>)obj;
+        String taskId = jobExecutionContext.getJobDetail().getKey().getName();
+        List<Tag> tagList = tagService.getTagListForJob(taskId);
+        if (CollUtil.isNotEmpty(tagList)) {
             LocalDate date = LocalDate.now().plusDays(1);
             boolean holiday = holidayService.isOffDay(date);
             if (holiday) {

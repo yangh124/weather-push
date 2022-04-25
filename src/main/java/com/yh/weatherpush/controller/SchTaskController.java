@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.schtask.AddTaskParam;
+import com.yh.weatherpush.dto.schtask.SchTaskPageDTO;
 import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
 import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.service.SchTaskService;
@@ -31,8 +32,8 @@ public class SchTaskController {
 
     @ApiOperation("获取定时任务分页")
     @GetMapping("/page")
-    public Result<IPage<SchTask>> pageList(PageParam pageParam) {
-        IPage<SchTask> res = schTaskService.pageList(pageParam);
+    public Result<IPage<SchTaskPageDTO>> pageList(PageParam pageParam) {
+        IPage<SchTaskPageDTO> res = schTaskService.pageList(pageParam);
         return Result.success(res);
     }
 

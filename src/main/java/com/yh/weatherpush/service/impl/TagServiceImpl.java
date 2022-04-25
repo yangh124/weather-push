@@ -13,8 +13,10 @@ import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.dto.tag.TagPageParam;
 import com.yh.weatherpush.entity.Tag;
+import com.yh.weatherpush.entity.TaskRelTag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.mapper.TagMapper;
+import com.yh.weatherpush.mapper.TaskRelTagMapper;
 import com.yh.weatherpush.service.QywxService;
 import com.yh.weatherpush.service.TagService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,6 +44,8 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     private QywxService qywxService;
     @Autowired
     private WeatherService weatherService;
+    @Autowired
+    private TaskRelTagMapper taskRelTagMapper;
 
     @Override
     public void create(AddTagParam param) {
@@ -108,5 +113,17 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Override
     public void delTagMembers(TagMembersParam param) {
         qywxService.delTagMembers(param);
+    }
+
+    @Override
+    public List<Tag> getTagListForJob(String taskId) {
+        List<Tag> tagList = new ArrayList<>();
+        List<TaskRelTag> trtList =
+            taskRelTagMapper.selectList(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
+        if (CollUtil.isNotEmpty(trtList)) {
+            List<Long> tagIdList = trtList.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
+            tagList = super.listByIds(tagIdList);
+        }
+        return tagList;
     }
 }

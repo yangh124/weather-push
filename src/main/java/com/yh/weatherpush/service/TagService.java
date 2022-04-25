@@ -31,4 +31,6 @@ public interface TagService extends IService<Tag> {
     void addTagMembers(TagMembersParam param);
 
     void delTagMembers(TagMembersParam param);
+
+    List<Tag> getTagListForJob(String taskId);
 }

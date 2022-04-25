@@ -1,31 +1,25 @@
 spring:
   datasource:
     url: jdbc:mysql://192.168.3.3:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false&autoReconnect=true&allowMultiQueries=true
-    username: prod
-    password: prod
+    username: root
+    password: root
   redis:
     host: 192.168.3.3 # Redis服务器地址
     database: 0 # Redis数据库索引（默认为0）
     port: 6379 # Redis服务器连接端口
     timeout: 3000ms # 连接超时时间（毫秒）
-    jedis:
-      pool:
-        max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
-        max-wait: -1ms      # 连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-idle: 10      # 连接池中的最大空闲连接
-        min-idle: 5       # 连接池中的最小空闲连接
 
 jwt:
-  secret: prod
+  secret: absdefg
   expiration: 7200
   tokenHeader: token
   tokenHead: Bearer
 
 qywx:
-  corpid: prod
-  push-secret: prod
-  other-secret: prod
-  agentid: prod
+  corpid: ww43a3e50e6f5189a4
+  push-secret: V1TiAK4gQ00xNImsfPupVnhmPwGYjABK2p-5e2wdXqQ
+  other-secret: 5TO0opozR9bwXcSFP1KVkQkjaEYMpEvfCKk9f13PN4w
+  agentid: 1000002
 
 hfweather:
-  key: prod
+  key: 79e0081b48bb4f8d87f4a9a338e5cc34

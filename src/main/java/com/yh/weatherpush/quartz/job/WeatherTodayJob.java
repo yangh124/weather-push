@@ -1,9 +1,10 @@
 package com.yh.weatherpush.quartz.job;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yh.weatherpush.entity.Tag;
-import com.yh.weatherpush.service.HolidayService;
-import com.yh.weatherpush.service.QywxService;
-import com.yh.weatherpush.service.WeatherService;
+import com.yh.weatherpush.entity.TaskRelTag;
+import com.yh.weatherpush.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -14,8 +15,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 今日天气
@@ -33,14 +36,15 @@ public class WeatherTodayJob implements Job {
     private WeatherService weatherService;
     @Autowired
     private HolidayService holidayService;
+    @Autowired
+    private TagService tagService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         log.info("============= WeatherTodayJob start =============");
-        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
-        Object obj = jobDataMap.get("tagList");
-        if (null != obj) {
-            List<Tag> tagList = (List<Tag>)obj;
+        String taskId = jobExecutionContext.getJobDetail().getKey().getName();
+        List<Tag> tagList = tagService.getTagListForJob(taskId);
+        if (CollUtil.isNotEmpty(tagList)) {
             boolean holiday = holidayService.isOffDay(LocalDate.now());
             if (holiday) {
                 return;
