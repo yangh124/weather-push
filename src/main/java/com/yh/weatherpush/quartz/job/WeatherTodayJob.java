@@ -1,13 +1,10 @@
 package com.yh.weatherpush.quartz.job;
 
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yh.weatherpush.entity.Tag;
-import com.yh.weatherpush.entity.TaskRelTag;
 import com.yh.weatherpush.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,10 +12,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 今日天气
@@ -50,7 +45,7 @@ public class WeatherTodayJob implements Job {
                 return;
             }
             String token = qywxService.getPushToken();
-            Map<Integer, String> map = weatherService.getTodayWeather(tagList);
+            Map<Integer, String> map = weatherService.getRedisWeather(tagList);
             qywxService.pushWeatherMsg(token, map);
             LocalDateTime now = LocalDateTime.now();
             String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

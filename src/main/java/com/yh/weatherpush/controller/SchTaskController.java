@@ -6,7 +6,6 @@ import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.schtask.AddTaskParam;
 import com.yh.weatherpush.dto.schtask.SchTaskPageDTO;
 import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
-import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.service.SchTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
