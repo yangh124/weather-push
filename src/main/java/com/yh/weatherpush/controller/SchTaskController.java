@@ -45,7 +45,7 @@ public class SchTaskController {
 
     @ApiOperation("修改定时任务")
     @PatchMapping("/{id}")
-    public Result<Void> updateStatus(@PathVariable Long id, @RequestBody UpdateTaskDTO dto) {
+    public Result<Void> updateStatus(@PathVariable Long id, @Validated @RequestBody UpdateTaskDTO dto) {
         schTaskService.updateTask(id, dto);
         return Result.success();
     }

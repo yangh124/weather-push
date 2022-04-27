@@ -134,12 +134,23 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         SchTask task = super.getById(id);
         Integer status = dto.getStatus();
         String cronExp = dto.getCronExp();
-        if (ObjectUtil.isNull(status) && StrUtil.isBlank(cronExp)) {
+        List<Long> tagIds = dto.getTagIds();
+        if (ObjectUtil.isNull(status) || StrUtil.isBlank(cronExp) || CollUtil.isEmpty(tagIds)) {
             throw new ApiException("参数错误!");
         }
-        task.setStatus(status);
-        task.setCronExp(cronExp);
+        BeanUtil.copyProperties(dto, task);
         super.updateById(task);
+        taskRelTagService.remove(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, id));
+        List<TaskRelTag> list = new ArrayList<>(tagIds.size());
+        for (Long tagId : tagIds) {
+            TaskRelTag taskRelTag = new TaskRelTag();
+            taskRelTag.setTaskId(id);
+            taskRelTag.setTagId(tagId);
+            taskRelTag.setCtime(LocalDateTime.now());
+            list.add(taskRelTag);
+        }
+        taskRelTagService.saveBatch(list);
+
         if (StrUtil.isNotBlank(cronExp)) {
             QuartzBean quartzBean = new QuartzBean();
             quartzBean.setId(String.valueOf(id));
