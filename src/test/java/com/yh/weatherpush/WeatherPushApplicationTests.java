@@ -7,6 +7,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -14,11 +15,12 @@ import java.util.List;
 class WeatherPushApplicationTests {
 
     @Autowired
-    private RedisService redisService;
+    private PasswordEncoder passwordEncoder;
 
     @Test
     void contextLoads() {
-        List<Tag> list = redisService.redisTagList();
+        String encode = passwordEncoder.encode("123456");
+        System.out.println(passwordEncoder.matches("123456", encode));
     }
 
 }

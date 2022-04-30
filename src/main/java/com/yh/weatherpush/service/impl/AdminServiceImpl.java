@@ -3,9 +3,12 @@ package com.yh.weatherpush.service.impl;
 import cn.hutool.core.util.BooleanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.yh.weatherpush.component.JwtTokenUtil;
 import com.yh.weatherpush.dto.AdminUserDetails;
 import com.yh.weatherpush.dto.admin.LoginParam;
+import com.yh.weatherpush.dto.admin.UpdPwdParam;
 import com.yh.weatherpush.entity.Admin;
 import com.yh.weatherpush.entity.Permission;
 import com.yh.weatherpush.exception.ApiException;
@@ -48,9 +51,6 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     private AdminMapper adminMapper;
     @Autowired
     private RedisTemplate redisTemplate;
-
-    @Value("${jwt.tokenHead}")
-    private String tokenHead;
 
     @Override
     public Admin getAdminByUsername(String username) {
@@ -105,6 +105,24 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
             return new AdminUserDetails(admin, null);
         }
         throw new UsernameNotFoundException("用户名或密码错误");
+    }
+
+    @Override
+    public void updatePassword(UpdPwdParam updPwdParam) {
+        Admin admin = getAdminByUsername(updPwdParam.getUsername());
+        boolean matches = passwordEncoder.matches(updPwdParam.getOldPassword(), admin.getPassword());
+        if (!matches) {
+            throw new ApiException("原密码错误");
+        }
+        String pwd = passwordEncoder.encode(updPwdParam.getNewPassword());
+        LambdaUpdateWrapper<Admin> updateWrapper =
+            new UpdateWrapper<Admin>().lambda().set(Admin::getPassword, pwd).eq(Admin::getId, admin.getId());
+        update(updateWrapper);
+        String key = "admin:info:" + admin.getUsername();
+        Boolean exist = redisTemplate.hasKey(key);
+        if (BooleanUtil.isTrue(exist)) {
+            redisTemplate.delete(key);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.yh.weatherpush.service;
 
 import com.yh.weatherpush.dto.admin.LoginParam;
+import com.yh.weatherpush.dto.admin.UpdPwdParam;
 import com.yh.weatherpush.entity.Admin;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yh.weatherpush.entity.Permission;
@@ -29,4 +30,9 @@ public interface AdminService extends IService<Admin> {
      */
     UserDetails loadUserByUsername(String username);
 
+    /**
+     * 修改密码
+     * @param updPwdParam
+     */
+    void updatePassword(UpdPwdParam updPwdParam);
 }

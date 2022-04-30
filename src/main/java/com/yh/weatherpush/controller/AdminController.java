@@ -3,6 +3,7 @@ package com.yh.weatherpush.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.admin.LoginParam;
+import com.yh.weatherpush.dto.admin.UpdPwdParam;
 import com.yh.weatherpush.entity.Admin;
 import com.yh.weatherpush.service.AdminService;
 import io.swagger.annotations.Api;
@@ -49,6 +50,18 @@ public class AdminController {
     @ApiOperation("登出")
     @PostMapping("/logout")
     public Result<JSONObject> logout() {
+        return Result.success();
+    }
+
+    @ApiOperation("修改密码")
+    @PostMapping("/updPwd")
+    public Result<Void> updatePassword(Principal principal, @Validated @RequestBody UpdPwdParam updPwdParam) {
+        if (principal == null) {
+            return Result.unauthorized(null);
+        }
+        String username = principal.getName();
+        updPwdParam.setUsername(username);
+        adminService.updatePassword(updPwdParam);
         return Result.success();
     }
 }
