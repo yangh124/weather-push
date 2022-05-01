@@ -20,7 +20,7 @@ class WeatherPushApplicationTests {
     @Test
     void contextLoads() {
         String encode = passwordEncoder.encode("123456");
-        System.out.println(passwordEncoder.matches("123456", encode));
+        System.out.println(encode);
     }
 
 }

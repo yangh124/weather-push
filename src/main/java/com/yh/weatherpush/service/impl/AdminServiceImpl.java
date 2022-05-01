@@ -114,7 +114,12 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         if (!matches) {
             throw new ApiException("原密码错误");
         }
-        String pwd = passwordEncoder.encode(updPwdParam.getNewPassword());
+        String newPassword = updPwdParam.getNewPassword();
+        String confirmPassword = updPwdParam.getConfirmPassword();
+        if (!newPassword.equals(confirmPassword)) {
+            throw new ApiException("确认密码与新密码不一致!");
+        }
+        String pwd = passwordEncoder.encode(newPassword);
         LambdaUpdateWrapper<Admin> updateWrapper =
             new UpdateWrapper<Admin>().lambda().set(Admin::getPassword, pwd).eq(Admin::getId, admin.getId());
         update(updateWrapper);

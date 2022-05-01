@@ -25,6 +25,10 @@ public class UpdPwdParam implements Serializable {
     @ApiModelProperty("新密码")
     private String newPassword;
 
+    @NotEmpty(message = "确认密码不能为空")
+    @ApiModelProperty("确认密码")
+    private String confirmPassword;
+
     @ApiModelProperty(hidden = true)
     private String username;
 }
