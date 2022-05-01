@@ -17,6 +17,7 @@ import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.entity.TaskRelTag;
+import com.yh.weatherpush.enums.TaskEnum;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.mapper.TagMapper;
@@ -75,6 +76,9 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
                 Long taskId = record.getId();
                 List<Tag> tagList = map.get(taskId);
                 dto.setTagList(tagList);
+                String taskName = record.getTaskName();
+                String desc = TaskEnum.getDescByName(taskName);
+                dto.setTaskName(desc);
                 resRecords.add(dto);
             }
         }
