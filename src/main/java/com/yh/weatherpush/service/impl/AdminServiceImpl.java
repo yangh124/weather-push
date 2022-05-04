@@ -18,6 +18,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -49,25 +51,13 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AdminMapper adminMapper;
-    @Autowired
-    private RedisTemplate redisTemplate;
 
+    @Cacheable(value = {"admin"}, key = "#username")
     @Override
     public Admin getAdminByUsername(String username) {
-        String key = "admin:info:" + username;
-        Boolean exist = redisTemplate.hasKey(key);
-        if (BooleanUtil.isTrue(exist)) {
-            return (Admin)redisTemplate.opsForValue().get(key);
-        } else {
-            LambdaQueryWrapper<Admin> eq =
-                new QueryWrapper<Admin>().lambda().eq(Admin::getUsername, username).last("LIMIT 1");
-            Admin admin = adminMapper.selectOne(eq);
-            // 此处需要做防刷接口处理
-            if (null != admin) {
-                redisTemplate.opsForValue().setIfAbsent(key, admin, 2, TimeUnit.HOURS);
-            }
-            return admin;
-        }
+        LambdaQueryWrapper<Admin> eq =
+            new QueryWrapper<Admin>().lambda().eq(Admin::getUsername, username).last("LIMIT 1");
+        return adminMapper.selectOne(eq);
     }
 
     @Override
@@ -107,6 +97,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         throw new UsernameNotFoundException("用户名或密码错误");
     }
 
+    @CacheEvict(value ="admin",key = "#updPwdParam.username")
     @Override
     public void updatePassword(UpdPwdParam updPwdParam) {
         Admin admin = getAdminByUsername(updPwdParam.getUsername());
@@ -123,11 +114,6 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         LambdaUpdateWrapper<Admin> updateWrapper =
             new UpdateWrapper<Admin>().lambda().set(Admin::getPassword, pwd).eq(Admin::getId, admin.getId());
         update(updateWrapper);
-        String key = "admin:info:" + admin.getUsername();
-        Boolean exist = redisTemplate.hasKey(key);
-        if (BooleanUtil.isTrue(exist)) {
-            redisTemplate.delete(key);
-        }
     }
 
 }
