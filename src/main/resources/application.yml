@@ -44,7 +44,9 @@ mybatis-plus:
 
 jwt:
   secret:
-  expiration:
+  expiration: 7200
+  tokenHeader: token
+  tokenHead: Bearer
 
 #企业微信
 qywx:
@@ -86,3 +88,6 @@ hfweather:
   warn-url: https://devapi.qweather.com/v7/warning/now?location=code&key=${hfweather.key}
   # 3天天气
   day-url: https://devapi.qweather.com/v7/weather/3d?location=code&key=${hfweather.key}
+
+swagger:
+  enable: true
