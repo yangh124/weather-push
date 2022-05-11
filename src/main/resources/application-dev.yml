@@ -10,19 +10,19 @@ spring:
     timeout: 3000ms # 连接超时时间（毫秒）
 
 jwt:
-  secret: absdefg
+  secret:
   expiration: 7200
   tokenHeader: token
   tokenHead: Bearer
 
 qywx:
-  corpid: ww43a3e50e6f5189a4
-  push-secret: V1TiAK4gQ00xNImsfPupVnhmPwGYjABK2p-5e2wdXqQ
-  other-secret: 5TO0opozR9bwXcSFP1KVkQkjaEYMpEvfCKk9f13PN4w
-  agentid: 1000002
+  corpid:
+  push-secret:
+  other-secret:
+  agentid:
 
 hfweather:
-  key: 79e0081b48bb4f8d87f4a9a338e5cc34
+  key:
 
 swagger:
   enable: true
