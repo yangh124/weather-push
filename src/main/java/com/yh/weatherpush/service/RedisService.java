@@ -20,6 +20,4 @@ public interface RedisService {
 
     List<Holiday> redisHolidayList(LocalDate date);
 
-    Map<String, SchTask> redisSchTask();
-
 }

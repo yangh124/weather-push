@@ -12,7 +12,10 @@ import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.RedisService;
 import com.yh.weatherpush.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,8 +37,10 @@ public class RedisServiceImpl implements RedisService {
     private TagService tagService;
     @Autowired
     private HolidayService holidayService;
-    @Autowired
-    private SchTaskMapper schTaskMapper;
+    @Value("classpath:lua/hmset.lua")
+    private Resource hmsetLua;
+    @Value("classpath:lua/sadd.lua")
+    private Resource saddLua;
 
     @Override
     public List<Tag> redisTagList() {
@@ -67,8 +72,15 @@ public class RedisServiceImpl implements RedisService {
             List<Holiday> list = holidayService.list(queryWrapper);
             if (CollUtil.isNotEmpty(list)) {
                 map = list.stream().collect(Collectors.toMap(a -> a.getHolidayDate().format(formatter), a -> a));
-                redisTemplate.opsForHash().putAll(key, map);
-                redisTemplate.expire(key, 24, TimeUnit.HOURS);
+                List<Object> argList = new ArrayList<>();
+                argList.add(map.size() << 1 + 2);
+                argList.add(86400L);
+                for (String s : map.keySet()) {
+                    argList.add(s);
+                    argList.add(map.get(s));
+                }
+                Object[] args = argList.toArray();
+                redisTemplate.execute(RedisScript.of(hmsetLua), Collections.singletonList(key), args);
             }
             return map.get(dateStr);
         } else {
@@ -90,10 +102,12 @@ public class RedisServiceImpl implements RedisService {
             LambdaQueryWrapper<Holiday> queryWrapper = new QueryWrapper<Holiday>().lambda().eq(Holiday::getYear, year);
             List<Holiday> list = holidayService.list(queryWrapper);
             if (CollUtil.isNotEmpty(list)) {
-                for (Holiday holiday : list) {
-                    redisTemplate.opsForSet().add(key, holiday);
-                }
-                redisTemplate.expire(key, 24, TimeUnit.HOURS);
+                List<Object> argList = new ArrayList<>();
+                argList.add(list.size() + 2);
+                argList.add(86400L);
+                argList.addAll(list);
+                Object[] args = argList.toArray();
+                redisTemplate.execute(RedisScript.of(saddLua), Collections.singletonList(key), args);
             }
             return list;
         } else {
@@ -104,23 +118,6 @@ public class RedisServiceImpl implements RedisService {
                 return null;
             }
         }
-    }
-
-    @Override
-    public Map<String, SchTask> redisSchTask() {
-        String key = "task:map";
-        Boolean b = redisTemplate.hasKey(key);
-        if (!BooleanUtil.isTrue(b)) {
-            List<SchTask> tasks = schTaskMapper.selectList(new QueryWrapper<>());
-            if (CollUtil.isNotEmpty(tasks)) {
-                for (SchTask task : tasks) {
-                    String taskName = task.getTaskName();
-                    redisTemplate.opsForHash().put(key, taskName, task);
-                }
-            }
-        }
-        Map<String, SchTask> entries = redisTemplate.opsForHash().entries(key);
-        return entries;
     }
 
 }
