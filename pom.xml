@@ -10,15 +10,16 @@
     </parent>
     <groupId>com.yh</groupId>
     <artifactId>weather-push</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <name>weather-push</name>
     <description>weather-push</description>
     <properties>
         <java.version>1.8</java.version>
         <docker.maven.plugin.version>1.2.2</docker.maven.plugin.version>
-        <docker.host>http://192.168.3.3:2375</docker.host>
-        <!--        <docker.host>http://101.43.11.186:4396</docker.host>-->
+        <docker.host>http://192.168.3.3:2376</docker.host>
         <log4j2.version>2.15.0</log4j2.version>
+        <docker.repository.registry>registry.cn-hangzhou.aliyuncs.com</docker.repository.registry>
+        <docker.repository.namespace>yh123</docker.repository.namespace>
     </properties>
     <dependencies>
         <dependency>
@@ -150,37 +151,35 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <!-- dockerfile maven -->
             <plugin>
                 <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>${docker.maven.plugin.version}</version>
+                <artifactId>dockerfile-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
+                        <id>default</id>
                         <goals>
                             <goal>build</goal>
+                            <goal>push</goal>
                         </goals>
+                        <configuration>
+                        </configuration>
                     </execution>
                 </executions>
+                <!--docker镜像相关的配置信息-->
                 <configuration>
-                    <env>
-                        <TZ>Asia/Shanghai</TZ>
-                        <LANG>C.UTF-8</LANG>
-                    </env>
-                    <imageName>${project.artifactId}:${project.version}</imageName>
-                    <dockerHost>${docker.host}</dockerHost>
-                    <!--                    <baseImage>java:8</baseImage>-->
-                    <baseImage>houwm/jdk8:arm64</baseImage>
-                    <!--注意这里不能换行 -->
-                    <entryPoint>["java", "-jar", "-Dspring.profiles.active=prod","/${project.build.finalName}.jar","-Xms512m -Xmx512m"]</entryPoint>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
+                    <contextDirectory>${project.basedir}</contextDirectory>
+                    <dockerfile>${project.basedir}/Dockerfile</dockerfile>
+                    <!--使用username和password标签，也可以使用useMavenSettingsForAuth，在settings.xml文件中的配置 servers-->
+                    <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
+                    <username>xxx</username>
+                    <password>xxx</password>
+                    <repository>${docker.repository.registry}/${docker.repository.namespace}/${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
                 </configuration>
             </plugin>
         </plugins>
