@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-push-deployment
+  namespace: default
+  labels:
+    app: weather-push
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-push
+  template:
+    metadata:
+      labels:
+        app: weather-push
+    spec:
+      containers:
+        - name: weather-push
+          # 指定Docker Hub中的镜像地址
+          image: registry.cn-hangzhou.aliyuncs.com/yh123/weather-push:0.0.5-SNAPSHOT
+          ports:
+            - containerPort: 8080
+          env:
+            # 指定环境
+            - name: spring.profiles.active
+              value: prod
+            # 指定时区
+            - name: TZ
+              value: Asia/Shanghai
+          volumeMounts:
+            - mountPath: /var/logs
+              name: log-volume
+      volumes:
+        - name: log-volume
+          hostPath:
+            path: /mydata/app/weather-push/logs
+            type: DirectoryOrCreate
