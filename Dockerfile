@@ -1,5 +1,5 @@
 # 基础镜像 我的服务器是arm架构，使用houwm/jdk8:arm64，x86架构用java:8
-FROM houwm/jdk8:arm64
+FROM java:8
 
 MAINTAINER yanghao<yh.124@qq.com>
 

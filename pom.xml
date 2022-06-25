@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.yh</groupId>
     <artifactId>weather-push</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>1.0.0-RELEASE</version>
     <name>weather-push</name>
     <description>weather-push</description>
     <properties>
@@ -170,7 +170,7 @@
                 <!--docker镜像相关的配置信息-->
                 <configuration>
                     <contextDirectory>${project.basedir}</contextDirectory>
-                    <dockerfile>${project.basedir}/Dockerfile</dockerfile>
+                    <dockerfile>Dockerfile</dockerfile>
                     <!--使用username和password标签，也可以使用useMavenSettingsForAuth，在settings.xml文件中的配置 servers-->
                     <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
                     <username>xxx</username>
