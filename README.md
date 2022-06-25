@@ -18,7 +18,7 @@ Secret：密钥（需要发送到企业微信app才能查看）
 ## 项目开发
 前端项目：[weather-push-admin](https://github.com/yangh124/weather-push-admin)
 后台项目：[weather-push](https://github.com/yangh124/weather-push)
-## 定时任务配置配置
+## 定时任务配置
 ### 执行执行初始化sql
 在后台项目resources/sql/init.sql
 ### 运行前后端项目
