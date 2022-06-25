@@ -101,14 +101,15 @@ public class RedisServiceImpl implements RedisService {
             int year = LocalDate.now().getYear();
             LambdaQueryWrapper<Holiday> queryWrapper = new QueryWrapper<Holiday>().lambda().eq(Holiday::getYear, year);
             List<Holiday> list = holidayService.list(queryWrapper);
-            if (CollUtil.isNotEmpty(list)) {
-                List<Object> argList = new ArrayList<>();
-                argList.add(list.size() + 2);
-                argList.add(86400L);
-                argList.addAll(list);
-                Object[] args = argList.toArray();
-                redisTemplate.execute(RedisScript.of(saddLua), Collections.singletonList(key), args);
+            if (CollUtil.isEmpty(list)) {
+                list = holidayService.getHolidayFromGitHub(date);
             }
+            List<Object> argList = new ArrayList<>();
+            argList.add(list.size() + 2);
+            argList.add(86400L);
+            argList.addAll(list);
+            Object[] args = argList.toArray();
+            redisTemplate.execute(RedisScript.of(saddLua), Collections.singletonList(key), args);
             return list;
         } else {
             Set members = redisTemplate.opsForSet().members(key);

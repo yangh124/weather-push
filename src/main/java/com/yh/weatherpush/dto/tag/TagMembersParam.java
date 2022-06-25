@@ -16,7 +16,7 @@ import java.util.List;
 public class TagMembersParam implements Serializable {
     private static final long serialVersionUID = -7506128416856466716L;
 
-    @NotNull
+    @NotNull(message = "id不能为空")
     @JSONField(name = "tagid")
     private Integer tagId;
 

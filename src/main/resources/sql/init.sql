@@ -300,3 +300,6 @@ CREATE TABLE `sys_task_rel_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='任务关联标签';
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO `sys_admin` (`username`, `password`, `avatar`, `ctime`)
+VALUES ('admin', '$2a$10$uj25NbcLtPsHabSbkiQA4OzmjuFeocupzJdBkJyJH/EUKIoCiUOHq', '', NOW());

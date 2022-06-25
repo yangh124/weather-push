@@ -18,4 +18,12 @@ public interface HolidayService extends IService<Holiday> {
      * @return
      */
     boolean isOffDay(LocalDate date);
+
+    /**
+     * 从github获取节假日信息
+     * 
+     * @param date
+     * @return
+     */
+    List<Holiday> getHolidayFromGitHub(LocalDate date);
 }

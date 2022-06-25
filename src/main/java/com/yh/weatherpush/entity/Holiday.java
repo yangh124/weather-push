@@ -9,8 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * <p>
@@ -24,6 +23,9 @@ import lombok.Setter;
 @Setter
 @TableName("sys_holiday")
 @ApiModel(value = "Holiday对象", description = "节假日")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Holiday implements Serializable {
 
     private static final long serialVersionUID = 1L;
