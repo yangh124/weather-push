@@ -1,13 +1,3 @@
----
-title: 通过企业微信（微信插件）实现每日天气推送
-categories:
-- 项目
-  tags:
-- 实战
-  date: 2021-11-06
-  toc: true # 是否启用内容索引
-  sidebar: true # 是否启用sidebar侧边栏，none：不启用
----
 ## 企业微信配置
 ### 进入[企业微信官网](https://work.weixin.qq.com)，点击立即注册
 ![16361632863091](https://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2021/11/06/16361632863091.jpg)
