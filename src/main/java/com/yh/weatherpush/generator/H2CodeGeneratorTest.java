@@ -42,7 +42,7 @@ public class H2CodeGeneratorTest {
      * 数据源配置
      */
     private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(
-        "jdbc:mysql://192.168.3.3:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false&autoReconnect=true&allowMultiQueries=true",
+        "jdbc:mysql://127.0.0.1:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false&autoReconnect=true&allowMultiQueries=true",
         "root", "root").build();
 
     /**

@@ -4,7 +4,7 @@
  Source Server         : mysql8
  Source Server Type    : MySQL
  Source Server Version : 80024
- Source Host           : 192.168.3.3:3306
+ Source Host           : 127.0.0.1:3306
  Source Schema         : weather
 
  Target Server Type    : MySQL
