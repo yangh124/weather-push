@@ -16,7 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <docker.maven.plugin.version>1.2.2</docker.maven.plugin.version>
-        <docker.host>http://127.0.0.1:2376</docker.host>
+<!--        <docker.host>http://127.0.0.1:2376</docker.host>-->
         <log4j2.version>2.15.0</log4j2.version>
         <docker.repository.registry>registry.cn-hangzhou.aliyuncs.com</docker.repository.registry>
         <docker.repository.namespace>yh123</docker.repository.namespace>
@@ -153,35 +153,35 @@
             </plugin>
 
             <!-- dockerfile maven -->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>push</goal>
-                        </goals>
-                        <configuration>
-                        </configuration>
-                    </execution>
-                </executions>
-                <!--docker镜像相关的配置信息-->
-                <configuration>
-                    <contextDirectory>${project.basedir}</contextDirectory>
-                    <dockerfile>Dockerfile</dockerfile>
-                    <!--使用username和password标签，也可以使用useMavenSettingsForAuth，在settings.xml文件中的配置 servers-->
-                    <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
-                    <username>xxx</username>
-                    <password>xxx</password>
-                    <repository>${docker.repository.registry}/${docker.repository.namespace}/${project.artifactId}</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
-                    </buildArgs>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default</id>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                            <goal>push</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                &lt;!&ndash;docker镜像相关的配置信息&ndash;&gt;-->
+<!--                <configuration>-->
+<!--                    <contextDirectory>${project.basedir}</contextDirectory>-->
+<!--                    <dockerfile>Dockerfile</dockerfile>-->
+<!--                    &lt;!&ndash;使用username和password标签，也可以使用useMavenSettingsForAuth，在settings.xml文件中的配置 servers&ndash;&gt;-->
+<!--                    <useMavenSettingsForAuth>false</useMavenSettingsForAuth>-->
+<!--                    <username>xxx</username>-->
+<!--                    <password>xxx</password>-->
+<!--                    <repository>${docker.repository.registry}/${docker.repository.namespace}/${project.artifactId}</repository>-->
+<!--                    <tag>${project.version}</tag>-->
+<!--                    <buildArgs>-->
+<!--                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
+<!--                    </buildArgs>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
