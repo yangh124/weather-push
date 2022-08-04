@@ -95,9 +95,7 @@ public class QuartzClient {
     }
 
     /**
-     * 修改job
-     *
-     * 只能修改执行时间
+     * 删除job
      *
      * @param scheduler 调度器
      * @param taskId 任务id

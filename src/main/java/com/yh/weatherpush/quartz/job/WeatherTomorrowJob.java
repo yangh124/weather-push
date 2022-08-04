@@ -39,7 +39,7 @@ public class WeatherTomorrowJob implements Job {
     private TagService tagService;
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute(JobExecutionContext jobExecutionContext) {
         log.info("============= WeatherTomorrowJob start =============");
         String taskId = jobExecutionContext.getJobDetail().getKey().getName();
         List<Tag> tagList = tagService.getTagListForJob(taskId);
