@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # $1 新镜像id或名字
 NAME=weather-push
 if [ -z "$1" ];then
