@@ -2,6 +2,7 @@ package com.yh.weatherpush.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yh.weatherpush.entity.Holiday;
@@ -11,11 +12,13 @@ import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.RedisService;
 import com.yh.weatherpush.service.TagService;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -33,6 +36,8 @@ public class RedisServiceImpl implements RedisService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private RedissonClient redissonClient;
     @Autowired
     private TagService tagService;
     @Autowired
@@ -84,7 +89,9 @@ public class RedisServiceImpl implements RedisService {
             }
             return map.get(dateStr);
         } else {
-            Object o = redisTemplate.opsForHash().get(key, dateStr);
+            // 添加双引号
+            String field = "\"" + dateStr + "\"";
+            Object o = redisTemplate.opsForHash().get(key, field);
             if (null != o) {
                 return (Holiday)o;
             } else {
