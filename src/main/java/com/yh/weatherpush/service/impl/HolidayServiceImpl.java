@@ -35,8 +35,6 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
     @Autowired
     private RedisService redisService;
     @Autowired
-    private HolidayMapper holidayMapper;
-    @Autowired
     private RestTemplate restTemplate;
     @Value("${holiday.url}")
     private String holidayUrl;
