@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk8
 
 MAINTAINER yanghao<yh.124@qq.com>
 
