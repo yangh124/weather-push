@@ -3,7 +3,6 @@ FROM registry.cn-hangzhou.aliyuncs.com/yh123/openjdk:8u102
 MAINTAINER yanghao<yh.124@qq.com>
 
 # 参数
-ARG JAR_FILE
 ARG ENCRYPT
 
 # 环境变量
@@ -14,7 +13,7 @@ ENV PARAMS="--server.port=8080 --spring.profiles.active=prod --jasypt.encryptor.
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # 复制jar包
-COPY target/${JAR_FILE} /app.jar
+COPY target/weather-push.jar /app.jar
 
 # 暴露端口
 EXPOSE 8080
