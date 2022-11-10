@@ -145,7 +145,7 @@
 
     <build>
             <!-- 产生的构件的文件名，默认值是${artifactId}-${version}。 -->
-        <finalName>projectname</finalName>
+        <finalName>weather-push</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
