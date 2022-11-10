@@ -6,7 +6,7 @@ spring:
   application:
     name: weather-push
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false&autoReconnect=true&allowMultiQueries=true
+    url: jdbc:mysql://127.0.0.1:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&autoReconnect=true&allowMultiQueries=true
     username: root
     password: root
   redis:
