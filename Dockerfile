@@ -1,4 +1,4 @@
-FROM openjdk:8u102
+FROM registry.cn-hangzhou.aliyuncs.com/yh123/openjdk:8u102
 
 MAINTAINER yanghao<yh.124@qq.com>
 
