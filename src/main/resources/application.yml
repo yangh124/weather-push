@@ -90,7 +90,7 @@ hfweather:
   day-url: https://devapi.qweather.com/v7/weather/3d?location=code&key=${hfweather.key}
 
 holiday:
-  url: https://natescarlet.coding.net/p/github/d/holiday-cn/git/raw/master/{year}.json
+  url: https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master/{year}.json
 
 swagger:
   enable: true
