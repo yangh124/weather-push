@@ -2,30 +2,29 @@ package com.yh.weatherpush.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.BooleanUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yh.weatherpush.entity.Holiday;
-import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.entity.Tag;
-import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.RedisService;
 import com.yh.weatherpush.service.TagService;
-import org.redisson.api.RedissonClient;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author : yh
@@ -36,8 +35,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Autowired
     private RedisTemplate redisTemplate;
-    @Autowired
-    private RedissonClient redissonClient;
     @Autowired
     private TagService tagService;
     @Autowired
@@ -68,13 +65,16 @@ public class RedisServiceImpl implements RedisService {
     public Holiday redisHolidayByKey(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String dateStr = date.format(formatter);
-        String key = "holiday:" + date.getYear() + ":map";
+        int year = date.getYear();
+        String key = "holiday:" + year + ":map";
         Boolean b = redisTemplate.hasKey(key);
         Map<String, Holiday> map = new HashMap<>();
         if (!BooleanUtil.isTrue(b)) {
-            int year = LocalDate.now().getYear();
             LambdaQueryWrapper<Holiday> queryWrapper = new QueryWrapper<Holiday>().lambda().eq(Holiday::getYear, year);
             List<Holiday> list = holidayService.list(queryWrapper);
+            if (CollUtil.isEmpty(list)) {
+                list = holidayService.getHolidayFromGitHub(year);
+            }
             if (CollUtil.isNotEmpty(list)) {
                 map = list.stream().collect(Collectors.toMap(a -> a.getHolidayDate().format(formatter), a -> a));
                 List<Object> argList = new ArrayList<>();
@@ -93,7 +93,7 @@ public class RedisServiceImpl implements RedisService {
             String field = "\"" + dateStr + "\"";
             Object o = redisTemplate.opsForHash().get(key, field);
             if (null != o) {
-                return (Holiday)o;
+                return (Holiday) o;
             } else {
                 return null;
             }
@@ -102,14 +102,14 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public List<Holiday> redisHolidayList(LocalDate date) {
-        String key = "holiday:" + date.getYear() + ":set";
+        int year = date.getYear();
+        String key = "holiday:" + year + ":set";
         Boolean b = redisTemplate.hasKey(key);
         if (!BooleanUtil.isTrue(b)) {
-            int year = LocalDate.now().getYear();
             LambdaQueryWrapper<Holiday> queryWrapper = new QueryWrapper<Holiday>().lambda().eq(Holiday::getYear, year);
             List<Holiday> list = holidayService.list(queryWrapper);
             if (CollUtil.isEmpty(list)) {
-                list = holidayService.getHolidayFromGitHub(date);
+                list = holidayService.getHolidayFromGitHub(year);
             }
             List<Object> argList = new ArrayList<>();
             argList.add(list.size() + 2);

@@ -22,8 +22,8 @@ public interface HolidayService extends IService<Holiday> {
     /**
      * 从github获取节假日信息
      * 
-     * @param date
+     * @param year 年份
      * @return
      */
-    List<Holiday> getHolidayFromGitHub(LocalDate date);
+    List<Holiday> getHolidayFromGitHub(Integer year);
 }

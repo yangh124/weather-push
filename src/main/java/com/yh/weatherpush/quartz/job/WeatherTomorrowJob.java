@@ -6,22 +6,20 @@ import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.QywxService;
 import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;
-import lombok.extern.slf4j.Slf4j;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 明日天气
- * 
+ *
  * @author : yh
  * @date : 2022/4/18 21:27
  */
@@ -47,6 +45,7 @@ public class WeatherTomorrowJob implements Job {
             LocalDate date = LocalDate.now().plusDays(1);
             boolean holiday = holidayService.isOffDay(date);
             if (holiday) {
+                log.info("============= free today =============");
                 return;
             }
             String token = qywxService.getPushToken();
