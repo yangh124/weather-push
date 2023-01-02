@@ -17,6 +17,8 @@ public class HfConfigPrProperties  {
 
     private String key;
 
+    private String domain;
+
     /**
      * 实时天气
      */

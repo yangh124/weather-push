@@ -54,40 +54,42 @@ qywx:
   push-secret:
   other-secret:
   agentid:
+  domain: https://qyapi.weixin.qq.com
   # 获取token
-  token-url: https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${qywx.corpid}&corpsecret=SECRET
+  token-url: ${qywx.domain}/cgi-bin/gettoken?corpid=${qywx.corpid}&corpsecret=SECRET
   # 发送消息
-  send-url: https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=ACCESS_TOKEN
+  send-url: ${qywx.domain}/cgi-bin/message/send?access_token=ACCESS_TOKEN
   tag:
     # 创建标签
-    create-url: https://qyapi.weixin.qq.com/cgi-bin/tag/create?access_token=ACCESS_TOKEN
+    create-url: ${qywx.domain}/cgi-bin/tag/create?access_token=ACCESS_TOKEN
     # 获取标签
-    list-url: https://qyapi.weixin.qq.com/cgi-bin/tag/list?access_token=ACCESS_TOKEN
-    delete-url: https://qyapi.weixin.qq.com/cgi-bin/tag/delete?access_token=ACCESS_TOKEN&tagid=TAG_ID
-    add-tag-user-url: https://qyapi.weixin.qq.com/cgi-bin/tag/addtagusers?access_token=ACCESS_TOKEN
-    del-tag-user-url: https://qyapi.weixin.qq.com/cgi-bin/tag/deltagusers?access_token=ACCESS_TOKEN
+    list-url: ${qywx.domain}/cgi-bin/tag/list?access_token=ACCESS_TOKEN
+    delete-url: ${qywx.domain}/cgi-bin/tag/delete?access_token=ACCESS_TOKEN&tagid=TAG_ID
+    add-tag-user-url: ${qywx.domain}/cgi-bin/tag/addtagusers?access_token=ACCESS_TOKEN
+    del-tag-user-url: ${qywx.domain}/cgi-bin/tag/deltagusers?access_token=ACCESS_TOKEN
   member:
     # 获取加入企业二维码
-    join-qrcode-url: https://qyapi.weixin.qq.com/cgi-bin/corp/get_join_qrcode?access_token=ACCESS_TOKEN
+    join-qrcode-url: ${qywx.domain}/cgi-bin/corp/get_join_qrcode?access_token=ACCESS_TOKEN
     # 获取部门成员 department_id：获取的部门id（1-根部门）； fetch_child：是否递归获取子部门下面的成员：1-递归获取，0-只获取本部门
-    simple-list-url: https://qyapi.weixin.qq.com/cgi-bin/user/simplelist?access_token=ACCESS_TOKEN&department_id=1&fetch_child=1
-    tag-member-list: https://qyapi.weixin.qq.com/cgi-bin/tag/get?access_token=ACCESS_TOKEN&tagid=TAGID
+    simple-list-url: ${qywx.domain}/cgi-bin/user/simplelist?access_token=ACCESS_TOKEN&department_id=1&fetch_child=1
+    tag-member-list: ${qywx.domain}/cgi-bin/tag/get?access_token=ACCESS_TOKEN&tagid=TAGID
 
 #和风天气
 hfweather:
   key:
+  domain: https://devapi.qweather.com
   #实时天气
-  get-url: https://devapi.qweather.com/v7/weather/now?location=code&key=${hfweather.key}
+  get-url: ${hfweather.domain}/v7/weather/now?location=code&key=${hfweather.key}
   #城市信息
   city-url: https://geoapi.qweather.com/v2/city/lookup?range=cn&location=cityName&key=${hfweather.key}&number=1
   #24h天气
-  hour-url: https://devapi.qweather.com/v7/weather/24h?location=code&key=${hfweather.key}
+  hour-url: ${hfweather.domain}/v7/weather/24h?location=code&key=${hfweather.key}
   # 穿衣指数  type=3
-  index-url: https://devapi.qweather.com/v7/indices/1d?type=3&location=code&key=${hfweather.key}
+  index-url: ${hfweather.domain}/v7/indices/1d?type=3&location=code&key=${hfweather.key}
   # 天气预警
-  warn-url: https://devapi.qweather.com/v7/warning/now?location=code&key=${hfweather.key}
+  warn-url: ${hfweather.domain}/v7/warning/now?location=code&key=${hfweather.key}
   # 3天天气
-  day-url: https://devapi.qweather.com/v7/weather/3d?location=code&key=${hfweather.key}
+  day-url: ${hfweather.domain}/v7/weather/3d?location=code&key=${hfweather.key}
 
 holiday:
   url: https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master/{year}.json

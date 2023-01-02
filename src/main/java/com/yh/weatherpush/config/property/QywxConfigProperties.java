@@ -30,6 +30,8 @@ public class QywxConfigProperties {
 
     private String agentid;
 
+    private String domain;
+
     @NestedConfigurationProperty
     private TagConfig tag;
 
