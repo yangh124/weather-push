@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 全局异常处理
- * 
+ *
  * @author yh
  */
 @Slf4j
@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
         if (e.getErrorCode() != null) {
             return Result.failed(e.getErrorCode());
         }
+        log.error(e.getMessage(), e);
         return Result.failed(e.getMessage());
     }
 
@@ -37,6 +38,7 @@ public class GlobalExceptionHandler {
                 message = fieldError.getDefaultMessage();
             }
         }
+        log.warn(e.getMessage(), e);
         return Result.validateFailed(message);
     }
 
@@ -50,6 +52,7 @@ public class GlobalExceptionHandler {
                 message = fieldError.getField() + fieldError.getDefaultMessage();
             }
         }
+        log.warn(e.getMessage(), e);
         return Result.validateFailed(message);
     }
 

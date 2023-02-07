@@ -42,12 +42,4 @@ public interface WeatherService {
      * @return {椒江=101210101, 嘉定=101210101, 杭州=101210101, 开化=101210101}
      */
     String getLocation(String name);
-
-    /**
-     * 获取天气灾害预警
-     * 
-     * @param tags 1 : 杭州 : 101210101
-     * @return 杭州 : 天气信息
-     */
-    Map<Integer, String> getWeatherWarn(List<Tag> tags);
 }
