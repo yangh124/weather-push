@@ -1,25 +1,32 @@
 package com.yh.weatherpush.service.impl;
 
 import com.yh.weatherpush.config.property.HfConfigPrProperties;
-import com.yh.weatherpush.dto.hfweather.*;
+import com.yh.weatherpush.dto.hfweather.HfCityResp;
+import com.yh.weatherpush.dto.hfweather.HfWeatherDayResp;
+import com.yh.weatherpush.dto.hfweather.HfWeatherHourResp;
+import com.yh.weatherpush.dto.hfweather.HfWeatherIndexResp;
+import com.yh.weatherpush.dto.hfweather.HfWeatherResp;
+import com.yh.weatherpush.dto.hfweather.Location;
+import com.yh.weatherpush.dto.hfweather.WeatherDay;
+import com.yh.weatherpush.dto.hfweather.WeatherHour;
+import com.yh.weatherpush.dto.hfweather.WeatherIndex;
+import com.yh.weatherpush.dto.hfweather.WeatherNow;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.service.WeatherService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.redisson.api.RBucket;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author : yh
@@ -33,9 +40,7 @@ public class WeatherServiceImpl implements WeatherService {
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
-    private RedisTemplate redisTemplate;
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private RedissonClient redissonClient;
 
     @Override
     public Map<Integer, String> getTodayWeather(List<Tag> tags) {
@@ -56,7 +61,7 @@ public class WeatherServiceImpl implements WeatherService {
             String weatherIndexUrl = hfConfig.getIndexUrl();
             weatherIndexUrl = weatherIndexUrl.replace("code", code);
             ResponseEntity<HfWeatherIndexResp> weatherIndexResponse =
-                restTemplate.getForEntity(weatherIndexUrl, HfWeatherIndexResp.class);
+                    restTemplate.getForEntity(weatherIndexUrl, HfWeatherIndexResp.class);
             HfWeatherIndexResp weatherIndexBody = weatherIndexResponse.getBody();
             if (null == weatherIndexBody) {
                 throw new ApiException("获取天气指数异常！");
@@ -65,13 +70,13 @@ public class WeatherServiceImpl implements WeatherService {
             String weatherHourUrl = hfConfig.getHourUrl();
             weatherHourUrl = weatherHourUrl.replace("code", code);
             ResponseEntity<HfWeatherHourResp> weatherHourResponse =
-                restTemplate.getForEntity(weatherHourUrl, HfWeatherHourResp.class);
+                    restTemplate.getForEntity(weatherHourUrl, HfWeatherHourResp.class);
             HfWeatherHourResp weatherHourBody = weatherHourResponse.getBody();
             if (null == weatherHourBody) {
                 throw new ApiException("获取天气指数异常！");
             }
             String s = covertWeatherData(tagname, weatherBody.getNow(), weatherIndexBody.getDaily(),
-                weatherHourBody.getHourly());
+                    weatherHourBody.getHourly());
             res.put(tagid, s);
         }
         return res;
@@ -96,11 +101,11 @@ public class WeatherServiceImpl implements WeatherService {
             StringBuilder builder = new StringBuilder("【明日天气】【" + tagname + "】\n\n");
             builder.append(weatherDay.getTextDay()).append("\n");
             builder.append("气温：").append(weatherDay.getTempMin()).append("~").append(weatherDay.getTempMax())
-                .append("度\n\n");
+                    .append("度\n\n");
             builder.append("相对湿度：").append(weatherDay.getHumidity()).append("%\n");
             builder.append("降水量：").append(weatherDay.getPrecip()).append(" mm\n");
             builder.append(weatherDay.getWindDirDay()).append(" ").append(weatherDay.getWindScaleDay()).append("级")
-                .append("\n");
+                    .append("\n");
             res.put(tagid, builder.toString());
         }
         return res;
@@ -114,7 +119,8 @@ public class WeatherServiceImpl implements WeatherService {
         for (Tag tag : tags) {
             Integer tagid = tag.getTagId();
             String key = format + ":" + tagid;
-            String s = stringRedisTemplate.opsForValue().get(key);
+            RBucket<String> bucket = redissonClient.getBucket(key);
+            String s = bucket.get();
             if (null != s) {
                 res.put(tagid, s);
             }
@@ -123,14 +129,14 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     /**
-     * @param tagName 城市名
-     * @param now 实时天气
+     * @param tagName   城市名
+     * @param now       实时天气
      * @param indexList 天气指数
-     * @param hourList 逐小时天气
+     * @param hourList  逐小时天气
      * @return 天气预报
      */
     private String covertWeatherData(String tagName, WeatherNow now, List<WeatherIndex> indexList,
-        List<WeatherHour> hourList) {
+            List<WeatherHour> hourList) {
 
         // 降雨预报 未来一小时降雨
         WeatherHour weatherHour = hourList.get(0);
@@ -181,52 +187,5 @@ public class WeatherServiceImpl implements WeatherService {
         }
         Location location = body.getLocation().get(0);
         return location.getId();
-    }
-
-    @Override
-    public Map<Integer, String> getWeatherWarn(List<Tag> tags) {
-        Map<Integer, String> map = new HashMap<>();
-        for (Tag tag : tags) {
-            String url = hfConfig.getWarnUrl();
-            url = url.replace("code", tag.getCode());
-            ResponseEntity<HfWeatherWarnResp> response = restTemplate.getForEntity(url, HfWeatherWarnResp.class);
-            HfWeatherWarnResp body = response.getBody();
-            if (null == body) {
-                throw new ApiException("获取天气预警失败!");
-            }
-            String code = body.getCode();
-            if (!"200".equals(code)) {
-                throw new ApiException("获取天气预警失败! -> " + body);
-            }
-            String fxLink = body.getFxLink();
-            List<WeatherWarn> warning = body.getWarning();
-            if (CollectionUtils.isEmpty(warning)) {
-                continue;
-            }
-            WeatherWarn weatherWarn = warning.get(0);
-            String id = weatherWarn.getId();
-            Boolean exist;
-            try {
-                exist = redisTemplate.hasKey(id);
-                if (null != exist && exist) {
-                    continue;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                continue;
-            }
-            Boolean res;
-            try {
-                res = redisTemplate.opsForValue().setIfAbsent(id, id);
-                if (null != res && res) {
-                    String text = weatherWarn.getText();
-                    String sb = text + "\n详细信息请查看 -> " + "<a href=\"" + fxLink + "\">和风天气</a>";
-                    map.put(tag.getTagId(), sb);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return map;
     }
 }
