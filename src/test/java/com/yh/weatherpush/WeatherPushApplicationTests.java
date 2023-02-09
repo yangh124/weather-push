@@ -1,7 +1,10 @@
 package com.yh.weatherpush;
 
-import com.yh.weatherpush.service.HolidayService;
-import java.time.LocalDate;
+import com.yh.weatherpush.entity.Tag;
+import com.yh.weatherpush.service.WeatherService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,13 +14,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 class WeatherPushApplicationTests {
 
     @Autowired
-    private HolidayService holidayService;
+    private WeatherService weatherService;
 
     @Test
     void contextLoads() {
-        LocalDate date = LocalDate.now().plusDays(1);
-        boolean offDay = holidayService.isOffDay(date);
-        System.out.println(offDay);
+        Tag tag = new Tag();
+        tag.setTagId(8);
+        List<Tag> tags = new ArrayList<>(1);
+        tags.add(tag);
+        Map<Integer, String> redisWeather = weatherService.getRedisWeather(tags);
+        System.out.println(redisWeather);
     }
 
 }

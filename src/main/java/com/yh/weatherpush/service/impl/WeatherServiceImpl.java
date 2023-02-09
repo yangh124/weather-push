@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -116,10 +117,11 @@ public class WeatherServiceImpl implements WeatherService {
         Map<Integer, String> res = new HashMap<>();
         LocalDate now = LocalDate.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        StringCodec stringCodec = new StringCodec();
         for (Tag tag : tags) {
             Integer tagid = tag.getTagId();
             String key = format + ":" + tagid;
-            RBucket<String> bucket = redissonClient.getBucket(key);
+            RBucket<String> bucket = redissonClient.getBucket(key, stringCodec);
             String s = bucket.get();
             if (null != s) {
                 res.put(tagid, s);
