@@ -28,12 +28,14 @@ public class RedissonConfig {
     private String host;
     @Value("${spring.redis.port}")
     private int port;
+    @Value("${spring.redis.password}")
+    private String password;
 
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
         String address = "redis://" + host + ":" + port;
-        config.useSingleServer().setAddress(address).setPingConnectionInterval(60000);
+        config.useSingleServer().setAddress(address).setPingConnectionInterval(60000).setPassword(password);
         ObjectMapper om = new ObjectMapper();
         // 指定要序列化的域，field,get和set,以及修饰符范围，ANY是都有包括private和public
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
