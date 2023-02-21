@@ -14,7 +14,7 @@ class WeatherPushApplicationTests {
 
     @Test
     void contextLoads() {
-        String encode = passwordEncoder.encode("As071602q");
+        String encode = passwordEncoder.encode("12345678");
         System.out.println(encode);
     }
 
