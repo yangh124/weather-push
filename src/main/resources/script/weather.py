@@ -48,7 +48,7 @@ def save_redis(weather, connect, date_str):
 
 
 def select_tag_from_msql():
-    conn = pymysql.connect(host=server_ip, port=3306, user='root', password='root', db='weather')
+    conn = pymysql.connect(host=server_ip, port=30306, user='root', password='root', db='weather')
     sql = "SELECT tag_id,tag_name,code FROM sys_tag;"
     try:
         with conn.cursor() as cursor:
@@ -85,7 +85,7 @@ def convert_tag_name(old_name):
 '''
 if __name__ == '__main__':
     select_tag_from_msql()
-    pool = redis.ConnectionPool(host=server_ip, port=6379, db=0)
+    pool = redis.ConnectionPool(host=server_ip, port=30919, db=0,password='root')
 
     date_str = time.strftime("%Y-%m-%d", time.localtime())
 
