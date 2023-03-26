@@ -1,6 +1,6 @@
 package com.yh.weatherpush.service.impl;
 
-import com.yh.weatherpush.config.property.HfConfigPrProperties;
+import cn.hutool.core.util.StrUtil;
 import com.yh.weatherpush.dto.hfweather.HfCityResp;
 import com.yh.weatherpush.dto.hfweather.HfWeatherDayResp;
 import com.yh.weatherpush.dto.hfweather.HfWeatherHourResp;
@@ -13,6 +13,7 @@ import com.yh.weatherpush.dto.hfweather.WeatherIndex;
 import com.yh.weatherpush.dto.hfweather.WeatherNow;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
+import com.yh.weatherpush.manager.RestApiManager;
 import com.yh.weatherpush.service.WeatherService;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -24,10 +25,7 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author : yh
@@ -37,11 +35,9 @@ import org.springframework.web.client.RestTemplate;
 public class WeatherServiceImpl implements WeatherService {
 
     @Autowired
-    private HfConfigPrProperties hfConfig;
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
     private RedissonClient redissonClient;
+    @Autowired
+    private RestApiManager restApiManager;
 
     @Override
     public Map<Integer, String> getTodayWeather(List<Tag> tags) {
@@ -51,33 +47,21 @@ public class WeatherServiceImpl implements WeatherService {
             String tagname = tag.getTagName();
             String code = tag.getCode();
             // 实时天气
-            String weatherUrl = hfConfig.getGetUrl();
-            weatherUrl = weatherUrl.replace("code", code);
-            ResponseEntity<HfWeatherResp> weatherResponse = restTemplate.getForEntity(weatherUrl, HfWeatherResp.class);
-            HfWeatherResp weatherBody = weatherResponse.getBody();
-            if (null == weatherBody) {
+            HfWeatherResp realTimeWeather = restApiManager.getRealTimeWeather(code);
+            if (null == realTimeWeather) {
                 throw new ApiException("获取天气异常！");
             }
             // 天气指数
-            String weatherIndexUrl = hfConfig.getIndexUrl();
-            weatherIndexUrl = weatherIndexUrl.replace("code", code);
-            ResponseEntity<HfWeatherIndexResp> weatherIndexResponse =
-                    restTemplate.getForEntity(weatherIndexUrl, HfWeatherIndexResp.class);
-            HfWeatherIndexResp weatherIndexBody = weatherIndexResponse.getBody();
-            if (null == weatherIndexBody) {
+            HfWeatherIndexResp weatherIndex = restApiManager.getWeatherIndex(code);
+            if (null == weatherIndex) {
                 throw new ApiException("获取天气指数异常！");
             }
             // 24小时天气
-            String weatherHourUrl = hfConfig.getHourUrl();
-            weatherHourUrl = weatherHourUrl.replace("code", code);
-            ResponseEntity<HfWeatherHourResp> weatherHourResponse =
-                    restTemplate.getForEntity(weatherHourUrl, HfWeatherHourResp.class);
-            HfWeatherHourResp weatherHourBody = weatherHourResponse.getBody();
-            if (null == weatherHourBody) {
+            HfWeatherHourResp hourWeather = restApiManager.getHourWeather(code);
+            if (null == hourWeather) {
                 throw new ApiException("获取天气指数异常！");
             }
-            String s = covertWeatherData(tagname, weatherBody.getNow(), weatherIndexBody.getDaily(),
-                    weatherHourBody.getHourly());
+            String s = covertWeatherData(tagname, realTimeWeather.getNow(), weatherIndex.getDaily(), hourWeather.getHourly());
             res.put(tagid, s);
         }
         return res;
@@ -90,24 +74,20 @@ public class WeatherServiceImpl implements WeatherService {
             Integer tagid = tag.getTagId();
             String tagname = tag.getTagName();
             String code = tag.getCode();
-            // 实时天气
-            String url = hfConfig.getDayUrl();
-            url = url.replace("code", code);
-            ResponseEntity<HfWeatherDayResp> weatherResponse = restTemplate.getForEntity(url, HfWeatherDayResp.class);
-            HfWeatherDayResp weatherBody = weatherResponse.getBody();
-            if (null == weatherBody) {
+            // 明日天气
+            HfWeatherDayResp dayWeather = restApiManager.getDayWeather(code);
+            if (null == dayWeather) {
                 throw new ApiException("获取3天天气异常！");
             }
-            WeatherDay weatherDay = weatherBody.getDaily().get(1);
-            StringBuilder builder = new StringBuilder("【明日天气】【" + tagname + "】\n\n");
-            builder.append(weatherDay.getTextDay()).append("\n");
-            builder.append("气温：").append(weatherDay.getTempMin()).append("~").append(weatherDay.getTempMax())
-                    .append("度\n\n");
-            builder.append("相对湿度：").append(weatherDay.getHumidity()).append("%\n");
-            builder.append("降水量：").append(weatherDay.getPrecip()).append(" mm\n");
-            builder.append(weatherDay.getWindDirDay()).append(" ").append(weatherDay.getWindScaleDay()).append("级")
-                    .append("\n");
-            res.put(tagid, builder.toString());
+            WeatherDay weatherDay = dayWeather.getDaily().get(1);
+            String str = "【明日天气】【" + tagname + "】\n\n" + weatherDay.getTextDay() + "\n"
+                    + "气温：" + weatherDay.getTempMin() + "~" + weatherDay.getTempMax()
+                    + "度\n\n"
+                    + "相对湿度：" + weatherDay.getHumidity() + "%\n"
+                    + "降水量：" + weatherDay.getPrecip() + " mm\n"
+                    + weatherDay.getWindDirDay() + " " + weatherDay.getWindScaleDay() + "级"
+                    + "\n";
+            res.put(tagid, str);
         }
         return res;
     }
@@ -143,7 +123,7 @@ public class WeatherServiceImpl implements WeatherService {
         // 降雨预报 未来一小时降雨
         WeatherHour weatherHour = hourList.get(0);
         String pop = weatherHour.getPop();
-        if (!StringUtils.isEmpty(pop)) {
+        if (StrUtil.isNotBlank(pop)) {
             if (!"0".equals(pop)) {
                 pop = "降水概率：" + pop + "%";
             }
@@ -176,18 +156,15 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public String getLocation(String name) {
-        String cityUrl = hfConfig.getCityUrl();
-        cityUrl = cityUrl.replace("cityName", name);
-        ResponseEntity<HfCityResp> response = restTemplate.getForEntity(cityUrl, HfCityResp.class);
-        HfCityResp body = response.getBody();
-        if (null == body) {
+        HfCityResp locations = restApiManager.getLocation(name);
+        if (null == locations) {
             throw new ApiException("获取地区信息失败!");
         }
-        String code = body.getCode();
+        String code = locations.getCode();
         if (!"200".equals(code)) {
-            throw new ApiException("获取地区信息失败! -> " + body);
+            throw new ApiException("获取地区信息失败! -> " + locations);
         }
-        Location location = body.getLocation().get(0);
+        Location location = locations.getLocation().get(0);
         return location.getId();
     }
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.entity.Holiday;
+import com.yh.weatherpush.manager.RestApiManager;
 import com.yh.weatherpush.mapper.HolidayMapper;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.RedisService;
@@ -15,10 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author : yh
@@ -27,13 +25,13 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> implements HolidayService {
 
+    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     @Autowired
     private RedisService redisService;
     @Autowired
-    private RestTemplate restTemplate;
-    @Value("${holiday.url}")
-    private String holidayUrl;
-    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private RestApiManager restApiManager;
+
 
     @Override
     public boolean isOffDay(LocalDate date) {
@@ -50,28 +48,24 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
 
     @Override
     public List<Holiday> getHolidayFromGitHub(Integer year) {
-        String url = holidayUrl.replace("{year}", String.valueOf(year));
-        ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
-        if (forEntity.getStatusCode().is2xxSuccessful()) {
-            String body = forEntity.getBody();
-            if (null != body) {
-                JSONObject jsonObject = (JSONObject) JSONObject.parse(body);
-                JSONArray days = jsonObject.getJSONArray("days");
-                if (days != null) {
-                    List<Holiday> list = new ArrayList<>();
-                    Iterator<Object> iterator = days.stream().iterator();
-                    while (iterator.hasNext()) {
-                        JSONObject next = (JSONObject) iterator.next();
-                        String name = next.getString("name");
-                        String dateStr = next.getString("date");
-                        Boolean isOffDay = next.getBoolean("isOffDay");
-                        Holiday holiday = Holiday.builder().holidayName(name).ctime(LocalDateTime.now())
-                                .holidayDate(LocalDate.parse(dateStr, format)).isOffDay(isOffDay).year(String.valueOf(year)).build();
-                        list.add(holiday);
-                    }
-                    saveBatch(list);
-                    return list;
+        String body = restApiManager.getHolidayFromGitHub(year);
+        if (null != body) {
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(body);
+            JSONArray days = jsonObject.getJSONArray("days");
+            if (days != null) {
+                List<Holiday> list = new ArrayList<>();
+                Iterator<Object> iterator = days.stream().iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    String name = next.getString("name");
+                    String dateStr = next.getString("date");
+                    Boolean isOffDay = next.getBoolean("isOffDay");
+                    Holiday holiday = Holiday.builder().holidayName(name).ctime(LocalDateTime.now())
+                            .holidayDate(LocalDate.parse(dateStr, format)).isOffDay(isOffDay).year(String.valueOf(year)).build();
+                    list.add(holiday);
                 }
+                saveBatch(list);
+                return list;
             }
         }
         return null;

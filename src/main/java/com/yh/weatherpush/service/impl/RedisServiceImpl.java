@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yh.weatherpush.entity.Holiday;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.RedisService;
-import com.yh.weatherpush.service.TagService;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -36,8 +35,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Autowired
     private RedissonClient redissonClient;
-    @Autowired
-    private TagService tagService;
     @Autowired
     private HolidayService holidayService;
     @Value("classpath:lua/hmset.lua")
