@@ -1,10 +1,8 @@
 package com.yh.weatherpush.dto.qywx;
 
-import com.yh.weatherpush.entity.Tag;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+import lombok.Data;
 
 /**
  * @author : yh
@@ -27,5 +25,5 @@ public class TabResp implements Serializable {
     /**
      * 标签
      */
-    private List<Tag> taglist;
+    private List<QywxTag> taglist;
 }

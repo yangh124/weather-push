@@ -1,17 +1,14 @@
 package com.yh.weatherpush.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.dto.qywx.MemberResp;
 import com.yh.weatherpush.entity.Member;
-import com.yh.weatherpush.entity.Tag;
+import com.yh.weatherpush.manager.api.QywxManager;
 import com.yh.weatherpush.mapper.MemberMapper;
 import com.yh.weatherpush.service.MemberService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yh.weatherpush.service.QywxService;
-import com.yh.weatherpush.service.TagService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * <p>
@@ -25,13 +22,13 @@ import java.util.List;
 public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> implements MemberService {
 
     @Autowired
-    private QywxService qywxService;
+    private QywxManager qywxManager;
 
     @Override
     public List<MemberResp> memberList(Integer id) {
         if (null == id) {
-            return qywxService.memberListByDept();
+            return qywxManager.memberListByDept();
         }
-        return qywxService.memberListByTag(id);
+        return qywxManager.memberListByTag(id);
     }
 }

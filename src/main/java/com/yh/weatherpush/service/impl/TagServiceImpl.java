@@ -7,27 +7,25 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.yh.weatherpush.dto.PageParam;
-import com.yh.weatherpush.dto.tag.TagMembersParam;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
+import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.TagPageParam;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.entity.TaskRelTag;
 import com.yh.weatherpush.exception.ApiException;
+import com.yh.weatherpush.manager.api.QywxManager;
 import com.yh.weatherpush.mapper.TagMapper;
 import com.yh.weatherpush.mapper.TaskRelTagMapper;
-import com.yh.weatherpush.service.QywxService;
 import com.yh.weatherpush.service.TagService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.service.WeatherService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -41,7 +39,7 @@ import java.util.stream.Collectors;
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
 
     @Autowired
-    private QywxService qywxService;
+    private QywxManager qywxManager;
     @Autowired
     private WeatherService weatherService;
     @Autowired
@@ -50,7 +48,9 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Override
     public void create(AddTagParam param) {
         String code = weatherService.getLocation(param.getTagName());
-        Tag tag = qywxService.createTag(param.getTagId(), param.getTagName());
+        Integer tagId = qywxManager.createTag(param.getTagId(), param.getTagName());
+        Tag tag = new Tag();
+        tag.setTagId(tagId);
         tag.setCode(code);
         tag.setCtime(LocalDateTime.now());
         super.save(tag);
@@ -62,7 +62,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         if (null == tag) {
             throw new ApiException("标签不存在");
         }
-        qywxService.deleteTag(tag.getTagId());
+        qywxManager.deleteTag(tag.getTagId());
         super.removeById(id);
     }
 
@@ -107,19 +107,19 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public void addTagMembers(TagMembersParam param) {
-        qywxService.addTagMembers(param);
+        qywxManager.addTagMembers(param);
     }
 
     @Override
     public void delTagMembers(TagMembersParam param) {
-        qywxService.delTagMembers(param);
+        qywxManager.delTagMembers(param);
     }
 
     @Override
     public List<Tag> getTagListForJob(String taskId) {
         List<Tag> tagList = new ArrayList<>();
         List<TaskRelTag> trtList =
-            taskRelTagMapper.selectList(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
+                taskRelTagMapper.selectList(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
         if (CollUtil.isNotEmpty(trtList)) {
             List<Long> tagIdList = trtList.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
             tagList = super.listByIds(tagIdList);

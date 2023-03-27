@@ -2,17 +2,16 @@ package com.yh.weatherpush.controller;
 
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.qywx.MemberResp;
+import com.yh.weatherpush.manager.api.QywxManager;
 import com.yh.weatherpush.service.MemberService;
-import com.yh.weatherpush.service.QywxService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author : yh
@@ -24,14 +23,14 @@ import java.util.List;
 public class MemberController {
 
     @Autowired
-    private QywxService qywxService;
+    private QywxManager qywxManager;
     @Autowired
     private MemberService memberService;
 
     @ApiOperation("获取加入企业二维码")
     @GetMapping("/qr_code")
     public Result<String> getJoinQrCode() {
-        String joinQrCode = qywxService.getJoinQrCode();
+        String joinQrCode = qywxManager.getJoinQrCode();
         return Result.success(joinQrCode);
     }
 

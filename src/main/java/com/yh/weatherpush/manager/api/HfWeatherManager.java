@@ -1,4 +1,4 @@
-package com.yh.weatherpush.manager;
+package com.yh.weatherpush.manager.api;
 
 import com.yh.weatherpush.config.property.HfConfigPrProperties;
 import com.yh.weatherpush.dto.hfweather.HfCityResp;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class RestApiManager {
+public class HfWeatherManager {
 
     @Value("${holiday.url}")
     private String holidayUrl;

@@ -14,16 +14,24 @@ public interface HolidayService extends IService<Holiday> {
 
     /**
      * 是否休息
-     * 
-     * @return
+     *
+     * @return 是否休息
      */
     boolean isOffDay(LocalDate date);
 
     /**
-     * 从github获取节假日信息
-     * 
-     * @param year 年份
-     * @return
+     * 获取某天的节假日信息
+     *
+     * @param date 日期
+     * @return 节假日信息
      */
-    List<Holiday> getHolidayFromGitHub(Integer year);
+    Holiday redisHolidayByKey(LocalDate date);
+
+    /**
+     * 获取今年的节假日信息
+     *
+     * @param date 日期
+     * @return 节假日信息
+     */
+    List<Holiday> redisHolidayList(LocalDate date);
 }

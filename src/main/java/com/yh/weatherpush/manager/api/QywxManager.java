@@ -1,18 +1,17 @@
-package com.yh.weatherpush.service.impl;
+package com.yh.weatherpush.manager.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yh.weatherpush.config.property.QywxConfigProperties;
 import com.yh.weatherpush.dto.qywx.MemberResp;
 import com.yh.weatherpush.dto.qywx.MsgResp;
+import com.yh.weatherpush.dto.qywx.QywxTag;
 import com.yh.weatherpush.dto.qywx.TabResp;
 import com.yh.weatherpush.dto.qywx.Text;
 import com.yh.weatherpush.dto.qywx.TextMsgReq;
 import com.yh.weatherpush.dto.qywx.TokenResp;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
-import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
-import com.yh.weatherpush.service.QywxService;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -20,15 +19,11 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * @author : yh
- * @date : 2021/10/31 13:14
- */
-@Service
-public class QywxServiceImpl implements QywxService {
+@Component
+public class QywxManager {
 
     @Autowired
     private QywxConfigProperties qywxConfig;
@@ -37,10 +32,16 @@ public class QywxServiceImpl implements QywxService {
     @Autowired
     private RedissonClient redissonClient;
 
-    @Override
-    public void pushWeatherMsg(String token, Map<Integer, String> weatherMap) {
-        for (Integer tagid : weatherMap.keySet()) {
-            String msg = weatherMap.get(tagid);
+
+    /**
+     * 发送文本消息
+     *
+     * @param token     token
+     * @param tagMsgMap 标签id -> 消息内容
+     */
+    public void pushWeatherMsg(String token, Map<Integer, String> tagMsgMap) {
+        for (Integer tagid : tagMsgMap.keySet()) {
+            String msg = tagMsgMap.get(tagid);
             String sendUrl = qywxConfig.getSendUrl();
             sendUrl = sendUrl.replace("ACCESS_TOKEN", token);
             TextMsgReq textMsgReq = TextMsgReq.builder().agentid(qywxConfig.getAgentid()).totag(tagid).msgtype("text")
@@ -49,8 +50,14 @@ public class QywxServiceImpl implements QywxService {
         }
     }
 
-    @Override
-    public Tag createTag(Integer tagId, String tagName) {
+    /**
+     * 创建标签
+     *
+     * @param tagId   标签id
+     * @param tagName 标签名称
+     * @return 标签id
+     */
+    public Integer createTag(Integer tagId, String tagName) {
         String createUrl = qywxConfig.getTag().getCreateUrl();
         String token = getOtherToken();
         createUrl = createUrl.replace("ACCESS_TOKEN", token);
@@ -69,13 +76,14 @@ public class QywxServiceImpl implements QywxService {
             throw new ApiException("创建标签失败! -> " + body.getString("errmsg"));
         }
         tagId = body.getInteger("tagid");
-        Tag tag = new Tag();
-        tag.setTagId(tagId);
-        tag.setTagName(tagName);
-        return tag;
+        return tagId;
     }
 
-    @Override
+    /**
+     * 删除标签
+     *
+     * @param tagId 标签id
+     */
     public void deleteTag(Integer tagId) {
         String deleteUrl = qywxConfig.getTag().getDeleteUrl();
         String token = getOtherToken();
@@ -91,11 +99,13 @@ public class QywxServiceImpl implements QywxService {
         }
     }
 
+
     /**
-     * @return
+     * 获取所有标签
+     *
+     * @return 标签
      */
-    @Override
-    public List<Tag> getAllTags() {
+    public List<QywxTag> getAllTags() {
         String labelUrl = qywxConfig.getTag().getListUrl();
         String token = getOtherToken();
         labelUrl = labelUrl.replace("ACCESS_TOKEN", token);
@@ -119,10 +129,11 @@ public class QywxServiceImpl implements QywxService {
      * 3.access_token至少保留512字节的存储空间。
      * </p>
      * 4.企业微信可能会出于运营需要，提前使access_token失效，开发者应实现access_token失效时重新获取的逻辑。
+     * <p>
+     * 推送消息token
      *
      * @return access_token
      */
-    @Override
     public String getPushToken() {
         RBucket<String> accessToken = redissonClient.getBucket("push_access_token");
         boolean exists = accessToken.isExists();
@@ -136,7 +147,11 @@ public class QywxServiceImpl implements QywxService {
         return access_token;
     }
 
-    @Override
+    /**
+     * 通讯录管理token
+     *
+     * @return token
+     */
     public String getOtherToken() {
         RBucket<String> accessToken = redissonClient.getBucket("other_access_token");
         boolean exists = accessToken.isExists();
@@ -169,7 +184,11 @@ public class QywxServiceImpl implements QywxService {
         return body.getAccess_token();
     }
 
-    @Override
+    /**
+     * 获取二维码
+     *
+     * @return 二维码
+     */
     public String getJoinQrCode() {
         String joinQrcodeUrl = qywxConfig.getMember().getJoinQrcodeUrl();
         String token = getOtherToken();
@@ -186,7 +205,11 @@ public class QywxServiceImpl implements QywxService {
         return body.getString("join_qrcode");
     }
 
-    @Override
+    /**
+     * 获取部门成员
+     *
+     * @return 部门成员
+     */
     public List<MemberResp> memberListByDept() {
         String simpleListUrl = qywxConfig.getMember().getSimpleListUrl();
         String token = getOtherToken();
@@ -205,7 +228,12 @@ public class QywxServiceImpl implements QywxService {
         return memberResps;
     }
 
-    @Override
+    /**
+     * 获取标签成员
+     *
+     * @param tagId 标签id
+     * @return 标签成员
+     */
     public List<MemberResp> memberListByTag(Integer tagId) {
         String url = qywxConfig.getMember().getTagMemberList();
         String token = getOtherToken();
@@ -224,7 +252,11 @@ public class QywxServiceImpl implements QywxService {
         return memberResps;
     }
 
-    @Override
+    /**
+     * 添加标签成员
+     *
+     * @param param 参数
+     */
     public void addTagMembers(TagMembersParam param) {
         String url = qywxConfig.getTag().getAddTagUserUrl();
         String token = getOtherToken();
@@ -240,7 +272,11 @@ public class QywxServiceImpl implements QywxService {
         }
     }
 
-    @Override
+    /**
+     * 删除标签成员
+     *
+     * @param param 参数
+     */
     public void delTagMembers(TagMembersParam param) {
         String url = qywxConfig.getTag().getDelTagUserUrl();
         String token = getOtherToken();

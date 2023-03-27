@@ -4,40 +4,36 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.dto.PageParam;
 import com.yh.weatherpush.dto.QuartzBean;
 import com.yh.weatherpush.dto.schtask.AddTaskParam;
 import com.yh.weatherpush.dto.schtask.SchTaskPageDTO;
 import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
-import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.entity.TaskRelTag;
 import com.yh.weatherpush.enums.TaskEnum;
 import com.yh.weatherpush.exception.ApiException;
+import com.yh.weatherpush.manager.TaskRelTagManager;
 import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.mapper.TagMapper;
-import com.yh.weatherpush.mapper.TaskRelTagMapper;
 import com.yh.weatherpush.quartz.QuartzClient;
-import com.yh.weatherpush.quartz.job.WeatherTodayJob;
 import com.yh.weatherpush.service.SchTaskService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yh.weatherpush.service.TaskRelTagService;
-import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.quartz.Scheduler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -55,9 +51,9 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     @Autowired
     private QuartzClient quartzClient;
     @Autowired
-    private TaskRelTagService taskRelTagService;
-    @Autowired
     private TagMapper tagMapper;
+    @Autowired
+    private TaskRelTagManager taskRelTagManager;
 
     @Override
     public IPage<SchTaskPageDTO> pageList(PageParam pageParam) {
@@ -91,7 +87,7 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         // 此处待优化
         for (Long taskId : taskIds) {
             List<TaskRelTag> list =
-                taskRelTagService.list(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
+                    taskRelTagManager.list(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
             if (CollUtil.isNotEmpty(list)) {
                 List<Long> tagIds = list.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
                 List<Tag> tagList = tagMapper.selectBatchIds(tagIds);
@@ -110,15 +106,7 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         super.save(schTask);
         Long taskId = schTask.getId();
         List<Long> tagIds = param.getTagIds();
-        List<TaskRelTag> list = new ArrayList<>(tagIds.size());
-        for (Long tagId : tagIds) {
-            TaskRelTag taskRelTag = new TaskRelTag();
-            taskRelTag.setTaskId(taskId);
-            taskRelTag.setTagId(tagId);
-            taskRelTag.setCtime(LocalDateTime.now());
-            list.add(taskRelTag);
-        }
-        taskRelTagService.saveBatch(list);
+        addBatch(taskId, tagIds);
         QuartzBean quartzBean = new QuartzBean();
         BeanUtil.copyProperties(schTask, quartzBean);
         quartzBean.setId(String.valueOf(taskId));
@@ -144,16 +132,8 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         }
         BeanUtil.copyProperties(dto, task);
         super.updateById(task);
-        taskRelTagService.remove(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, id));
-        List<TaskRelTag> list = new ArrayList<>(tagIds.size());
-        for (Long tagId : tagIds) {
-            TaskRelTag taskRelTag = new TaskRelTag();
-            taskRelTag.setTaskId(id);
-            taskRelTag.setTagId(tagId);
-            taskRelTag.setCtime(LocalDateTime.now());
-            list.add(taskRelTag);
-        }
-        taskRelTagService.saveBatch(list);
+        taskRelTagManager.remove(new UpdateWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, id));
+        addBatch(id, tagIds);
 
         if (StrUtil.isNotBlank(cronExp)) {
             QuartzBean quartzBean = new QuartzBean();
@@ -168,6 +148,18 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
                 quartzClient.stop(scheduler, String.valueOf(id));
             }
         }
+    }
+
+    private void addBatch(Long id, List<Long> tagIds) {
+        List<TaskRelTag> list = new ArrayList<>(tagIds.size());
+        for (Long tagId : tagIds) {
+            TaskRelTag taskRelTag = new TaskRelTag();
+            taskRelTag.setTaskId(id);
+            taskRelTag.setTagId(tagId);
+            taskRelTag.setCtime(LocalDateTime.now());
+            list.add(taskRelTag);
+        }
+        taskRelTagManager.saveBatch(list);
     }
 
 }

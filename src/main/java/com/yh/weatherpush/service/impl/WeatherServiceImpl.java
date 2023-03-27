@@ -13,7 +13,7 @@ import com.yh.weatherpush.dto.hfweather.WeatherIndex;
 import com.yh.weatherpush.dto.hfweather.WeatherNow;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
-import com.yh.weatherpush.manager.RestApiManager;
+import com.yh.weatherpush.manager.api.HfWeatherManager;
 import com.yh.weatherpush.service.WeatherService;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -37,7 +37,7 @@ public class WeatherServiceImpl implements WeatherService {
     @Autowired
     private RedissonClient redissonClient;
     @Autowired
-    private RestApiManager restApiManager;
+    private HfWeatherManager hfWeatherManager;
 
     @Override
     public Map<Integer, String> getTodayWeather(List<Tag> tags) {
@@ -47,17 +47,17 @@ public class WeatherServiceImpl implements WeatherService {
             String tagname = tag.getTagName();
             String code = tag.getCode();
             // 实时天气
-            HfWeatherResp realTimeWeather = restApiManager.getRealTimeWeather(code);
+            HfWeatherResp realTimeWeather = hfWeatherManager.getRealTimeWeather(code);
             if (null == realTimeWeather) {
                 throw new ApiException("获取天气异常！");
             }
             // 天气指数
-            HfWeatherIndexResp weatherIndex = restApiManager.getWeatherIndex(code);
+            HfWeatherIndexResp weatherIndex = hfWeatherManager.getWeatherIndex(code);
             if (null == weatherIndex) {
                 throw new ApiException("获取天气指数异常！");
             }
             // 24小时天气
-            HfWeatherHourResp hourWeather = restApiManager.getHourWeather(code);
+            HfWeatherHourResp hourWeather = hfWeatherManager.getHourWeather(code);
             if (null == hourWeather) {
                 throw new ApiException("获取天气指数异常！");
             }
@@ -75,7 +75,7 @@ public class WeatherServiceImpl implements WeatherService {
             String tagname = tag.getTagName();
             String code = tag.getCode();
             // 明日天气
-            HfWeatherDayResp dayWeather = restApiManager.getDayWeather(code);
+            HfWeatherDayResp dayWeather = hfWeatherManager.getDayWeather(code);
             if (null == dayWeather) {
                 throw new ApiException("获取3天天气异常！");
             }
@@ -156,7 +156,7 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public String getLocation(String name) {
-        HfCityResp locations = restApiManager.getLocation(name);
+        HfCityResp locations = hfWeatherManager.getLocation(name);
         if (null == locations) {
             throw new ApiException("获取地区信息失败!");
         }

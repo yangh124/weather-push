@@ -2,8 +2,8 @@ package com.yh.weatherpush.quartz.job;
 
 import cn.hutool.core.collection.CollUtil;
 import com.yh.weatherpush.entity.Tag;
+import com.yh.weatherpush.manager.api.QywxManager;
 import com.yh.weatherpush.service.HolidayService;
-import com.yh.weatherpush.service.QywxService;
 import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 public class WeatherTomorrowJob implements Job {
 
     @Autowired
-    private QywxService qywxService;
+    private QywxManager qywxManager;
     @Autowired
     private WeatherService weatherService;
     @Autowired
@@ -48,9 +48,9 @@ public class WeatherTomorrowJob implements Job {
                 log.info("============= free today =============");
                 return;
             }
-            String token = qywxService.getPushToken();
+            String token = qywxManager.getPushToken();
             Map<Integer, String> map = weatherService.getTomWeather(tagList);
-            qywxService.pushWeatherMsg(token, map);
+            qywxManager.pushWeatherMsg(token, map);
             LocalDateTime now = LocalDateTime.now();
             String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             log.info(format + " -> 天气推送成功");

@@ -1,21 +1,36 @@
 package com.yh.weatherpush.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.entity.Holiday;
-import com.yh.weatherpush.manager.RestApiManager;
+import com.yh.weatherpush.manager.api.HfWeatherManager;
 import com.yh.weatherpush.mapper.HolidayMapper;
 import com.yh.weatherpush.service.HolidayService;
-import com.yh.weatherpush.service.RedisService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.redisson.api.RMap;
+import org.redisson.api.RScript;
+import org.redisson.api.RScript.Mode;
+import org.redisson.api.RScript.ReturnType;
+import org.redisson.api.RSet;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,15 +42,19 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
 
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    @Value("classpath:lua/hmset.lua")
+    private Resource hmsetLua;
+    @Value("classpath:lua/sadd.lua")
+    private Resource saddLua;
     @Autowired
-    private RedisService redisService;
+    private HfWeatherManager hfWeatherManager;
     @Autowired
-    private RestApiManager restApiManager;
+    private RedissonClient redissonClient;
 
 
     @Override
     public boolean isOffDay(LocalDate date) {
-        Holiday holiday = redisService.redisHolidayByKey(date);
+        Holiday holiday = redisHolidayByKey(date);
         if (ObjectUtil.isNull(holiday)) {
             int value = date.getDayOfWeek().getValue();
             // 周末放假
@@ -46,9 +65,65 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
         }
     }
 
-    @Override
-    public List<Holiday> getHolidayFromGitHub(Integer year) {
-        String body = restApiManager.getHolidayFromGitHub(year);
+    public Holiday redisHolidayByKey(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = date.format(formatter);
+        int year = date.getYear();
+        String key = "holiday:" + year + ":map";
+        RMap<String, Holiday> holidayRMap = redissonClient.getMap(key);
+        boolean exists = holidayRMap.isExists();
+        Map<String, Holiday> map = new HashMap<>();
+        if (!exists) {
+            LambdaQueryWrapper<Holiday> queryWrapper = new QueryWrapper<Holiday>().lambda().eq(Holiday::getYear, year);
+            List<Holiday> list = this.list(queryWrapper);
+            if (CollUtil.isEmpty(list)) {
+                list = this.getHolidayFromGitHub(year);
+            }
+            if (CollUtil.isNotEmpty(list)) {
+                map = list.stream().collect(Collectors.toMap(a -> a.getHolidayDate().format(formatter), a -> a));
+                List<Object> argList = new ArrayList<>();
+                argList.add(map.size() << 1 + 2);
+                argList.add(86400L);
+                for (String s : map.keySet()) {
+                    argList.add(s);
+                    argList.add(map.get(s));
+                }
+                Object[] args = argList.toArray();
+                RScript script = redissonClient.getScript();
+                script.eval(Mode.READ_ONLY, RedisScript.of(hmsetLua).getScriptAsString(), ReturnType.VALUE, Collections.singletonList(key), args);
+            }
+            return map.get(dateStr);
+        } else {
+            return holidayRMap.get(dateStr);
+        }
+    }
+
+    public List<Holiday> redisHolidayList(LocalDate date) {
+        int year = date.getYear();
+        String key = "holiday:" + year + ":set";
+        RSet<Holiday> holidayRSet = redissonClient.getSet(key);
+        boolean exists = holidayRSet.isExists();
+        if (!exists) {
+            LambdaQueryWrapper<Holiday> queryWrapper = new QueryWrapper<Holiday>().lambda().eq(Holiday::getYear, year);
+            List<Holiday> list = this.list(queryWrapper);
+            if (CollUtil.isEmpty(list)) {
+                list = this.getHolidayFromGitHub(year);
+            }
+            List<Object> argList = new ArrayList<>();
+            argList.add(list.size() + 2);
+            argList.add(86400L);
+            argList.addAll(list);
+            Object[] args = argList.toArray();
+            RScript script = redissonClient.getScript();
+            script.eval(Mode.READ_ONLY, RedisScript.of(saddLua).getScriptAsString(), ReturnType.VALUE, Collections.singletonList(key), args);
+            return list;
+        } else {
+            return new ArrayList<>(holidayRSet);
+        }
+    }
+
+    private List<Holiday> getHolidayFromGitHub(Integer year) {
+        String body = hfWeatherManager.getHolidayFromGitHub(year);
         if (null != body) {
             JSONObject jsonObject = (JSONObject) JSONObject.parse(body);
             JSONArray days = jsonObject.getJSONArray("days");
@@ -70,5 +145,4 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
         }
         return null;
     }
-
 }
