@@ -13,7 +13,7 @@ public interface WeatherService {
 
     /**
      * 获取今日天气
-     * 
+     *
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
@@ -21,7 +21,7 @@ public interface WeatherService {
 
     /**
      * 获取明日天气
-     * 
+     *
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
@@ -29,7 +29,7 @@ public interface WeatherService {
 
     /**
      * 获取redis天气
-     * 
+     *
      * @param tags
      * @return
      */
@@ -38,8 +38,8 @@ public interface WeatherService {
     /**
      * 通过地名查询 location code
      *
-     * @param tag
-     * @return {椒江=101210101, 嘉定=101210101, 杭州=101210101, 开化=101210101}
+     * @param name 地名
+     * @return 杭州=10121010
      */
     String getLocation(String name);
 }
