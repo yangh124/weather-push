@@ -45,7 +45,7 @@ public class WeatherTomorrowJob implements Job {
             LocalDate date = LocalDate.now().plusDays(1);
             boolean holiday = holidayService.isOffDay(date);
             if (holiday) {
-                log.info("============= free today =============");
+                log.info("============= free day =============");
                 return;
             }
             String token = qywxManager.getPushToken();

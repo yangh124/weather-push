@@ -1,19 +1,5 @@
 package com.yh.weatherpush.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -24,12 +10,20 @@ import com.yh.weatherpush.dto.AdminUserDetails;
 import com.yh.weatherpush.dto.admin.LoginParam;
 import com.yh.weatherpush.dto.admin.UpdPwdParam;
 import com.yh.weatherpush.entity.Admin;
-import com.yh.weatherpush.entity.Permission;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.mapper.AdminMapper;
 import com.yh.weatherpush.service.AdminService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -54,13 +48,8 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Override
     public Admin getAdminByUsername(String username) {
         LambdaQueryWrapper<Admin> eq =
-            new QueryWrapper<Admin>().lambda().eq(Admin::getUsername, username).last("LIMIT 1");
+                new QueryWrapper<Admin>().lambda().eq(Admin::getUsername, username).last("LIMIT 1");
         return adminMapper.selectOne(eq);
-    }
-
-    @Override
-    public List<Permission> getPermissionList(Long id) {
-        return new ArrayList<>();
     }
 
     @Override
@@ -76,7 +65,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
                 throw new ApiException("帐号已被禁用");
             }
             UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateToken(userDetails);
         } catch (AuthenticationException e) {
@@ -90,12 +79,12 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         // 获取用户信息
         Admin admin = getAdminByUsername(username);
         if (admin != null) {
-            return new AdminUserDetails(admin, null);
+            return new AdminUserDetails(admin);
         }
         throw new UsernameNotFoundException("用户名或密码错误");
     }
 
-    @CacheEvict(value ="admin",key = "#updPwdParam.username")
+    @CacheEvict(value = "admin", key = "#updPwdParam.username")
     @Override
     public void updatePassword(UpdPwdParam updPwdParam) {
         Admin admin = getAdminByUsername(updPwdParam.getUsername());
@@ -110,7 +99,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         }
         String pwd = passwordEncoder.encode(newPassword);
         LambdaUpdateWrapper<Admin> updateWrapper =
-            new UpdateWrapper<Admin>().lambda().set(Admin::getPassword, pwd).eq(Admin::getId, admin.getId());
+                new UpdateWrapper<Admin>().lambda().set(Admin::getPassword, pwd).eq(Admin::getId, admin.getId());
         update(updateWrapper);
     }
 

@@ -54,6 +54,7 @@
 
 ## 数据库表结构
 
-![表结构设计](http://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2023/04/02/16804065842905.jpg)
+![表结构](http://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2023/04/02/16804217312533.jpg)
+
 
 **待续...**

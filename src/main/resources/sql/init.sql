@@ -240,24 +240,6 @@ CREATE TABLE `sys_member` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='成员表';
 
 -- ----------------------------
--- Table structure for sys_permission
--- ----------------------------
-DROP TABLE IF EXISTS `sys_permission`;
-CREATE TABLE `sys_permission` (
-                                  `id` bigint NOT NULL AUTO_INCREMENT,
-                                  `pid` bigint DEFAULT NULL COMMENT '父级权限id',
-                                  `name` varchar(100) DEFAULT NULL COMMENT '名称',
-                                  `value` varchar(200) DEFAULT NULL COMMENT '权限值',
-                                  `icon` varchar(500) DEFAULT NULL COMMENT '图标',
-                                  `type` int DEFAULT NULL COMMENT '权限类型：0->目录；1->菜单；2->按钮（接口绑定权限）',
-                                  `uri` varchar(200) DEFAULT NULL COMMENT '前端资源路径',
-                                  `status` int DEFAULT NULL COMMENT '启用状态；0->禁用；1->启用',
-                                  `create_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-                                  `sort` int DEFAULT NULL COMMENT '排序',
-                                  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3 COMMENT='后台用户权限表';
-
--- ----------------------------
 -- Table structure for sys_sch_task
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_sch_task`;

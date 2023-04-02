@@ -1,27 +1,20 @@
 package com.yh.weatherpush.dto;
 
-import cn.hutool.core.collection.CollUtil;
 import com.yh.weatherpush.entity.Admin;
-import com.yh.weatherpush.entity.Permission;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author : yh
  * @date : 2022/3/16 21:38
  */
 public class AdminUserDetails implements UserDetails {
-    private Admin admin;
-    private List<Permission> permissionList;
 
-    public AdminUserDetails(Admin admin, List<Permission> permissionList) {
+    private Admin admin;
+
+    public AdminUserDetails(Admin admin) {
         this.admin = admin;
-        this.permissionList = permissionList;
     }
 
     public AdminUserDetails() {
@@ -30,12 +23,7 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (CollUtil.isEmpty(permissionList)) {
-            return null;
-        }
-        // 返回当前用户的权限
-        return permissionList.stream().filter(permission -> permission.getValue() != null)
-            .map(permission -> new SimpleGrantedAuthority(permission.getValue())).collect(Collectors.toList());
+        return null;
     }
 
     @Override
