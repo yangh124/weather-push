@@ -101,3 +101,9 @@
 ![表结构](http://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2023/04/02/16804223643686.jpg)
 
 **待续...**
+
+## License
+
+[Apache License 2.0](https://github.com/yangh124/weather-push/blob/master/LICENSE) license.
+
+Copyright (c) 2022-present yangh124
