@@ -34,7 +34,7 @@ public class MemberController {
         return Result.success(joinQrCode);
     }
 
-    @ApiOperation("获取部门成员（所有成员）")
+    @ApiOperation("获取地区成员/所有成员")
     @GetMapping()
     public Result<List<MemberResp>> memberList(@RequestParam(required = false) Integer id) {
         List<MemberResp> memberResps = memberService.memberList(id);
