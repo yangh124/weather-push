@@ -1,11 +1,7 @@
 package com.yh.weatherpush.manager.api;
 
 import com.yh.weatherpush.config.property.HfConfigPrProperties;
-import com.yh.weatherpush.dto.hfweather.HfCityResp;
-import com.yh.weatherpush.dto.hfweather.HfWeatherDayResp;
-import com.yh.weatherpush.dto.hfweather.HfWeatherHourResp;
-import com.yh.weatherpush.dto.hfweather.HfWeatherIndexResp;
-import com.yh.weatherpush.dto.hfweather.HfWeatherResp;
+import com.yh.weatherpush.dto.hfweather.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -21,21 +17,6 @@ public class HfWeatherManager {
     private HfConfigPrProperties hfConfig;
     @Autowired
     private RestTemplate restTemplate;
-
-    /**
-     * 获取节假日信息
-     *
-     * @param year 年份
-     * @return 节假日信息
-     */
-    public String getHolidayFromGitHub(Integer year) {
-        String url = holidayUrl.replace("{year}", String.valueOf(year));
-        ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
-        if (forEntity.getStatusCode().is2xxSuccessful()) {
-            return forEntity.getBody();
-        }
-        return null;
-    }
 
     /**
      * 获取实时天气

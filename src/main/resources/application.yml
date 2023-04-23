@@ -92,7 +92,7 @@ hfweather:
   day-url: ${hfweather.domain}/v7/weather/3d?location=code&key=${hfweather.key}
 
 holiday:
-  url: https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master/{year}.json
+  url: https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master
 
 swagger:
   enable: true

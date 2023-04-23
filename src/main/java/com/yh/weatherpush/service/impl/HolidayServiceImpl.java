@@ -9,18 +9,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.entity.Holiday;
 import com.yh.weatherpush.manager.api.HfWeatherManager;
+import com.yh.weatherpush.manager.api.HolidayApiClient;
 import com.yh.weatherpush.mapper.HolidayMapper;
 import com.yh.weatherpush.service.HolidayService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.redisson.api.RMap;
 import org.redisson.api.RScript;
 import org.redisson.api.RScript.Mode;
@@ -32,6 +23,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author : yh
@@ -48,6 +45,8 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
     private Resource saddLua;
     @Autowired
     private HfWeatherManager hfWeatherManager;
+    @Autowired
+    private HolidayApiClient holidayApiClient;
     @Autowired
     private RedissonClient redissonClient;
 
@@ -123,7 +122,7 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
     }
 
     private List<Holiday> getHolidayFromGitHub(Integer year) {
-        String body = hfWeatherManager.getHolidayFromGitHub(year);
+        String body = holidayApiClient.getHolidayFromGitHub(year);
         if (null != body) {
             JSONObject jsonObject = (JSONObject) JSONObject.parse(body);
             JSONArray days = jsonObject.getJSONArray("days");

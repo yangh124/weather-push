@@ -1,21 +1,24 @@
 package com.yh.weatherpush;
 
+import com.yh.weatherpush.manager.api.HolidayApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDate;
 
 
 @SpringBootTest
 class WeatherPushApplicationTests {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private HolidayApiClient holidayApiClient;
 
     @Test
     void contextLoads() {
-        String encode = passwordEncoder.encode("12345678");
-        System.out.println(encode);
+        int year = LocalDate.now().getYear();
+        String str = holidayApiClient.getHolidayFromGitHub(year);
+        System.out.println(str);
     }
 
 }
