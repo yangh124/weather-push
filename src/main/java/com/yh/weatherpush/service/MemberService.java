@@ -1,8 +1,8 @@
 package com.yh.weatherpush.service;
 
-import com.yh.weatherpush.dto.qywx.MemberResp;
-import com.yh.weatherpush.entity.Member;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yh.weatherpush.dto.qywx.MemberDTO;
+import com.yh.weatherpush.entity.Member;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ import java.util.List;
 public interface MemberService extends IService<Member> {
 
 
-    List<MemberResp> memberList(Integer id);
+    List<MemberDTO> memberList(Integer id);
 }

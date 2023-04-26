@@ -11,7 +11,7 @@ import java.util.List;
  * @date : 2022/3/14 21:34
  */
 @Data
-public class MemberResp implements Serializable {
+public class MemberDTO implements Serializable {
 
     private static final long serialVersionUID = 5767043043513141435L;
 

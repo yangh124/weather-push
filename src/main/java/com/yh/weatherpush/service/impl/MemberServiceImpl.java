@@ -1,14 +1,15 @@
 package com.yh.weatherpush.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yh.weatherpush.dto.qywx.MemberResp;
+import com.yh.weatherpush.dto.qywx.MemberDTO;
 import com.yh.weatherpush.entity.Member;
 import com.yh.weatherpush.manager.api.QywxManager;
 import com.yh.weatherpush.mapper.MemberMapper;
 import com.yh.weatherpush.service.MemberService;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -25,7 +26,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     private QywxManager qywxManager;
 
     @Override
-    public List<MemberResp> memberList(Integer id) {
+    public List<MemberDTO> memberList(Integer id) {
         if (null == id) {
             return qywxManager.memberListByDept();
         }

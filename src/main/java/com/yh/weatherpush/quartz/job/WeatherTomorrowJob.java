@@ -6,16 +6,17 @@ import com.yh.weatherpush.manager.api.QywxManager;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 明日天气
@@ -48,9 +49,8 @@ public class WeatherTomorrowJob implements Job {
                 log.info("============= free day =============");
                 return;
             }
-            String token = qywxManager.getPushToken();
             Map<Integer, String> map = weatherService.getTomWeather(tagList);
-            qywxManager.pushWeatherMsg(token, map);
+            qywxManager.pushWeatherMsg(map);
             LocalDateTime now = LocalDateTime.now();
             String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             log.info(format + " -> 天气推送成功");

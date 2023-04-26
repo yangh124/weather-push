@@ -12,40 +12,17 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "hfweather")
+@ConfigurationProperties(prefix = "hf-weather")
 public class HfConfigPrProperties  {
 
     private String key;
 
-    private String domain;
-
-    /**
-     * 实时天气
-     */
-    private String getUrl;
+    private String baseUrl;
 
     /**
      * 查询城市code
      */
     private String cityUrl;
 
-    /**
-     * 未来24h天气
-     */
-    private String hourUrl;
 
-    /**
-     * 天气指数
-     */
-    private String indexUrl;
-
-    /**
-     * 天气预警
-     */
-    private String warnUrl;
-
-    /**
-     * 3天天气
-     */
-    private String dayUrl;
 }

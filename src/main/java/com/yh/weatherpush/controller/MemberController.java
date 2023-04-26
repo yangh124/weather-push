@@ -1,17 +1,18 @@
 package com.yh.weatherpush.controller;
 
 import com.yh.weatherpush.dto.Result;
-import com.yh.weatherpush.dto.qywx.MemberResp;
+import com.yh.weatherpush.dto.qywx.MemberDTO;
 import com.yh.weatherpush.manager.api.QywxManager;
 import com.yh.weatherpush.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author : yh
@@ -36,9 +37,9 @@ public class MemberController {
 
     @ApiOperation("获取地区成员/所有成员")
     @GetMapping()
-    public Result<List<MemberResp>> memberList(@RequestParam(required = false) Integer id) {
-        List<MemberResp> memberResps = memberService.memberList(id);
-        return Result.success(memberResps);
+    public Result<List<MemberDTO>> memberList(@RequestParam(required = false) Integer id) {
+        List<MemberDTO> memberDTOS = memberService.memberList(id);
+        return Result.success(memberDTOS);
     }
 
 }

@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.entity.Holiday;
-import com.yh.weatherpush.manager.api.HfWeatherManager;
 import com.yh.weatherpush.manager.api.HolidayApiClient;
 import com.yh.weatherpush.mapper.HolidayMapper;
 import com.yh.weatherpush.service.HolidayService;
@@ -43,8 +42,6 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
     private Resource hmsetLua;
     @Value("classpath:lua/sadd.lua")
     private Resource saddLua;
-    @Autowired
-    private HfWeatherManager hfWeatherManager;
     @Autowired
     private HolidayApiClient holidayApiClient;
     @Autowired

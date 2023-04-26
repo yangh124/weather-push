@@ -22,7 +22,7 @@ qywx:
   other-secret: ENC(rpj8eSYkt9+nSjCt/ytCE3j7jKp3u0Bul5QQchSIsZCG8VqljKRqk+wi6fXvDVlsb+wOyDzHsI6PU7anJGnkdcQqHyHcHZOkY5/vBe2/xDI=)
   agentid: ENC(H+7T49cJ0hrwQ01oFriXV2+h2sDFVDM40OpoACyVktKpzEbYUYZI0PqIi0q6jYA4)
 
-hfweather:
+hf-weather:
   key: ENC(E8D+neLnWOjo4L5zxztNhVH6eqPrMUFuFIn8PLrY8n+4AjWfVux+JmVoQ4XroGHRJy/4nWqO6I8tT6fS1aNgciJfwOGuplOPN2URzvlXq1U=)
 
 swagger:

@@ -1,26 +1,25 @@
 package com.yh.weatherpush.manager.api;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.bean.BeanUtil;
 import com.yh.weatherpush.config.property.QywxConfigProperties;
-import com.yh.weatherpush.dto.qywx.MemberResp;
-import com.yh.weatherpush.dto.qywx.MsgResp;
-import com.yh.weatherpush.dto.qywx.QywxTag;
-import com.yh.weatherpush.dto.qywx.TabResp;
-import com.yh.weatherpush.dto.qywx.Text;
-import com.yh.weatherpush.dto.qywx.TextMsgReq;
-import com.yh.weatherpush.dto.qywx.TokenResp;
+import com.yh.weatherpush.dto.qywx.MemberDTO;
+import com.yh.weatherpush.dto.qywx.QywxBaseRespDTO;
+import com.yh.weatherpush.dto.qywx.QywxTagDTO;
+import com.yh.weatherpush.dto.qywx.TextDTO;
+import com.yh.weatherpush.dto.qywx.request.TagCreateReqDTO;
+import com.yh.weatherpush.dto.qywx.request.TagUsersReqDTO;
+import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
+import com.yh.weatherpush.dto.qywx.response.*;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.exception.ApiException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class QywxManager {
@@ -28,25 +27,24 @@ public class QywxManager {
     @Autowired
     private QywxConfigProperties qywxConfig;
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
     private RedissonClient redissonClient;
+    @Autowired
+    private QywxApiClient qywxApiClient;
 
 
     /**
      * 发送文本消息
      *
-     * @param token     token
      * @param tagMsgMap 标签id -> 消息内容
      */
-    public void pushWeatherMsg(String token, Map<Integer, String> tagMsgMap) {
-        for (Integer tagid : tagMsgMap.keySet()) {
-            String msg = tagMsgMap.get(tagid);
-            String sendUrl = qywxConfig.getSendUrl();
-            sendUrl = sendUrl.replace("ACCESS_TOKEN", token);
-            TextMsgReq textMsgReq = TextMsgReq.builder().agentid(qywxConfig.getAgentid()).totag(tagid).msgtype("text")
-                    .text(new Text(msg)).build();
-            restTemplate.postForEntity(sendUrl, textMsgReq, MsgResp.class);
+    public void pushWeatherMsg(Map<Integer, String> tagMsgMap) {
+        String pushToken = getPushToken();
+        String agentid = qywxConfig.getAgentid();
+        for (Integer tagId : tagMsgMap.keySet()) {
+            String msg = tagMsgMap.get(tagId);
+            TextDTO text = new TextDTO(msg);
+            TextMsgReqDTO reqDTO = TextMsgReqDTO.builder().msgType("text").toTag(tagId).agentId(agentid).text(text).build();
+            qywxApiClient.messageSend(pushToken, reqDTO);
         }
     }
 
@@ -58,24 +56,21 @@ public class QywxManager {
      * @return 标签id
      */
     public Integer createTag(Integer tagId, String tagName) {
-        String createUrl = qywxConfig.getTag().getCreateUrl();
         String token = getOtherToken();
-        createUrl = createUrl.replace("ACCESS_TOKEN", token);
-        JSONObject param = new JSONObject();
+        TagCreateReqDTO reqDTO = new TagCreateReqDTO();
+        reqDTO.setTagName(tagName);
         if (null != tagId) {
-            param.put("tagid", tagId);
+            reqDTO.setTagId(tagId);
         }
-        param.put("tagname", tagName);
-        ResponseEntity<JSONObject> response = restTemplate.postForEntity(createUrl, param, JSONObject.class);
-        JSONObject body = response.getBody();
-        if (null == body) {
+        TagCreateRespDTO respDTO = qywxApiClient.createTag(token, reqDTO);
+        if (null == respDTO) {
             throw new ApiException("创建标签失败!");
         }
-        Integer errcode = body.getInteger("errcode");
-        if (!errcode.equals(0)) {
-            throw new ApiException("创建标签失败! -> " + body.getString("errmsg"));
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("创建标签失败! -> " + respDTO.getErrMsg());
         }
-        tagId = body.getInteger("tagid");
+        tagId = respDTO.getTagId();
         return tagId;
     }
 
@@ -85,17 +80,14 @@ public class QywxManager {
      * @param tagId 标签id
      */
     public void deleteTag(Integer tagId) {
-        String deleteUrl = qywxConfig.getTag().getDeleteUrl();
         String token = getOtherToken();
-        deleteUrl = deleteUrl.replace("ACCESS_TOKEN", token).replace("TAG_ID", String.valueOf(tagId));
-        ResponseEntity<JSONObject> response = restTemplate.getForEntity(deleteUrl, JSONObject.class);
-        JSONObject body = response.getBody();
-        if (null == body) {
+        QywxBaseRespDTO respDTO = qywxApiClient.deleteTag(token, tagId);
+        if (null == respDTO) {
             throw new ApiException("删除标签失败!");
         }
-        Integer errcode = body.getInteger("errcode");
-        if (!errcode.equals(0)) {
-            throw new ApiException("删除标签失败! -> " + body.getString("errmsg"));
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("删除标签失败! -> " + respDTO.getErrMsg());
         }
     }
 
@@ -105,20 +97,17 @@ public class QywxManager {
      *
      * @return 标签
      */
-    public List<QywxTag> getAllTags() {
-        String labelUrl = qywxConfig.getTag().getListUrl();
+    public List<QywxTagDTO> getAllTags() {
         String token = getOtherToken();
-        labelUrl = labelUrl.replace("ACCESS_TOKEN", token);
-        ResponseEntity<TabResp> response = restTemplate.getForEntity(labelUrl, TabResp.class);
-        TabResp body = response.getBody();
-        if (null == body) {
+        TagListRespDTO respDTO = qywxApiClient.tagList(token);
+        if (null == respDTO) {
             throw new ApiException("获取标签失败!");
         }
-        Integer errcode = body.getErrcode();
-        if (!errcode.equals(0)) {
-            throw new ApiException("获取token失败! -> " + body);
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("获取token失败! -> " + respDTO.getErrMsg());
         }
-        return body.getTaglist();
+        return respDTO.getTagList();
     }
 
     /**
@@ -134,17 +123,22 @@ public class QywxManager {
      *
      * @return access_token
      */
-    public String getPushToken() {
+    private String getPushToken() {
         RBucket<String> accessToken = redissonClient.getBucket("push_access_token");
         boolean exists = accessToken.isExists();
         if (exists) {
             return accessToken.get();
         }
-        String tokenUrl = qywxConfig.getTokenUrl();
-        tokenUrl = tokenUrl.replace("SECRET", qywxConfig.getPushSecret());
-        String access_token = getToken(tokenUrl);
-        accessToken.set(access_token, 1, TimeUnit.HOURS);
-        return access_token;
+        GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getPushSecret());
+        if (null == respDTO) {
+            throw new ApiException("获取token失败!");
+        }
+        if (0 != respDTO.getErrCode()) {
+            throw new ApiException("获取token失败! -> " + respDTO.getErrMsg());
+        }
+        String token = respDTO.getAccessToken();
+        accessToken.set(token, 1, TimeUnit.HOURS);
+        return token;
     }
 
     /**
@@ -152,36 +146,22 @@ public class QywxManager {
      *
      * @return token
      */
-    public String getOtherToken() {
+    private String getOtherToken() {
         RBucket<String> accessToken = redissonClient.getBucket("other_access_token");
         boolean exists = accessToken.isExists();
         if (exists) {
             return accessToken.get();
         }
-        String tokenUrl = qywxConfig.getTokenUrl();
-        tokenUrl = tokenUrl.replace("SECRET", qywxConfig.getOtherSecret());
-        String access_token = getToken(tokenUrl);
-        accessToken.set(access_token, 1, TimeUnit.HOURS);
-        return access_token;
-    }
-
-    /**
-     * 获取token
-     *
-     * @param tokenUrl 请求地址
-     * @return token
-     */
-    private String getToken(String tokenUrl) {
-        ResponseEntity<TokenResp> response = restTemplate.getForEntity(tokenUrl, TokenResp.class);
-        TokenResp body = response.getBody();
-        if (null == body) {
+        GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getOtherSecret());
+        if (null == respDTO) {
             throw new ApiException("获取token失败!");
         }
-        String errcode = body.getErrcode();
-        if (!"0".equals(errcode)) {
-            throw new ApiException("获取token失败! -> " + body);
+        if (0 != respDTO.getErrCode()) {
+            throw new ApiException("获取token失败! -> " + respDTO.getErrMsg());
         }
-        return body.getAccess_token();
+        String token = respDTO.getAccessToken();
+        accessToken.set(token, 1, TimeUnit.HOURS);
+        return token;
     }
 
     /**
@@ -190,19 +170,16 @@ public class QywxManager {
      * @return 二维码
      */
     public String getJoinQrCode() {
-        String joinQrcodeUrl = qywxConfig.getMember().getJoinQrcodeUrl();
         String token = getOtherToken();
-        joinQrcodeUrl = joinQrcodeUrl.replace("ACCESS_TOKEN", token);
-        ResponseEntity<JSONObject> response = restTemplate.getForEntity(joinQrcodeUrl, JSONObject.class);
-        JSONObject body = response.getBody();
-        if (null == body) {
+        GetJoinQrCodeRespDTO respDTO = qywxApiClient.getJoinQrCode(token, null);
+        if (null == respDTO) {
             throw new ApiException("获取失败!");
         }
-        Integer errcode = body.getInteger("errcode");
-        if (!errcode.equals(0)) {
-            throw new ApiException("获取失败! -> " + body.getString("errmsg"));
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("获取失败! -> " + respDTO.getErrMsg());
         }
-        return body.getString("join_qrcode");
+        return respDTO.getJoinQrcode();
     }
 
     /**
@@ -210,22 +187,17 @@ public class QywxManager {
      *
      * @return 部门成员
      */
-    public List<MemberResp> memberListByDept() {
-        String simpleListUrl = qywxConfig.getMember().getSimpleListUrl();
+    public List<MemberDTO> memberListByDept() {
         String token = getOtherToken();
-        simpleListUrl = simpleListUrl.replace("ACCESS_TOKEN", token);
-        ResponseEntity<JSONObject> response = restTemplate.getForEntity(simpleListUrl, JSONObject.class);
-        JSONObject body = response.getBody();
-        if (null == body) {
+        UserSimpleListRespDTO respDTO = qywxApiClient.userSimpList(token, null);
+        if (null == respDTO) {
             throw new ApiException("获取失败!");
         }
-        Integer errcode = body.getInteger("errcode");
-        if (!errcode.equals(0)) {
-            throw new ApiException("获取失败! -> " + body.getString("errmsg"));
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("获取失败! -> " + respDTO.getErrMsg());
         }
-        JSONArray jsonArray = body.getJSONArray("userlist");
-        List<MemberResp> memberResps = JSONArray.parseArray(jsonArray.toJSONString(), MemberResp.class);
-        return memberResps;
+        return respDTO.getUserList();
     }
 
     /**
@@ -234,22 +206,17 @@ public class QywxManager {
      * @param tagId 标签id
      * @return 标签成员
      */
-    public List<MemberResp> memberListByTag(Integer tagId) {
-        String url = qywxConfig.getMember().getTagMemberList();
+    public List<MemberDTO> memberListByTag(Integer tagId) {
         String token = getOtherToken();
-        url = url.replace("ACCESS_TOKEN", token).replace("TAGID", String.valueOf(tagId));
-        ResponseEntity<JSONObject> response = restTemplate.getForEntity(url, JSONObject.class);
-        JSONObject body = response.getBody();
-        if (null == body) {
+        TagGetRespDTO respDTO = qywxApiClient.tagGet(token, tagId);
+        if (null == respDTO) {
             throw new ApiException("获取失败!");
         }
-        Integer errcode = body.getInteger("errcode");
-        if (!errcode.equals(0)) {
-            throw new ApiException("获取失败! -> " + body.getString("errmsg"));
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("获取失败! -> " + respDTO.getErrMsg());
         }
-        JSONArray jsonArray = body.getJSONArray("userlist");
-        List<MemberResp> memberResps = JSONArray.parseArray(jsonArray.toJSONString(), MemberResp.class);
-        return memberResps;
+        return respDTO.getUserList();
     }
 
     /**
@@ -258,17 +225,16 @@ public class QywxManager {
      * @param param 参数
      */
     public void addTagMembers(TagMembersParam param) {
-        String url = qywxConfig.getTag().getAddTagUserUrl();
         String token = getOtherToken();
-        url = url.replace("ACCESS_TOKEN", token);
-        ResponseEntity<JSONObject> response = restTemplate.postForEntity(url, param, JSONObject.class);
-        JSONObject body = response.getBody();
-        if (null == body) {
+        TagUsersReqDTO tagUsersReqDTO = new TagUsersReqDTO();
+        BeanUtil.copyProperties(param, tagUsersReqDTO);
+        QywxBaseRespDTO respDTO = qywxApiClient.addTagUsers(token, tagUsersReqDTO);
+        if (null == respDTO) {
             throw new ApiException("添加失败!");
         }
-        Integer errcode = body.getInteger("errcode");
-        if (!errcode.equals(0)) {
-            throw new ApiException("添加失败! -> " + body.getString("errmsg"));
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("添加失败! -> " + respDTO.getErrMsg());
         }
     }
 
@@ -278,17 +244,16 @@ public class QywxManager {
      * @param param 参数
      */
     public void delTagMembers(TagMembersParam param) {
-        String url = qywxConfig.getTag().getDelTagUserUrl();
         String token = getOtherToken();
-        url = url.replace("ACCESS_TOKEN", token);
-        ResponseEntity<JSONObject> response = restTemplate.postForEntity(url, param, JSONObject.class);
-        JSONObject body = response.getBody();
-        if (null == body) {
+        TagUsersReqDTO reqDTO = new TagUsersReqDTO();
+        BeanUtil.copyProperties(param, reqDTO);
+        QywxBaseRespDTO respDTO = qywxApiClient.delTagUsers(token, reqDTO);
+        if (null == respDTO) {
             throw new ApiException("删除失败!");
         }
-        Integer errcode = body.getInteger("errcode");
-        if (!errcode.equals(0)) {
-            throw new ApiException("删除失败! -> " + body.getString("errmsg"));
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("删除失败! -> " + respDTO.getErrMsg());
         }
     }
 }
