@@ -2,7 +2,7 @@ package com.yh.weatherpush.quartz.job;
 
 import cn.hutool.core.collection.CollUtil;
 import com.yh.weatherpush.entity.Tag;
-import com.yh.weatherpush.manager.api.QywxManager;
+import com.yh.weatherpush.manager.QywxManager;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;

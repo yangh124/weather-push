@@ -1,4 +1,4 @@
-package com.yh.weatherpush.manager.api;
+package com.yh.weatherpush.manager;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.yh.weatherpush.config.property.QywxConfigProperties;
@@ -12,6 +12,7 @@ import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
 import com.yh.weatherpush.dto.qywx.response.*;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.exception.ApiException;
+import com.yh.weatherpush.manager.api.QywxApiClient;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

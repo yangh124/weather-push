@@ -15,17 +15,18 @@ import com.yh.weatherpush.dto.tag.TagPageParam;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.entity.TaskRelTag;
 import com.yh.weatherpush.exception.ApiException;
-import com.yh.weatherpush.manager.api.QywxManager;
+import com.yh.weatherpush.manager.QywxManager;
 import com.yh.weatherpush.mapper.TagMapper;
 import com.yh.weatherpush.mapper.TaskRelTagMapper;
 import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * <p>

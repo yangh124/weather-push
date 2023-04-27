@@ -3,7 +3,7 @@ package com.yh.weatherpush.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.dto.qywx.MemberDTO;
 import com.yh.weatherpush.entity.Member;
-import com.yh.weatherpush.manager.api.QywxManager;
+import com.yh.weatherpush.manager.QywxManager;
 import com.yh.weatherpush.mapper.MemberMapper;
 import com.yh.weatherpush.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
