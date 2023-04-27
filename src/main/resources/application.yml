@@ -43,36 +43,9 @@ mybatis-plus:
     map-underscore-to-camel-case: true
 
 jwt:
-  secret:
   expiration: 7200
   tokenHeader: token
   tokenHead: Bearer
-
-#企业微信
-qywx:
-  corpid:
-  push-secret:
-  other-secret:
-  agentid:
-  base-url: https://qyapi.weixin.qq.com/cgi-bin
-  # 获取token
-  token-url: ${qywx.base-url}/gettoken?corpid=${qywx.corpid}&corpsecret=SECRET
-  # 发送消息
-  send-url: ${qywx.base-url}/message/send?access_token=ACCESS_TOKEN
-  tag:
-    # 创建标签
-    create-url: ${qywx.base-url}/tag/create?access_token=ACCESS_TOKEN
-    # 获取标签
-    list-url: ${qywx.base-url}/tag/list?access_token=ACCESS_TOKEN
-    delete-url: ${qywx.base-url}/tag/delete?access_token=ACCESS_TOKEN&tagid=TAG_ID
-    add-tag-user-url: ${qywx.base-url}/tag/addtagusers?access_token=ACCESS_TOKEN
-    del-tag-user-url: ${qywx.base-url}/tag/deltagusers?access_token=ACCESS_TOKEN
-  member:
-    # 获取加入企业二维码
-    join-qrcode-url: ${qywx.base-url}/corp/get_join_qrcode?access_token=ACCESS_TOKEN
-    # 获取部门成员 department_id：获取的部门id（1-根部门）； fetch_child：是否递归获取子部门下面的成员：1-递归获取，0-只获取本部门
-    simple-list-url: ${qywx.base-url}/user/simplelist?access_token=ACCESS_TOKEN&department_id=1&fetch_child=1
-    tag-member-list: ${qywx.base-url}/tag/get?access_token=ACCESS_TOKEN&tagid=TAGID
 
 # 和风天气
 hf-weather:

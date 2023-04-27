@@ -12,9 +12,6 @@ spring:
 
 jwt:
   secret: uljJariVXey9lrcROGJX
-  expiration: 7200
-  tokenHeader: token
-  tokenHead: Bearer
 
 qywx:
   corpid: ENC(h1ThubkA8YcnboOGLwaO05SUJuDwsA79AX8mxBIEo+X6uYDnA+yoCzapA2Dm5DP+n75h8mJRp5Y2kWvsaVkO5Q==)
