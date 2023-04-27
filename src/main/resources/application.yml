@@ -47,6 +47,10 @@ jwt:
   tokenHeader: token
   tokenHead: Bearer
 
+#企业微信
+qywx:
+  base-url: https://qyapi.weixin.qq.com/cgi-bin
+
 # 和风天气
 hf-weather:
   base-url: https://devapi.qweather.com
