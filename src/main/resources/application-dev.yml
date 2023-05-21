@@ -18,6 +18,7 @@ qywx:
   push-secret: ENC(wzcvVqXwrh0z1lQ8YIWpBfOWsJ5Udv/Wkb9onqN82+20Y8GeYyJkbfCbJi3CPl8gV4/BjjwDyBU0EOQekj8TptAskrOk26QYetW0MjnJSPw=)
   other-secret: ENC(rpj8eSYkt9+nSjCt/ytCE3j7jKp3u0Bul5QQchSIsZCG8VqljKRqk+wi6fXvDVlsb+wOyDzHsI6PU7anJGnkdcQqHyHcHZOkY5/vBe2/xDI=)
   agentid: ENC(H+7T49cJ0hrwQ01oFriXV2+h2sDFVDM40OpoACyVktKpzEbYUYZI0PqIi0q6jYA4)
+  member-url: http://localhost:9528/admin/member/member
 
 hf-weather:
   key: ENC(E8D+neLnWOjo4L5zxztNhVH6eqPrMUFuFIn8PLrY8n+4AjWfVux+JmVoQ4XroGHRJy/4nWqO6I8tT6fS1aNgciJfwOGuplOPN2URzvlXq1U=)

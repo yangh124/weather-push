@@ -22,4 +22,9 @@ public class QywxConfigProperties {
     private String otherSecret;
 
     private String agentid;
+
+    /**
+     * 前端通讯录展示页面url
+     */
+    private String memberUrl;
 }

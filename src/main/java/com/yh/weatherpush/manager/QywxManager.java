@@ -1,11 +1,11 @@
 package com.yh.weatherpush.manager;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.crypto.digest.DigestAlgorithm;
+import cn.hutool.crypto.digest.Digester;
 import com.yh.weatherpush.config.property.QywxConfigProperties;
-import com.yh.weatherpush.dto.qywx.MemberDTO;
-import com.yh.weatherpush.dto.qywx.QywxBaseRespDTO;
-import com.yh.weatherpush.dto.qywx.QywxTagDTO;
-import com.yh.weatherpush.dto.qywx.TextDTO;
+import com.yh.weatherpush.dto.qywx.*;
 import com.yh.weatherpush.dto.qywx.request.TagCreateReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TagUsersReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
@@ -14,6 +14,7 @@ import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.api.QywxApiClient;
 import org.redisson.api.RBucket;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -125,20 +126,21 @@ public class QywxManager {
      * @return access_token
      */
     private String getPushToken() {
-        RBucket<String> accessToken = redissonClient.getBucket("push_access_token");
-        boolean exists = accessToken.isExists();
-        if (exists) {
-            return accessToken.get();
+        String token;
+        RLock lock = redissonClient.getLock("push_access_token:lock");
+        lock.lock();
+        try {
+            RBucket<String> accessToken = redissonClient.getBucket("push_access_token");
+            boolean exists = accessToken.isExists();
+            if (exists) {
+                token = accessToken.get();
+            } else {
+                GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getPushSecret());
+                token = getTokenResult(accessToken, respDTO);
+            }
+        } finally {
+            lock.unlock();
         }
-        GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getPushSecret());
-        if (null == respDTO) {
-            throw new ApiException("获取token失败!");
-        }
-        if (0 != respDTO.getErrCode()) {
-            throw new ApiException("获取token失败! -> " + respDTO.getErrMsg());
-        }
-        String token = respDTO.getAccessToken();
-        accessToken.set(token, 1, TimeUnit.HOURS);
         return token;
     }
 
@@ -148,21 +150,68 @@ public class QywxManager {
      * @return token
      */
     private String getOtherToken() {
-        RBucket<String> accessToken = redissonClient.getBucket("other_access_token");
-        boolean exists = accessToken.isExists();
-        if (exists) {
-            return accessToken.get();
+        String token;
+        RLock lock = redissonClient.getLock("other_access_token:lock");
+        lock.lock();
+        try {
+            RBucket<String> accessToken = redissonClient.getBucket("other_access_token");
+            boolean exists = accessToken.isExists();
+            if (exists) {
+                token = accessToken.get();
+            } else {
+                GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getOtherSecret());
+                token = getTokenResult(accessToken, respDTO);
+            }
+        } finally {
+            lock.unlock();
         }
-        GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getOtherSecret());
+        return token;
+    }
+
+    private String getTokenResult(RBucket<String> accessToken, GetTokenRespDTO respDTO) {
+        String token;
         if (null == respDTO) {
             throw new ApiException("获取token失败!");
         }
         if (0 != respDTO.getErrCode()) {
             throw new ApiException("获取token失败! -> " + respDTO.getErrMsg());
         }
-        String token = respDTO.getAccessToken();
+        token = respDTO.getAccessToken();
         accessToken.set(token, 1, TimeUnit.HOURS);
         return token;
+    }
+
+    /**
+     * 获取应用的jsapi_ticket
+     *
+     * @param accessToken token
+     * @return
+     */
+    private String getJsApiTicket(String accessToken) {
+        String ticket;
+        RLock lock = redissonClient.getLock("jsapi_ticket:lock");
+        lock.lock();
+        try {
+            RBucket<String> jsapiTicket = redissonClient.getBucket("jsapi_ticket");
+            boolean exists = jsapiTicket.isExists();
+            if (exists) {
+                ticket = jsapiTicket.get();
+            } else {
+                JsApiTicketRespDTO respDTO = qywxApiClient.getAgentConfig(accessToken, "agent_config");
+                if (null == respDTO) {
+                    throw new ApiException("获取jsapi_ticket失败!");
+                }
+                if (0 != respDTO.getErrCode()) {
+                    throw new ApiException("获取jsapi_ticket失败! -> " + respDTO.getErrMsg());
+                }
+                ticket = respDTO.getTicket();
+                Long expiresIn = respDTO.getExpiresIn();
+                jsapiTicket.set(ticket, expiresIn, TimeUnit.SECONDS);
+            }
+        } finally {
+            lock.unlock();
+        }
+        return ticket;
     }
 
     /**
@@ -181,24 +230,6 @@ public class QywxManager {
             throw new ApiException("获取失败! -> " + respDTO.getErrMsg());
         }
         return respDTO.getJoinQrcode();
-    }
-
-    /**
-     * 获取部门成员
-     *
-     * @return 部门成员
-     */
-    public List<MemberDTO> memberListByDept() {
-        String token = getOtherToken();
-        UserSimpleListRespDTO respDTO = qywxApiClient.userSimpList(token, null);
-        if (null == respDTO) {
-            throw new ApiException("获取失败!");
-        }
-        Integer errCode = respDTO.getErrCode();
-        if (!errCode.equals(0)) {
-            throw new ApiException("获取失败! -> " + respDTO.getErrMsg());
-        }
-        return respDTO.getUserList();
     }
 
     /**
@@ -256,5 +287,25 @@ public class QywxManager {
         if (!errCode.equals(0)) {
             throw new ApiException("删除失败! -> " + respDTO.getErrMsg());
         }
+    }
+
+    public QywxAgentConfigDTO getQywxAgentConfig() {
+        String corpid = qywxConfig.getCorpid();
+        String agentid = qywxConfig.getAgentid();
+        long timestamp = System.currentTimeMillis();
+        String token = getPushToken();
+        String jsApiTicket = getJsApiTicket(token);
+        String memberUrl = qywxConfig.getMemberUrl();
+        String uuid = IdUtil.fastSimpleUUID();
+        String str = "jsapi_ticket=" + jsApiTicket + "&noncestr=" + uuid + "&timestamp=" + timestamp + "&url=" + memberUrl;
+        Digester digester = new Digester(DigestAlgorithm.SHA1);
+        String signature = digester.digestHex(str);
+        QywxAgentConfigDTO dto = new QywxAgentConfigDTO();
+        dto.setCorpid(corpid);
+        dto.setAgentid(agentid);
+        dto.setTimestamp(timestamp);
+        dto.setNonceStr(uuid);
+        dto.setSignature(signature);
+        return dto;
     }
 }

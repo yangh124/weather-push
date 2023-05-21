@@ -1,5 +1,7 @@
 package com.yh.weatherpush;
 
+import com.yh.weatherpush.config.property.QywxConfigProperties;
+import com.yh.weatherpush.manager.QywxManager;
 import com.yh.weatherpush.manager.api.HolidayApiClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,11 @@ class WeatherPushApplicationTests {
 
     @Autowired
     private HolidayApiClient holidayApiClient;
+    @Autowired
+    private QywxManager qywxManager;
+    @Autowired
+    private QywxConfigProperties qywxConfigProperties;
+
 
     @Test
     void contextLoads() {
@@ -20,5 +27,4 @@ class WeatherPushApplicationTests {
         String str = holidayApiClient.getHolidayFromGitHub(year);
         System.out.println(str);
     }
-
 }

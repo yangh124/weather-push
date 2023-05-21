@@ -4,6 +4,7 @@ import com.yh.weatherpush.dto.qywx.QywxBaseRespDTO;
 import com.yh.weatherpush.dto.qywx.request.TagCreateReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TagUsersReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
+import com.yh.weatherpush.dto.qywx.request.UserListIdReqDTO;
 import com.yh.weatherpush.dto.qywx.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,12 +78,12 @@ public interface QywxApiClient {
     /**
      * 获取部门成员
      *
-     * @param accessToken  accessToken
-     * @param departmentId 部门id
+     * @param accessToken accessToken
+     * @param reqDTO      参数
      * @return
      */
-    @GetMapping("/user/simplelist")
-    UserSimpleListRespDTO userSimpList(@RequestParam("access_token") String accessToken, @RequestParam("department_id") Integer departmentId);
+    @PostMapping("/user/list_id")
+    UserSimpleListRespDTO userSimpList(@RequestParam("access_token") String accessToken, @RequestBody UserListIdReqDTO reqDTO);
 
     /**
      * 获取标签成员
@@ -111,4 +112,14 @@ public interface QywxApiClient {
      */
     @PostMapping("/tag/deltagusers")
     QywxBaseRespDTO delTagUsers(@RequestParam("access_token") String accessToken, @RequestBody TagUsersReqDTO reqDTO);
+
+
+    /**
+     * 获取应用的jsapi_ticket
+     *
+     * @param accessToken accessToken
+     * @param type        类型 agent_config
+     */
+    @GetMapping("/ticket/get")
+    JsApiTicketRespDTO getAgentConfig(@RequestParam("access_token") String accessToken, @RequestParam("type") String type);
 }
