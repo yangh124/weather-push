@@ -1,6 +1,7 @@
 package com.yh.weatherpush.manager;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class QywxManager {
@@ -232,13 +234,31 @@ public class QywxManager {
         return respDTO.getJoinQrcode();
     }
 
+    public List<String> userIdList() {
+        String token = getOtherToken();
+        UserSimpleListRespDTO respDTO = qywxApiClient.userSimpList(token);
+        if (null == respDTO) {
+            throw new ApiException("获取失败!");
+        }
+        Integer errCode = respDTO.getErrCode();
+        if (!errCode.equals(0)) {
+            throw new ApiException("获取失败! -> " + respDTO.getErrMsg());
+        }
+        List<DeptUserDTO> deptUserList = respDTO.getDeptUserList();
+        if (CollUtil.isNotEmpty(deptUserList)) {
+            return deptUserList.stream().map(DeptUserDTO::getUserId).collect(Collectors.toList());
+        } else {
+            return CollUtil.newArrayList();
+        }
+    }
+
     /**
      * 获取标签成员
      *
      * @param tagId 标签id
      * @return 标签成员
      */
-    public List<MemberDTO> memberListByTag(Integer tagId) {
+    public List<MemberDTO> userListByTag(Integer tagId) {
         String token = getOtherToken();
         TagGetRespDTO respDTO = qywxApiClient.tagGet(token, tagId);
         if (null == respDTO) {

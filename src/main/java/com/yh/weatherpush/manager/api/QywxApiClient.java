@@ -4,7 +4,6 @@ import com.yh.weatherpush.dto.qywx.QywxBaseRespDTO;
 import com.yh.weatherpush.dto.qywx.request.TagCreateReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TagUsersReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
-import com.yh.weatherpush.dto.qywx.request.UserListIdReqDTO;
 import com.yh.weatherpush.dto.qywx.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,11 +78,10 @@ public interface QywxApiClient {
      * 获取部门成员
      *
      * @param accessToken accessToken
-     * @param reqDTO      参数
      * @return
      */
     @PostMapping("/user/list_id")
-    UserSimpleListRespDTO userSimpList(@RequestParam("access_token") String accessToken, @RequestBody UserListIdReqDTO reqDTO);
+    UserSimpleListRespDTO userSimpList(@RequestParam("access_token") String accessToken);
 
     /**
      * 获取标签成员

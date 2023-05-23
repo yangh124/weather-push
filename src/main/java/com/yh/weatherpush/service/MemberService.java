@@ -17,5 +17,7 @@ import java.util.List;
 public interface MemberService extends IService<Member> {
 
 
-    List<MemberDTO> memberList(Integer id);
+    List<MemberDTO> userList(Integer id);
+
+    List<String> userIdList();
 }

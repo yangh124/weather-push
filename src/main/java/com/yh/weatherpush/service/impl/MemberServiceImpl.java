@@ -26,10 +26,12 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     private QywxManager qywxManager;
 
     @Override
-    public List<MemberDTO> memberList(Integer id) {
-        if (null == id) {
-            return null;
-        }
-        return qywxManager.memberListByTag(id);
+    public List<MemberDTO> userList(Integer id) {
+        return qywxManager.userListByTag(id);
+    }
+
+    @Override
+    public List<String> userIdList() {
+        return qywxManager.userIdList();
     }
 }

@@ -36,11 +36,18 @@ public class MemberController {
         return Result.success(joinQrCode);
     }
 
-    @ApiOperation("获取地区成员/所有成员")
+    @ApiOperation("获取地区成员")
     @GetMapping()
-    public Result<List<MemberDTO>> memberList(@RequestParam(required = false) Integer id) {
-        List<MemberDTO> memberResps = memberService.memberList(id);
+    public Result<List<MemberDTO>> userList(@RequestParam Integer id) {
+        List<MemberDTO> memberResps = memberService.userList(id);
         return Result.success(memberResps);
+    }
+
+    @ApiOperation("获取所有成员")
+    @GetMapping("/ids")
+    public Result<List<String>> userIdList() {
+        List<String> ids = memberService.userIdList();
+        return Result.success(ids);
     }
 
     @ApiOperation("获取企业微信配置（用于通讯录展示）")
