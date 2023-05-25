@@ -1,6 +1,5 @@
 package com.yh.weatherpush.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -8,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yh.weatherpush.dto.qywx.QywxTagDTO;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
@@ -80,30 +80,16 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         if (CollUtil.isEmpty(records)) {
             return new Page<>();
         }
-        List<TagDTO> tagDTOS = covertTagDTO(records);
-        IPage<TagDTO> res = new Page<>();
-        BeanUtil.copyProperties(page, res);
-        res.setRecords(tagDTOS);
-        return res;
+        return page.convert(TagDTO::covertFromTag);
     }
 
     @Override
     public List<TagDTO> getAll() {
-        List<Tag> list = super.list();
-        if (CollUtil.isEmpty(list)) {
+        List<QywxTagDTO> tags = qywxManager.getAllTags();
+        if (CollUtil.isEmpty(tags)) {
             return CollUtil.newArrayList();
         }
-        return covertTagDTO(list);
-    }
-
-    private List<TagDTO> covertTagDTO(List<Tag> list) {
-        List<TagDTO> res = new ArrayList<>(list.size());
-        for (Tag tag : list) {
-            TagDTO tagDTO = new TagDTO();
-            BeanUtil.copyProperties(tag, tagDTO);
-            res.add(tagDTO);
-        }
-        return res;
+        return tags.stream().map(TagDTO::covertFromQywxTagDTO).collect(Collectors.toList());
     }
 
     @Override
