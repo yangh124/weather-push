@@ -116,11 +116,11 @@ public class QywxManager {
 
     /**
      * 1.access_token的有效期通过返回的expires_in来传达，正常情况下为7200秒（2小时），有效期内重复获取返回相同结果，过期后获取会返回新的access_token。
-     * </p>
+     * <p>
      * 2.由于企业微信每个应用的access_token是彼此独立的，所以进行缓存时需要区分应用来进行存储。
-     * </p>
+     * <p>
      * 3.access_token至少保留512字节的存储空间。
-     * </p>
+     * <p>
      * 4.企业微信可能会出于运营需要，提前使access_token失效，开发者应实现access_token失效时重新获取的逻辑。
      * <p>
      * 推送消息token
