@@ -10,8 +10,11 @@ spring:
     password: root # Redis服务器连接密码（默认为空）
     timeout: 3000ms # 连接超时时间（毫秒）
 
-jwt:
-  secret: uljJariVXey9lrcROGJX
+sa-token:
+  # jwt秘钥
+  jwt-secret-key: ENC(URi+96d9EfoiC7IY3QuAkb2Z03mgZP/NV0Qlmn+CoVLrMCoJW31zk++qDKokO1yHv8h+dq0LOWL9EiaQUjPMXw==)
+  # 打印日志
+  is-log: true
 
 qywx:
   corpid: ENC(h1ThubkA8YcnboOGLwaO05SUJuDwsA79AX8mxBIEo+X6uYDnA+yoCzapA2Dm5DP+n75h8mJRp5Y2kWvsaVkO5Q==)

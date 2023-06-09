@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yh.weatherpush.dto.admin.LoginParam;
 import com.yh.weatherpush.dto.admin.UpdPwdParam;
 import com.yh.weatherpush.entity.Admin;
-import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * <p>
@@ -18,12 +17,7 @@ public interface AdminService extends IService<Admin> {
 
     Admin getAdminByUsername(String username);
 
-    String login(LoginParam param);
-
-    /**
-     * 获取用户信息
-     */
-    UserDetails loadUserByUsername(String username);
+    void newLogin(LoginParam param);
 
     /**
      * 修改密码
@@ -31,4 +25,5 @@ public interface AdminService extends IService<Admin> {
      * @param updPwdParam
      */
     void updatePassword(UpdPwdParam updPwdParam);
+
 }

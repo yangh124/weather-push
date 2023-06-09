@@ -1,5 +1,6 @@
 package com.yh.weatherpush.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.admin.LoginParam;
@@ -28,18 +29,15 @@ public class AdminController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    public Result<String> login(@Validated @RequestBody LoginParam param) {
-        String token = adminService.login(param);
-        return Result.success(token);
+    public Result<Void> newLogin(@Validated @RequestBody LoginParam param) {
+        adminService.newLogin(param);
+        return Result.success();
     }
 
     @ApiOperation("获取用户信息")
     @GetMapping("/info")
-    public Result<JSONObject> info(Principal principal) {
-        if (principal == null) {
-            return Result.unauthorized(null);
-        }
-        String username = principal.getName();
+    public Result<JSONObject> info() {
+        String username = (String) StpUtil.getLoginId();
         Admin admin = adminService.getAdminByUsername(username);
         JSONObject result = new JSONObject();
         result.put("name", admin.getNickName());
