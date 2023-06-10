@@ -1,5 +1,6 @@
 package com.yh.weatherpush.exception;
 
+import cn.dev33.satoken.exception.*;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.enums.ResultCode;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * 业务异常
+     */
     @ExceptionHandler(value = ApiException.class)
     public Result handle(ApiException e) {
         if (e.getErrorCode() != null) {
@@ -28,6 +32,9 @@ public class GlobalExceptionHandler {
         return Result.failed(e.getMessage());
     }
 
+    /**
+     * 参数校验异常
+     */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public Result handleValidException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
@@ -42,6 +49,9 @@ public class GlobalExceptionHandler {
         return Result.validateFailed(message);
     }
 
+    /**
+     * 参数校验异常
+     */
     @ExceptionHandler(value = BindException.class)
     public Result handleValidException(BindException e) {
         BindingResult bindingResult = e.getBindingResult();
@@ -56,6 +66,53 @@ public class GlobalExceptionHandler {
         return Result.validateFailed(message);
     }
 
+    // 拦截：未登录异常
+    @ExceptionHandler(NotLoginException.class)
+    public Result handlerException(NotLoginException e) {
+        // 打印堆栈，以供调试
+        log.error(e.getMessage(), e);
+        // 返回给前端
+        return Result.unauthorized(e.getMessage());
+    }
+
+    // 拦截：缺少权限异常
+    @ExceptionHandler(NotPermissionException.class)
+    public Result handlerException(NotPermissionException e) {
+        log.error(e.getMessage(), e);
+        return Result.forbidden("缺少权限：" + e.getPermission());
+    }
+
+    // 拦截：缺少角色异常
+    @ExceptionHandler(NotRoleException.class)
+    public Result handlerException(NotRoleException e) {
+        log.error(e.getMessage(), e);
+        return Result.forbidden("缺少角色：" + e.getRole());
+    }
+
+    // 拦截：二级认证校验失败异常
+    @ExceptionHandler(NotSafeException.class)
+    public Result handlerException(NotSafeException e) {
+        log.error(e.getMessage(), e);
+        return Result.forbidden("二级认证校验失败：" + e.getService());
+    }
+
+    // 拦截：服务封禁异常
+    @ExceptionHandler(DisableServiceException.class)
+    public Result handlerException(DisableServiceException e) {
+        log.error(e.getMessage(), e);
+        return Result.failed("当前账号 " + e.getService() + " 服务已被封禁 (level=" + e.getLevel() + ")：" + e.getDisableTime() + "秒后解封");
+    }
+
+    // 拦截：Http Basic 校验失败异常
+    @ExceptionHandler(NotBasicAuthException.class)
+    public Result handlerException(NotBasicAuthException e) {
+        log.error(e.getMessage(), e);
+        return Result.failed(e.getMessage());
+    }
+
+    /**
+     * 其他异常
+     */
     @ExceptionHandler(value = Exception.class)
     public Result handleException(Exception e) {
         log.error(e.getMessage(), e);

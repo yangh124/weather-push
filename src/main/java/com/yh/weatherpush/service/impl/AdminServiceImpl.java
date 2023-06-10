@@ -1,5 +1,6 @@
 package com.yh.weatherpush.service.impl;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -45,7 +46,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     }
 
     @Override
-    public void newLogin(LoginParam param) {
+    public SaTokenInfo login(LoginParam param) {
         String username = param.getUsername();
         Admin admin = getAdminByUsername(username);
         if (null == admin) {
@@ -55,6 +56,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
             throw new ApiException("密码不正确");
         }
         StpUtil.login(username);
+        return StpUtil.getTokenInfo();
     }
 
 

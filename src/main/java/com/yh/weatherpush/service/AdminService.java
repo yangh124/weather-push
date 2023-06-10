@@ -1,5 +1,6 @@
 package com.yh.weatherpush.service;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yh.weatherpush.dto.admin.LoginParam;
 import com.yh.weatherpush.dto.admin.UpdPwdParam;
@@ -17,7 +18,7 @@ public interface AdminService extends IService<Admin> {
 
     Admin getAdminByUsername(String username);
 
-    void newLogin(LoginParam param);
+    SaTokenInfo login(LoginParam param);
 
     /**
      * 修改密码

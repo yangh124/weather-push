@@ -1,5 +1,6 @@
 package com.yh.weatherpush.controller;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.yh.weatherpush.dto.Result;
@@ -29,9 +30,9 @@ public class AdminController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    public Result<Void> newLogin(@Validated @RequestBody LoginParam param) {
-        adminService.newLogin(param);
-        return Result.success();
+    public Result<String> login(@Validated @RequestBody LoginParam param) {
+        SaTokenInfo tokenInfo = adminService.login(param);
+        return Result.success(tokenInfo.getTokenValue());
     }
 
     @ApiOperation("获取用户信息")
