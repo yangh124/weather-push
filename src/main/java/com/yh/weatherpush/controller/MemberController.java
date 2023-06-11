@@ -4,7 +4,6 @@ import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.qywx.MemberDTO;
 import com.yh.weatherpush.dto.qywx.QywxAgentConfigDTO;
 import com.yh.weatherpush.manager.QywxManager;
-import com.yh.weatherpush.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,6 @@ public class MemberController {
 
     @Autowired
     private QywxManager qywxManager;
-    @Autowired
-    private MemberService memberService;
 
     @ApiOperation("获取加入企业二维码")
     @GetMapping("/qr_code")
@@ -39,14 +36,14 @@ public class MemberController {
     @ApiOperation("获取地区成员")
     @GetMapping()
     public Result<List<MemberDTO>> userList(@RequestParam Integer id) {
-        List<MemberDTO> memberResps = memberService.userList(id);
+        List<MemberDTO> memberResps = qywxManager.userListByTag(id);
         return Result.success(memberResps);
     }
 
     @ApiOperation("获取所有成员")
     @GetMapping("/ids")
     public Result<List<String>> userIdList() {
-        List<String> ids = memberService.userIdList();
+        List<String> ids = qywxManager.userIdList();
         return Result.success(ids);
     }
 

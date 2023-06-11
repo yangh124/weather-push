@@ -82,23 +82,23 @@
 
 ## 技术选型
 
-| 技术           | 说明        | 官网                                         |
-|--------------|-----------|--------------------------------------------|
-| SpringBoot   | Web应用开发框架 | https://spring.io/projects/spring-boot     |
-| Sa-Token     | 认证授权      | https://spring.io/projects/spring-security |
-| MyBatis-Plus | ORM框架     | https://baomidou.com/                      |
-| Mysql        | 关系型数据库    | https://www.mysql.com/cn/                  |
-| Redis        | 内存数据存储    | https://redis.io/                          |
-| Nginx        | 静态资源服务器   | https://www.nginx.com/                     |
-| Docker       | 应用容器引擎    | https://www.docker.com                     |
-| JWT          | JWT登录支持   | https://github.com/jwtk/jjwt               |
-| Swagger-UI   | API文档生成工具 | https://github.com/swagger-api/swagger-ui  |
-| Redisson     | redis客户端  | https://github.com/redisson/redisson       |
-| Quartz       | 任务调度框架    | http://www.quartz-scheduler.org/           |
+| 技术           | 说明        | 官网                                        |
+|--------------|-----------|-------------------------------------------|
+| SpringBoot   | Web应用开发框架 | https://spring.io/projects/spring-boot    |
+| Sa-Token     | 认证授权      | https://sa-token.cc                       |
+| MyBatis-Plus | ORM框架     | https://baomidou.com/                     |
+| Mysql        | 关系型数据库    | https://www.mysql.com/cn/                 |
+| Redis        | 内存数据存储    | https://redis.io/                         |
+| Nginx        | 静态资源服务器   | https://www.nginx.com/                    |
+| Docker       | 应用容器引擎    | https://www.docker.com                    |
+| JWT          | JWT登录支持   | https://github.com/jwtk/jjwt              |
+| Swagger-UI   | API文档生成工具 | https://github.com/swagger-api/swagger-ui |
+| Redisson     | redis客户端  | https://github.com/redisson/redisson      |
+| Quartz       | 任务调度框架    | http://www.quartz-scheduler.org/          |
 
 ## 数据库表结构
 
-![表结构](http://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2023/04/02/16804223643686.jpg)
+![表结构](http://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2023/06/11/16864572674612.jpg)
 
 **待续...**
 
