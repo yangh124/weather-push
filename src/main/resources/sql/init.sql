@@ -226,20 +226,6 @@ CREATE TABLE `sys_holiday` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='节假日';
 
 -- ----------------------------
--- Table structure for sys_member
--- ----------------------------
-DROP TABLE IF EXISTS `sys_member`;
-CREATE TABLE `sys_member` (
-                              `id` bigint NOT NULL,
-                              `user_id` varchar(50) NOT NULL COMMENT '用户id',
-                              `name` varchar(50) DEFAULT NULL COMMENT '用户名',
-                              `open_user_id` varchar(50) DEFAULT NULL COMMENT 'open_userid',
-                              `ctime` timestamp NOT NULL COMMENT '创建时间',
-                              `utime` timestamp NULL DEFAULT NULL COMMENT '修改时间',
-                              PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='成员表';
-
--- ----------------------------
 -- Table structure for sys_sch_task
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_sch_task`;
