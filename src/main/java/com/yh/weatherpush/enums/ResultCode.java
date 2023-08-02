@@ -1,10 +1,13 @@
 package com.yh.weatherpush.enums;
 
+import lombok.Getter;
+
 /**
  * 枚举了一些常用code
  * 
  * @author yh
  */
+@Getter
 public enum ResultCode {
     /**
      * 状态code
@@ -23,11 +26,4 @@ public enum ResultCode {
         this.message = message;
     }
 
-    public long getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

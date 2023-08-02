@@ -1,11 +1,13 @@
 package com.yh.weatherpush.enums;
 
 import cn.hutool.core.util.StrUtil;
+import lombok.Getter;
 
 /**
  * @author : yh
  * @date : 2022/5/1 16:58
  */
+@Getter
 public enum TaskEnum {
 
     WEATHER_TODAY("weatherTodayJob", "今日天气"),
@@ -19,14 +21,6 @@ public enum TaskEnum {
     TaskEnum(String name, String desc) {
         this.name = name;
         this.desc = desc;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDesc() {
-        return desc;
     }
 
     public static String getDescByName(String name) {
