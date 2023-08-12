@@ -1,6 +1,5 @@
 package com.yh.weatherpush.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -20,20 +19,22 @@ import com.yh.weatherpush.entity.TaskRelTag;
 import com.yh.weatherpush.enums.TaskEnum;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.TaskRelTagManager;
+import com.yh.weatherpush.manager.mapstruct.ISchTaskMapper;
 import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.mapper.TagMapper;
 import com.yh.weatherpush.quartz.QuartzClient;
 import com.yh.weatherpush.service.SchTaskService;
+import org.quartz.Scheduler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.quartz.Scheduler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -59,28 +60,24 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     public IPage<SchTaskPageDTO> pageList(PageParam pageParam) {
         IPage<SchTask> page = new Page<>(pageParam.getCurrentPage(), pageParam.getPageSize());
         page = super.page(page);
-        IPage<SchTaskPageDTO> res = new Page<>();
-        BeanUtil.copyProperties(page, res);
-        List<SchTask> records = page.getRecords();
-        List<SchTaskPageDTO> resRecords = new ArrayList<>(records.size());
-        if (CollUtil.isNotEmpty(records)) {
-            List<Long> taskIds = records.stream().map(SchTask::getId).collect(Collectors.toList());
-            Map<Long, List<Tag>> map = getTaskTagMap(taskIds);
-            for (SchTask record : records) {
-                SchTaskPageDTO dto = new SchTaskPageDTO();
-                BeanUtil.copyProperties(record, dto);
-                Long taskId = record.getId();
-                List<Tag> tagList = map.get(taskId);
-                dto.setTagList(tagList);
-                String taskName = record.getTaskName();
-                String desc = TaskEnum.getDescByName(taskName);
-                dto.setTaskName(desc);
-                resRecords.add(dto);
-            }
+        if (page.getTotal() == 0) {
+            return new Page<>();
         }
-        res.setRecords(resRecords);
-        return res;
+        List<SchTask> records = page.getRecords();
+        List<Long> taskIds = records.stream().map(SchTask::getId).collect(Collectors.toList());
+        Map<Long, List<Tag>> map = getTaskTagMap(taskIds);
+        return page.convert(record -> {
+            SchTaskPageDTO dto = ISchTaskMapper.INSTANCE.toSchTaskPageDTO(record);
+            Long taskId = record.getId();
+            List<Tag> tagList = map.get(taskId);
+            dto.setTagList(tagList);
+            String taskName = record.getTaskName();
+            String desc = TaskEnum.getDescByName(taskName);
+            dto.setTaskName(desc);
+            return dto;
+        });
     }
+
 
     private Map<Long, List<Tag>> getTaskTagMap(List<Long> taskIds) {
         Map<Long, List<Tag>> map = new HashMap<>(taskIds.size());
@@ -100,15 +97,13 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void create(AddTaskParam param) {
-        SchTask schTask = new SchTask();
-        BeanUtil.copyProperties(param, schTask);
+        SchTask schTask = ISchTaskMapper.INSTANCE.toSchTaskFromAdd(param);
         schTask.setCtime(LocalDateTime.now());
         super.save(schTask);
         Long taskId = schTask.getId();
         List<Long> tagIds = param.getTagIds();
         addBatch(taskId, tagIds);
-        QuartzBean quartzBean = new QuartzBean();
-        BeanUtil.copyProperties(schTask, quartzBean);
+        QuartzBean quartzBean = ISchTaskMapper.INSTANCE.toQuartzBean(schTask);
         quartzBean.setId(String.valueOf(taskId));
         quartzClient.create(scheduler, quartzBean);
     }
@@ -130,7 +125,7 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         if (ObjectUtil.isNull(status) || StrUtil.isBlank(cronExp) || CollUtil.isEmpty(tagIds)) {
             throw new ApiException("参数错误!");
         }
-        BeanUtil.copyProperties(dto, task);
+        task = ISchTaskMapper.INSTANCE.toSchTaskFromUpdate(dto);
         super.updateById(task);
         taskRelTagManager.remove(new UpdateWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, id));
         addBatch(id, tagIds);

@@ -1,6 +1,5 @@
 package com.yh.weatherpush.manager;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
@@ -14,6 +13,7 @@ import com.yh.weatherpush.dto.qywx.response.*;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.api.QywxApiClient;
+import com.yh.weatherpush.manager.mapstruct.IQywxMapper;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -47,7 +47,8 @@ public class QywxManager {
         for (Integer tagId : tagMsgMap.keySet()) {
             String msg = tagMsgMap.get(tagId);
             TextDTO text = new TextDTO(msg);
-            TextMsgReqDTO reqDTO = TextMsgReqDTO.builder().msgType("text").toTag(tagId).agentId(agentid).text(text).build();
+            TextMsgReqDTO reqDTO =
+                    TextMsgReqDTO.builder().msgType("text").toTag(tagId).agentId(agentid).text(text).build();
             qywxApiClient.messageSend(pushToken, reqDTO);
         }
     }
@@ -278,8 +279,7 @@ public class QywxManager {
      */
     public void addTagMembers(TagMembersParam param) {
         String token = getOtherToken();
-        TagUsersReqDTO tagUsersReqDTO = new TagUsersReqDTO();
-        BeanUtil.copyProperties(param, tagUsersReqDTO);
+        TagUsersReqDTO tagUsersReqDTO = IQywxMapper.INSTANCE.toTagUsersReqDTO(param);
         QywxBaseRespDTO respDTO = qywxApiClient.addTagUsers(token, tagUsersReqDTO);
         if (null == respDTO) {
             throw new ApiException("添加失败!");
@@ -297,8 +297,7 @@ public class QywxManager {
      */
     public void delTagMembers(TagMembersParam param) {
         String token = getOtherToken();
-        TagUsersReqDTO reqDTO = new TagUsersReqDTO();
-        BeanUtil.copyProperties(param, reqDTO);
+        TagUsersReqDTO reqDTO = IQywxMapper.INSTANCE.toTagUsersReqDTO(param);
         QywxBaseRespDTO respDTO = qywxApiClient.delTagUsers(token, reqDTO);
         if (null == respDTO) {
             throw new ApiException("删除失败!");
@@ -317,7 +316,8 @@ public class QywxManager {
         String jsApiTicket = getJsApiTicket(token);
         String memberUrl = qywxConfig.getMemberUrl();
         String uuid = IdUtil.fastSimpleUUID();
-        String str = "jsapi_ticket=" + jsApiTicket + "&noncestr=" + uuid + "&timestamp=" + timestamp + "&url=" + memberUrl;
+        String str =
+                "jsapi_ticket=" + jsApiTicket + "&noncestr=" + uuid + "&timestamp=" + timestamp + "&url=" + memberUrl;
         Digester digester = new Digester(DigestAlgorithm.SHA1);
         String signature = digester.digestHex(str);
         QywxAgentConfigDTO dto = new QywxAgentConfigDTO();
