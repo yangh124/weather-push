@@ -14,7 +14,7 @@
     <name>weather-push</name>
     <description>weather-push</description>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <docker.maven.plugin.version>1.2.2</docker.maven.plugin.version>
         <log4j2.version>2.15.0</log4j2.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
