@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.yh.weatherpush.dto.qywx.QywxTagDTO;
+import com.yh.api.dto.qywx.QywxTagDTO;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.dto.tag.TagMembersParam;

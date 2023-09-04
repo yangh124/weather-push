@@ -1,8 +1,8 @@
 package com.yh.weatherpush.controller;
 
+import com.yh.api.dto.qywx.MemberDTO;
+import com.yh.api.dto.qywx.QywxAgentConfigDTO;
 import com.yh.weatherpush.dto.Result;
-import com.yh.weatherpush.dto.qywx.MemberDTO;
-import com.yh.weatherpush.dto.qywx.QywxAgentConfigDTO;
 import com.yh.weatherpush.manager.QywxManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

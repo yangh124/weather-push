@@ -1,8 +1,10 @@
 package com.yh.weatherpush.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.yh.weatherpush.config.property.HfConfigPrProperties;
-import com.yh.weatherpush.dto.hfweather.*;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson2.JSONObject;
+import com.yh.api.config.HfConfigPrProperties;
+import com.yh.api.dto.hfweather.*;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.api.HfWeatherApiClient;
@@ -11,9 +13,7 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -35,8 +35,6 @@ public class WeatherServiceImpl implements WeatherService {
     private HfWeatherApiClient hfWeatherApiClient;
     @Autowired
     private HfConfigPrProperties hfConfigPrProperties;
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Override
     public Map<Integer, String> getTodayWeather(List<Tag> tags) {
@@ -157,16 +155,19 @@ public class WeatherServiceImpl implements WeatherService {
     public String getLocation(String name) {
         String cityUrl = hfConfigPrProperties.getCityUrl();
         cityUrl = cityUrl.replace("cityName", name);
-        ResponseEntity<HfCityResp> response = restTemplate.getForEntity(cityUrl, HfCityResp.class);
-        HfCityResp locations = response.getBody();
-        if (null == locations) {
+        String res = HttpUtil.get(cityUrl);
+        if (StrUtil.isNotBlank(res)) {
+            JSONObject jsonObject = JSONObject.parseObject(res);
+            HfCityResp resp = jsonObject.toJavaObject(HfCityResp.class);
+            String code = resp.getCode();
+            if (!"200".equals(code)) {
+                throw new ApiException("获取地区信息失败! -> " + jsonObject);
+            }
+            Location location = resp.getLocation().get(0);
+            return location.getId();
+        } else {
             throw new ApiException("获取地区信息失败!");
         }
-        String code = locations.getCode();
-        if (!"200".equals(code)) {
-            throw new ApiException("获取地区信息失败! -> " + locations);
-        }
-        Location location = locations.getLocation().get(0);
-        return location.getId();
+
     }
 }

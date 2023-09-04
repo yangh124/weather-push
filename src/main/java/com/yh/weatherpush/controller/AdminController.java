@@ -2,7 +2,7 @@ package com.yh.weatherpush.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.admin.LoginParam;
 import com.yh.weatherpush.dto.admin.UpdPwdParam;
