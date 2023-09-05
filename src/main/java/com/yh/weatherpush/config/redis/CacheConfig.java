@@ -1,11 +1,11 @@
 package com.yh.weatherpush.config.redis;
 
+import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSerializer;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -23,7 +23,7 @@ public class CacheConfig {
         config = config
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()));
         config = config.serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                RedisSerializationContext.SerializationPair.fromSerializer(new GenericFastJsonRedisSerializer()));
 
         CacheProperties.Redis redisProperties = cacheProperties.getRedis();
         if (redisProperties.getTimeToLive() != null) {

@@ -27,4 +27,4 @@ hf-weather:
   key: ENC(E8D+neLnWOjo4L5zxztNhVH6eqPrMUFuFIn8PLrY8n+4AjWfVux+JmVoQ4XroGHRJy/4nWqO6I8tT6fS1aNgciJfwOGuplOPN2URzvlXq1U=)
 
 swagger:
-  enable: true
+  enable: false
