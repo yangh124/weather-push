@@ -27,7 +27,7 @@ public class HttpMessageConvertersConfig {
         fastJsonConfig.setWriterFeatures(JSONWriter.Feature.PrettyFormat,
                 JSONWriter.Feature.WriteNullStringAsEmpty,
                 JSONWriter.Feature.WriteNullListAsEmpty, JSONWriter.Feature.WriteMapNullValue);
-        List<MediaType> mediaTypes = new ArrayList<>(5);
+        List<MediaType> mediaTypes = new ArrayList<>(1);
         mediaTypes.add(MediaType.APPLICATION_JSON);
         fastConverter.setSupportedMediaTypes(mediaTypes);
         fastConverter.setFastJsonConfig(fastJsonConfig);

@@ -1,5 +1,6 @@
 package com.yh.weatherpush.entity;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -39,6 +40,7 @@ public class Holiday implements Serializable {
     /**
      * 日期
      */
+    @JSONField(format = "yyyy-MM-dd")
     private LocalDate holidayDate;
 
     /**
