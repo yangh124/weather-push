@@ -39,10 +39,10 @@ public class WeatherServiceImpl implements WeatherService {
     private RestTemplate restTemplate;
 
     @Override
-    public Map<Long, String> getTodayWeather(List<Tag> tags) {
-        Map<Long, String> res = new HashMap<>(tags.size());
+    public Map<Integer, String> getTodayWeather(List<Tag> tags) {
+        Map<Integer, String> res = new HashMap<>(tags.size());
         for (Tag tag : tags) {
-            Long tagid = tag.getId();
+            Integer tagid = tag.getId();
             String tagname = tag.getTagName();
             String code = tag.getCode();
             // 实时天气
@@ -67,10 +67,10 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Map<Long, String> getTomWeather(List<Tag> tags) {
-        Map<Long, String> res = new HashMap<>(tags.size());
+    public Map<Integer, String> getTomWeather(List<Tag> tags) {
+        Map<Integer, String> res = new HashMap<>(tags.size());
         for (Tag tag : tags) {
-            Long tagid = tag.getId();
+            Integer tagid = tag.getId();
             String tagname = tag.getTagName();
             String code = tag.getCode();
             // 明日天气
@@ -92,13 +92,13 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Map<Long, String> getRedisWeather(List<Tag> tags) {
-        Map<Long, String> res = new HashMap<>();
+    public Map<Integer, String> getRedisWeather(List<Tag> tags) {
+        Map<Integer, String> res = new HashMap<>();
         LocalDate now = LocalDate.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         StringCodec stringCodec = new StringCodec();
         for (Tag tag : tags) {
-            Long tagid = tag.getId();
+            Integer tagid = tag.getId();
             String key = format + ":" + tagid;
             RBucket<String> bucket = redissonClient.getBucket(key, stringCodec);
             String s = bucket.get();

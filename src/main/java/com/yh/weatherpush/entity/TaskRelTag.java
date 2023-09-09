@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author yh
- * @since 2023-08-30
+ * @since 2023-09-09
  */
 @Getter
 @Setter
@@ -24,18 +24,18 @@ public class TaskRelTag implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
     /**
      * 任务id
      */
-    private Long taskId;
+    private Integer taskId;
 
     /**
      * 标签id
      */
-    private Long tagId;
+    private Integer tagId;
 
     /**
      * 创建时间

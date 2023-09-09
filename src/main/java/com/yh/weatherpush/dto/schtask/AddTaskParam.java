@@ -30,6 +30,6 @@ public class AddTaskParam implements Serializable {
 
     @NotEmpty(message = "关联地区不能为空")
     @ApiModelProperty("地区id")
-    private List<Long> tagIds;
+    private List<Integer> tagIds;
 
 }

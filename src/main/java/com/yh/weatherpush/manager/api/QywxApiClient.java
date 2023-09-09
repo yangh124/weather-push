@@ -54,7 +54,7 @@ public interface QywxApiClient {
      * @param tagId       标签id
      */
     @GetMapping("/tag/delete")
-    QywxBaseRespDTO deleteTag(@RequestParam("access_token") String accessToken, @RequestParam Long tagId);
+    QywxBaseRespDTO deleteTag(@RequestParam("access_token") String accessToken, @RequestParam Integer tagId);
 
     /**
      * 获取标签列表

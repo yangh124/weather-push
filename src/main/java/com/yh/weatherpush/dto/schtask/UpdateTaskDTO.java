@@ -31,5 +31,5 @@ public class UpdateTaskDTO implements Serializable {
 
     @NotEmpty
     @ApiModelProperty("关联地区")
-    private List<Long> tagIds;
+    private List<Integer> tagIds;
 }

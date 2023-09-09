@@ -11,7 +11,7 @@ public class QywxTagDTO implements Serializable {
     private static final long serialVersionUID = 1141658194181269440L;
 
     @JSONField(name = "tagid")
-    private Long tagId;
+    private Integer tagId;
 
     @JSONField(name = "tagname")
     private String tagName;

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class TagDTO implements Serializable {
 
     @JSONField(serializeUsing = ToStringSerializer.class)
-    private Long id;
+    private Integer id;
 
     @ApiModelProperty("企业微信tag_name（城市name）")
     private String tagName;

@@ -52,6 +52,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         Tag tag = new Tag();
         tag.setCode(code);
         tag.setCtime(LocalDateTime.now());
+        tag.setTagName(param.getTagName());
         super.save(tag);
         qywxManager.createTag(tag.getId(), param.getTagName());
     }
@@ -112,7 +113,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         List<TaskRelTag> trtList =
                 taskRelTagMapper.selectList(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
         if (CollUtil.isNotEmpty(trtList)) {
-            List<Long> tagIdList = trtList.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
+            List<Integer> tagIdList = trtList.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
             tagList = super.listByIds(tagIdList);
         }
         return tagList;

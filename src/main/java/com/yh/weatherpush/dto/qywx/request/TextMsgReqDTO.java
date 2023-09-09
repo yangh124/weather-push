@@ -21,7 +21,7 @@ public class TextMsgReqDTO implements Serializable {
      * 指定接收消息的成员
      */
     @JSONField(name = "totag")
-    private Long toTag;
+    private Integer toTag;
 
     /**
      * 消息类型

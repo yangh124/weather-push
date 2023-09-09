@@ -41,10 +41,10 @@ public class QywxManager {
      *
      * @param tagMsgMap 标签id -> 消息内容
      */
-    public void pushWeatherMsg(Map<Long, String> tagMsgMap) {
+    public void pushWeatherMsg(Map<Integer, String> tagMsgMap) {
         String pushToken = getPushToken();
         String agentid = qywxConfig.getAgentid();
-        for (Long tagId : tagMsgMap.keySet()) {
+        for (Integer tagId : tagMsgMap.keySet()) {
             String msg = tagMsgMap.get(tagId);
             TextDTO text = new TextDTO(msg);
             TextMsgReqDTO reqDTO =
@@ -60,13 +60,11 @@ public class QywxManager {
      * @param tagName 标签名称
      * @return 标签id
      */
-    public void createTag(Long tagId, String tagName) {
+    public void createTag(Integer tagId, String tagName) {
         String token = getOtherToken();
         TagCreateReqDTO reqDTO = new TagCreateReqDTO();
         reqDTO.setTagName(tagName);
-        if (null != tagId) {
-            reqDTO.setTagId(tagId);
-        }
+        reqDTO.setTagId(tagId);
         TagCreateRespDTO respDTO = qywxApiClient.createTag(token, reqDTO);
         if (null == respDTO) {
             throw new ApiException("创建标签失败!");
@@ -82,7 +80,7 @@ public class QywxManager {
      *
      * @param tagId 标签id
      */
-    public void deleteTag(Long tagId) {
+    public void deleteTag(Integer tagId) {
         String token = getOtherToken();
         QywxBaseRespDTO respDTO = qywxApiClient.deleteTag(token, tagId);
         if (null == respDTO) {

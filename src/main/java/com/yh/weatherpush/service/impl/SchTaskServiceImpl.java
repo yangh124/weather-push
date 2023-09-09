@@ -64,11 +64,11 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
             return new Page<>();
         }
         List<SchTask> records = page.getRecords();
-        List<Long> taskIds = records.stream().map(SchTask::getId).collect(Collectors.toList());
-        Map<Long, List<Tag>> map = getTaskTagMap(taskIds);
+        List<Integer> taskIds = records.stream().map(SchTask::getId).collect(Collectors.toList());
+        Map<Integer, List<Tag>> map = getTaskTagMap(taskIds);
         return page.convert(record -> {
             SchTaskPageDTO dto = ISchTaskMapper.INSTANCE.toSchTaskPageDTO(record);
-            Long taskId = record.getId();
+            Integer taskId = record.getId();
             List<Tag> tagList = map.get(taskId);
             dto.setTagList(tagList);
             String taskName = record.getTaskName();
@@ -79,14 +79,14 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     }
 
 
-    private Map<Long, List<Tag>> getTaskTagMap(List<Long> taskIds) {
-        Map<Long, List<Tag>> map = new HashMap<>(taskIds.size());
+    private Map<Integer, List<Tag>> getTaskTagMap(List<Integer> taskIds) {
+        Map<Integer, List<Tag>> map = new HashMap<>(taskIds.size());
         // 此处待优化
-        for (Long taskId : taskIds) {
+        for (Integer taskId : taskIds) {
             List<TaskRelTag> list =
                     taskRelTagManager.list(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
             if (CollUtil.isNotEmpty(list)) {
-                List<Long> tagIds = list.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
+                List<Integer> tagIds = list.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
                 List<Tag> tagList = tagMapper.selectBatchIds(tagIds);
                 map.put(taskId, tagList);
             }
@@ -100,8 +100,8 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         SchTask schTask = ISchTaskMapper.INSTANCE.toSchTaskFromAdd(param);
         schTask.setCtime(LocalDateTime.now());
         super.save(schTask);
-        Long taskId = schTask.getId();
-        List<Long> tagIds = param.getTagIds();
+        Integer taskId = schTask.getId();
+        List<Integer> tagIds = param.getTagIds();
         addBatch(taskId, tagIds);
         QuartzBean quartzBean = ISchTaskMapper.INSTANCE.toQuartzBean(schTask);
         quartzBean.setId(String.valueOf(taskId));
@@ -110,18 +110,18 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         super.removeById(id);
         quartzClient.delete(scheduler, String.valueOf(id));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void updateTask(Long id, UpdateTaskDTO dto) {
+    public void updateTask(Integer id, UpdateTaskDTO dto) {
         SchTask task = super.getById(id);
         Integer status = dto.getStatus();
         String cronExp = dto.getCronExp();
-        List<Long> tagIds = dto.getTagIds();
+        List<Integer> tagIds = dto.getTagIds();
         if (ObjectUtil.isNull(status) || StrUtil.isBlank(cronExp) || CollUtil.isEmpty(tagIds)) {
             throw new ApiException("参数错误!");
         }
@@ -145,9 +145,9 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         }
     }
 
-    private void addBatch(Long id, List<Long> tagIds) {
+    private void addBatch(Integer id, List<Integer> tagIds) {
         List<TaskRelTag> list = new ArrayList<>(tagIds.size());
-        for (Long tagId : tagIds) {
+        for (Integer tagId : tagIds) {
             TaskRelTag taskRelTag = new TaskRelTag();
             taskRelTag.setTaskId(id);
             taskRelTag.setTagId(tagId);

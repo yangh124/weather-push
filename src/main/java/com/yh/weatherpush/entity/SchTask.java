@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author yh
- * @since 2023-08-30
+ * @since 2023-09-09
  */
 @Getter
 @Setter
@@ -24,8 +24,8 @@ public class SchTask implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
     /**
      * 任务名称

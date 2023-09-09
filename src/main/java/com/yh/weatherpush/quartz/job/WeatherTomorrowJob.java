@@ -49,7 +49,7 @@ public class WeatherTomorrowJob implements Job {
                 log.info("============= free day =============");
                 return;
             }
-            Map<Long, String> map = weatherService.getTomWeather(tagList);
+            Map<Integer, String> map = weatherService.getTomWeather(tagList);
             qywxManager.pushWeatherMsg(map);
             LocalDateTime now = LocalDateTime.now();
             String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author yh
- * @since 2023-08-30
+ * @since 2023-09-09
  */
 @Getter
 @Setter
@@ -25,7 +25,7 @@ public class Admin implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     private String username;
 

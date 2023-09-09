@@ -45,14 +45,14 @@ public class SchTaskController {
 
     @ApiOperation("修改定时任务")
     @PatchMapping("/{id}")
-    public Result<Void> updateStatus(@PathVariable Long id, @Validated @RequestBody UpdateTaskDTO dto) {
+    public Result<Void> updateStatus(@PathVariable Integer id, @Validated @RequestBody UpdateTaskDTO dto) {
         schTaskService.updateTask(id, dto);
         return Result.success();
     }
 
     @ApiOperation("删除任务")
     @DeleteMapping("/{id}")
-    public Result<Void> delete(@PathVariable Long id) {
+    public Result<Void> delete(@PathVariable Integer id) {
         schTaskService.delete(id);
         return Result.success();
     }
