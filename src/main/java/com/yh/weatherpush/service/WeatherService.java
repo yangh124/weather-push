@@ -17,7 +17,7 @@ public interface WeatherService {
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> getTodayWeather(List<Tag> tags);
+    Map<Long, String> getTodayWeather(List<Tag> tags);
 
     /**
      * 获取明日天气
@@ -25,7 +25,7 @@ public interface WeatherService {
      * @param tags 1 : 杭州 : 101210101
      * @return 杭州 : 天气信息
      */
-    Map<Integer, String> getTomWeather(List<Tag> tags);
+    Map<Long, String> getTomWeather(List<Tag> tags);
 
     /**
      * 获取redis天气
@@ -33,7 +33,7 @@ public interface WeatherService {
      * @param tags
      * @return
      */
-    Map<Integer, String> getRedisWeather(List<Tag> tags);
+    Map<Long, String> getRedisWeather(List<Tag> tags);
 
     /**
      * 通过地名查询 location code

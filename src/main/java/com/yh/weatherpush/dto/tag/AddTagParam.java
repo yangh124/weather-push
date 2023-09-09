@@ -16,7 +16,7 @@ public class AddTagParam implements Serializable {
     private static final long serialVersionUID = 5108658370936176324L;
 
     @ApiModelProperty(value = "标签id")
-    private Integer tagId;
+    private Long tagId;
 
     @NotBlank
     @ApiModelProperty(value = "标签名字")

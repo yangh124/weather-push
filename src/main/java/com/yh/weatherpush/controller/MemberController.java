@@ -35,7 +35,7 @@ public class MemberController {
 
     @ApiOperation("获取地区成员")
     @GetMapping()
-    public Result<List<MemberDTO>> userList(@RequestParam Integer id) {
+    public Result<List<MemberDTO>> userList(@RequestParam Long id) {
         List<MemberDTO> memberResps = qywxManager.userListByTag(id);
         return Result.success(memberResps);
     }

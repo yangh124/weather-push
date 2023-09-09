@@ -41,10 +41,10 @@ public class QywxManager {
      *
      * @param tagMsgMap 标签id -> 消息内容
      */
-    public void pushWeatherMsg(Map<Integer, String> tagMsgMap) {
+    public void pushWeatherMsg(Map<Long, String> tagMsgMap) {
         String pushToken = getPushToken();
         String agentid = qywxConfig.getAgentid();
-        for (Integer tagId : tagMsgMap.keySet()) {
+        for (Long tagId : tagMsgMap.keySet()) {
             String msg = tagMsgMap.get(tagId);
             TextDTO text = new TextDTO(msg);
             TextMsgReqDTO reqDTO =
@@ -60,7 +60,7 @@ public class QywxManager {
      * @param tagName 标签名称
      * @return 标签id
      */
-    public Integer createTag(Integer tagId, String tagName) {
+    public void createTag(Long tagId, String tagName) {
         String token = getOtherToken();
         TagCreateReqDTO reqDTO = new TagCreateReqDTO();
         reqDTO.setTagName(tagName);
@@ -75,8 +75,6 @@ public class QywxManager {
         if (!errCode.equals(0)) {
             throw new ApiException("创建标签失败! -> " + respDTO.getErrMsg());
         }
-        tagId = respDTO.getTagId();
-        return tagId;
     }
 
     /**
@@ -84,7 +82,7 @@ public class QywxManager {
      *
      * @param tagId 标签id
      */
-    public void deleteTag(Integer tagId) {
+    public void deleteTag(Long tagId) {
         String token = getOtherToken();
         QywxBaseRespDTO respDTO = qywxApiClient.deleteTag(token, tagId);
         if (null == respDTO) {
@@ -259,7 +257,7 @@ public class QywxManager {
      * @param tagId 标签id
      * @return 标签成员
      */
-    public List<MemberDTO> userListByTag(Integer tagId) {
+    public List<MemberDTO> userListByTag(Long tagId) {
         String token = getOtherToken();
         TagGetRespDTO respDTO = qywxApiClient.tagGet(token, tagId);
         if (null == respDTO) {

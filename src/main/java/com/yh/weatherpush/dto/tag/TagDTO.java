@@ -20,9 +20,6 @@ public class TagDTO implements Serializable {
     @JSONField(serializeUsing = ToStringSerializer.class)
     private Long id;
 
-    @ApiModelProperty("企业微信tag_id（城市id）")
-    private Integer tagId;
-
     @ApiModelProperty("企业微信tag_name（城市name）")
     private String tagName;
 
@@ -39,7 +36,7 @@ public class TagDTO implements Serializable {
 
     public static TagDTO covertFromQywxTagDTO(QywxTagDTO qywxTagDTO) {
         TagDTO tagDTO = new TagDTO();
-        tagDTO.setTagId(qywxTagDTO.getTagId());
+        tagDTO.setId(qywxTagDTO.getTagId());
         tagDTO.setTagName(qywxTagDTO.getTagName());
         return tagDTO;
     }
@@ -47,7 +44,6 @@ public class TagDTO implements Serializable {
     public static TagDTO covertFromTag(Tag tag) {
         TagDTO tagDTO = new TagDTO();
         tagDTO.setId(tag.getId());
-        tagDTO.setTagId(tag.getTagId());
         tagDTO.setTagName(tag.getTagName());
         tagDTO.setCode(tag.getCode());
         tagDTO.setCtime(tag.getCtime());

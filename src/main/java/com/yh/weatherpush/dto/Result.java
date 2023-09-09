@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Result<T> {
+
     private long code;
     private String message;
     private T data;

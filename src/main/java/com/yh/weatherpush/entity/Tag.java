@@ -28,11 +28,6 @@ public class Tag implements Serializable {
     private Long id;
 
     /**
-     * 企业微信tag_id（城市id）
-     */
-    private Integer tagId;
-
-    /**
      * 企业微信tag_name（城市name）
      */
     private String tagName;

@@ -48,7 +48,7 @@ public class WeatherTodayJob implements Job {
                 log.info("============= free day =============");
                 return;
             }
-            Map<Integer, String> map = weatherService.getRedisWeather(tagList);
+            Map<Long, String> map = weatherService.getRedisWeather(tagList);
             qywxManager.pushWeatherMsg(map);
             LocalDateTime now = LocalDateTime.now();
             String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

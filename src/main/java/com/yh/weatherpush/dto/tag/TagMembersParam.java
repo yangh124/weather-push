@@ -18,7 +18,7 @@ public class TagMembersParam implements Serializable {
 
     @NotNull(message = "id不能为空")
     @JSONField(name = "tagid")
-    private Integer tagId;
+    private Long tagId;
 
     @NotEmpty
     @JSONField(name = "userlist")

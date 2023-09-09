@@ -49,12 +49,11 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     @Override
     public void create(AddTagParam param) {
         String code = weatherService.getLocation(param.getTagName());
-        Integer tagId = qywxManager.createTag(param.getTagId(), param.getTagName());
         Tag tag = new Tag();
-        tag.setTagId(tagId);
         tag.setCode(code);
         tag.setCtime(LocalDateTime.now());
         super.save(tag);
+        qywxManager.createTag(tag.getId(), param.getTagName());
     }
 
     @Override
@@ -63,7 +62,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         if (null == tag) {
             throw new ApiException("标签不存在");
         }
-        qywxManager.deleteTag(tag.getTagId());
+        qywxManager.deleteTag(tag.getId());
         super.removeById(id);
     }
 

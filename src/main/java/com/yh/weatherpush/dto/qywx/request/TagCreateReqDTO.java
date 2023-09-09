@@ -11,7 +11,7 @@ public class TagCreateReqDTO implements Serializable {
     private static final long serialVersionUID = -1115049831589758080L;
 
     @JSONField(name = "tagid")
-    private Integer tagId;
+    private Long tagId;
 
     @JSONField(name = "tagname")
     private String tagName;
