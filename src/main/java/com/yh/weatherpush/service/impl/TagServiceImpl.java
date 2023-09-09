@@ -85,6 +85,11 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public List<TagDTO> getAll() {
+        List<Tag> list = this.list();
+        if (CollUtil.isNotEmpty(list)) {
+            return list.stream().map(TagDTO::covertFromTag).collect(Collectors.toList());
+        }
+        // todo 怎么去同步数据
         List<QywxTagDTO> tags = qywxManager.getAllTags();
         if (CollUtil.isEmpty(tags)) {
             return CollUtil.newArrayList();
