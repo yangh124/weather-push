@@ -40,6 +40,10 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Cacheable(value = {"admin"}, key = "#username")
     @Override
     public Admin getAdminByUsername(String username) {
+        return getAdmin(username);
+    }
+
+    private Admin getAdmin(String username) {
         LambdaQueryWrapper<Admin> eq =
                 new QueryWrapper<Admin>().lambda().eq(Admin::getUsername, username).last("LIMIT 1");
         return adminMapper.selectOne(eq);
@@ -48,7 +52,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Override
     public SaTokenInfo login(LoginParam param) {
         String username = param.getUsername();
-        Admin admin = getAdminByUsername(username);
+        Admin admin = getAdmin(username);
         if (null == admin) {
             throw new ApiException("用户名或密码错误");
         }
@@ -63,7 +67,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @CacheEvict(value = "admin", key = "#updPwdParam.username")
     @Override
     public void updatePassword(UpdPwdParam updPwdParam) {
-        Admin admin = getAdminByUsername(updPwdParam.getUsername());
+        Admin admin = getAdmin(updPwdParam.getUsername());
 
         boolean matches = passwordEncoder.matches(updPwdParam.getOldPassword(), admin.getPassword());
         if (!matches) {
@@ -78,6 +82,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         LambdaUpdateWrapper<Admin> updateWrapper =
                 new UpdateWrapper<Admin>().lambda().set(Admin::getPassword, pwd).eq(Admin::getId, admin.getId());
         update(updateWrapper);
+        StpUtil.logout();
     }
 
 }

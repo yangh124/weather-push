@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 /**
  * @author : yh
  * @date : 2022/3/8 22:08
@@ -54,11 +52,8 @@ public class AdminController {
 
     @ApiOperation("修改密码")
     @PostMapping("/updPwd")
-    public Result<Void> updatePassword(Principal principal, @Validated @RequestBody UpdPwdParam updPwdParam) {
-        if (principal == null) {
-            return Result.unauthorized(null);
-        }
-        String username = principal.getName();
+    public Result<Void> updatePassword(@Validated @RequestBody UpdPwdParam updPwdParam) {
+        String username = (String) StpUtil.getLoginId();
         updPwdParam.setUsername(username);
         adminService.updatePassword(updPwdParam);
         return Result.success();
