@@ -195,7 +195,7 @@ CREATE TABLE `QRTZ_TRIGGERS` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_admin`;
 CREATE TABLE `sys_admin` (
-                             `id` bigint NOT NULL AUTO_INCREMENT,
+                             `id` int NOT NULL AUTO_INCREMENT,
                              `username` varchar(64) DEFAULT NULL,
                              `password` varchar(64) DEFAULT NULL,
                              `avatar` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '头像',
@@ -214,7 +214,7 @@ CREATE TABLE `sys_admin` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_holiday`;
 CREATE TABLE `sys_holiday` (
-                               `id` bigint NOT NULL,
+                               `id` int NOT NULL AUTO_INCREMENT,
                                `holiday_name` varchar(50) NOT NULL DEFAULT '' COMMENT '节假日名称',
                                `holiday_date` date NOT NULL COMMENT '日期',
                                `is_off_day` tinyint(1) NOT NULL COMMENT '是否放假（0-补班 1-放假）',
@@ -230,7 +230,7 @@ CREATE TABLE `sys_holiday` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_sch_task`;
 CREATE TABLE `sys_sch_task` (
-                                `id` bigint NOT NULL,
+                                `id` int NOT NULL AUTO_INCREMENT,
                                 `task_name` varchar(50) NOT NULL COMMENT '任务名称',
                                 `cron_exp` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'cron表达式',
                                 `task_desc` varchar(255) DEFAULT NULL COMMENT '任务描述',
@@ -245,8 +245,7 @@ CREATE TABLE `sys_sch_task` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_tag`;
 CREATE TABLE `sys_tag` (
-                           `id` bigint NOT NULL,
-                           `tag_id` int NOT NULL DEFAULT '0' COMMENT '企业微信tag_id（城市id）',
+                           `id` int NOT NULL AUTO_INCREMENT,
                            `tag_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '企业微信tag_name（城市name）',
                            `code` char(9) NOT NULL DEFAULT '' COMMENT '地区编码',
                            `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
@@ -259,9 +258,9 @@ CREATE TABLE `sys_tag` (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_task_rel_tag`;
 CREATE TABLE `sys_task_rel_tag` (
-                                    `id` bigint NOT NULL,
-                                    `task_id` bigint NOT NULL COMMENT '任务id',
-                                    `tag_id` bigint NOT NULL COMMENT '标签id',
+                                    `id`      int NOT NULL AUTO_INCREMENT,
+                                    `task_id` int NOT NULL COMMENT '任务id',
+                                    `tag_id`  int NOT NULL COMMENT '标签id',
                                     `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
                                     `utime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
                                     PRIMARY KEY (`id`)
