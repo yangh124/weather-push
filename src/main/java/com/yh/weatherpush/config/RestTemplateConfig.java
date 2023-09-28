@@ -1,6 +1,5 @@
 package com.yh.weatherpush.config;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -16,7 +15,6 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,7 +41,7 @@ public class RestTemplateConfig {
             }
             // 由于系统中默认有jackson 在转换json时自动会启用 但是我们不想使用它 可以直接移除
             if (converter instanceof GsonHttpMessageConverter
-                || converter instanceof MappingJackson2HttpMessageConverter) {
+                    || converter instanceof MappingJackson2HttpMessageConverter) {
                 iterator.remove();
             }
         }
@@ -55,7 +53,7 @@ public class RestTemplateConfig {
     @Bean
     public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
         HttpComponentsClientHttpRequestFactory factory =
-            new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
+                new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().build());
         factory.setReadTimeout(5000);// 单位为ms
         factory.setConnectTimeout(5000);// 单位为ms
         return factory;
@@ -65,13 +63,9 @@ public class RestTemplateConfig {
     public HttpMessageConverters fastJsonHttpMessageConverters() {
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
-        List<MediaType> mediaTypes = new ArrayList<>(5);
-        mediaTypes.add(MediaType.APPLICATION_ATOM_XML);
-        mediaTypes.add(MediaType.APPLICATION_CBOR);
-        mediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);
+        fastConverter.setDefaultCharset(StandardCharsets.UTF_8);
+        List<MediaType> mediaTypes = new ArrayList<>(1);
         mediaTypes.add(MediaType.APPLICATION_JSON);
-        mediaTypes.add(MediaType.APPLICATION_OCTET_STREAM);
         fastConverter.setSupportedMediaTypes(mediaTypes);
         fastConverter.setFastJsonConfig(fastJsonConfig);
         return new HttpMessageConverters(fastConverter);
