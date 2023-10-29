@@ -4,6 +4,7 @@ import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
 
+@Slf4j
 @Configuration
 public class SaTokenWebMvcConfig implements WebMvcConfigurer {
 
@@ -30,11 +32,11 @@ public class SaTokenWebMvcConfig implements WebMvcConfigurer {
         // 注册 Sa-Token 拦截器，校验规则为 StpUtil.checkLogin() 登录校验。
         registry.addInterceptor(new SaInterceptor(handle -> {
                     try {
-                        System.out.println("-------- 前端访问path：" + SaHolder.getRequest().getRequestPath());
+                        log.debug("-------- 前端访问path：" + SaHolder.getRequest().getRequestPath());
                         StpUtil.checkLogin();
-                        System.out.println("-------- 此 path 校验成功：" + SaHolder.getRequest().getRequestPath());
+                        log.debug("-------- 此 path 校验成功：" + SaHolder.getRequest().getRequestPath());
                     } catch (Exception e) {
-                        System.out.println("-------- 此 path 校验失败：" + SaHolder.getRequest().getRequestPath());
+                        log.debug("-------- 此 path 校验失败：" + SaHolder.getRequest().getRequestPath());
                         throw e;
                     }
                 }))
