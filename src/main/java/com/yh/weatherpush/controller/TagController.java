@@ -2,14 +2,14 @@ package com.yh.weatherpush.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.Result;
-import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.AddTagParam;
 import com.yh.weatherpush.dto.tag.TagDTO;
+import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.TagPageParam;
 import com.yh.weatherpush.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +23,13 @@ import java.util.List;
  * @author yh
  * @since 2022-02-19
  */
+@AllArgsConstructor
 @Api(tags = "标签管理")
 @RestController
 @RequestMapping("/tags")
 public class TagController {
 
-    @Autowired
-    private TagService tagService;
+    private final TagService tagService;
 
     @ApiOperation("创建标签")
     @PostMapping()

@@ -6,10 +6,10 @@ import com.yh.weatherpush.manager.QywxManager;
 import com.yh.weatherpush.service.HolidayService;
 import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -24,18 +24,15 @@ import java.util.Map;
  * @author : yh
  * @date : 2022/4/18 21:27
  */
+@AllArgsConstructor
 @Slf4j
 @Component
 public class WeatherTomorrowJob implements Job {
 
-    @Autowired
-    private QywxManager qywxManager;
-    @Autowired
-    private WeatherService weatherService;
-    @Autowired
-    private HolidayService holidayService;
-    @Autowired
-    private TagService tagService;
+    private final QywxManager qywxManager;
+    private final WeatherService weatherService;
+    private final HolidayService holidayService;
+    private final TagService tagService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {

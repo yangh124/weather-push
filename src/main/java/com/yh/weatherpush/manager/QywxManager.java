@@ -14,10 +14,10 @@ import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.api.QywxApiClient;
 import com.yh.weatherpush.manager.mapstruct.IQywxMapper;
+import lombok.AllArgsConstructor;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,15 +25,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Component
 public class QywxManager {
 
-    @Autowired
-    private QywxConfigProperties qywxConfig;
-    @Autowired
-    private RedissonClient redissonClient;
-    @Autowired
-    private QywxApiClient qywxApiClient;
+    private final QywxConfigProperties qywxConfig;
+    private final RedissonClient redissonClient;
+    private final QywxApiClient qywxApiClient;
 
 
     /**

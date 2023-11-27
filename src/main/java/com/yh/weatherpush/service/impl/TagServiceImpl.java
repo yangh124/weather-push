@@ -20,7 +20,7 @@ import com.yh.weatherpush.mapper.TagMapper;
 import com.yh.weatherpush.mapper.TaskRelTagMapper;
 import com.yh.weatherpush.service.TagService;
 import com.yh.weatherpush.service.WeatherService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,15 +36,13 @@ import java.util.stream.Collectors;
  * @author yh
  * @since 2022-02-19
  */
+@AllArgsConstructor
 @Service
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
 
-    @Autowired
-    private QywxManager qywxManager;
-    @Autowired
-    private WeatherService weatherService;
-    @Autowired
-    private TaskRelTagMapper taskRelTagMapper;
+    private final QywxManager qywxManager;
+    private final WeatherService weatherService;
+    private final TaskRelTagMapper taskRelTagMapper;
 
     @Override
     public void create(AddTagParam param) {

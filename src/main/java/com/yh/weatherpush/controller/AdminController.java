@@ -10,7 +10,7 @@ import com.yh.weatherpush.entity.Admin;
 import com.yh.weatherpush.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "系统用户")
 @RestController
 @RequestMapping("/admin")
+@AllArgsConstructor
 public class AdminController {
 
-    @Autowired
-    private AdminService adminService;
+    private final AdminService adminService;
 
     @ApiOperation("登录")
     @PostMapping("/login")

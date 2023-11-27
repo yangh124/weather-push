@@ -7,10 +7,10 @@ import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.api.HfWeatherApiClient;
 import com.yh.weatherpush.service.WeatherService;
+import lombok.AllArgsConstructor;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,17 +26,14 @@ import java.util.Map;
  * @author : yh
  * @date : 2021/10/31 14:29
  */
+@AllArgsConstructor
 @Service
 public class WeatherServiceImpl implements WeatherService {
 
-    @Autowired
-    private RedissonClient redissonClient;
-    @Autowired
-    private HfWeatherApiClient hfWeatherApiClient;
-    @Autowired
-    private HfConfigPrProperties hfConfigPrProperties;
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RedissonClient redissonClient;
+    private final HfWeatherApiClient hfWeatherApiClient;
+    private final HfConfigPrProperties hfConfigPrProperties;
+    private final RestTemplate restTemplate;
 
     @Override
     public Map<Integer, String> getTodayWeather(List<Tag> tags) {

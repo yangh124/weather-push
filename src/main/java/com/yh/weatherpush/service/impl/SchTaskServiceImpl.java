@@ -24,8 +24,8 @@ import com.yh.weatherpush.mapper.SchTaskMapper;
 import com.yh.weatherpush.mapper.TagMapper;
 import com.yh.weatherpush.quartz.QuartzClient;
 import com.yh.weatherpush.service.SchTaskService;
+import lombok.AllArgsConstructor;
 import org.quartz.Scheduler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,17 +44,14 @@ import java.util.stream.Collectors;
  * @author yh
  * @since 2022-04-17
  */
+@AllArgsConstructor
 @Service
 public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> implements SchTaskService {
 
-    @Autowired
-    private Scheduler scheduler;
-    @Autowired
-    private QuartzClient quartzClient;
-    @Autowired
-    private TagMapper tagMapper;
-    @Autowired
-    private TaskRelTagManager taskRelTagManager;
+    private final Scheduler scheduler;
+    private final QuartzClient quartzClient;
+    private final TagMapper tagMapper;
+    private final TaskRelTagManager taskRelTagManager;
 
     @Override
     public IPage<SchTaskPageDTO> pageList(PageParam pageParam) {

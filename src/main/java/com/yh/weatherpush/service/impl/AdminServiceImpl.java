@@ -13,8 +13,8 @@ import com.yh.weatherpush.entity.Admin;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.mapper.AdminMapper;
 import com.yh.weatherpush.service.AdminService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,12 +28,12 @@ import org.springframework.stereotype.Service;
  * @author yh
  * @since 2022-03-16
  */
+@AllArgsConstructor
 @Slf4j
 @Service
 public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements AdminService {
 
-    @Autowired
-    private AdminMapper adminMapper;
+    private final AdminMapper adminMapper;
 
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 

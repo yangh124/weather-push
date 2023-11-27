@@ -9,7 +9,7 @@ import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
 import com.yh.weatherpush.service.SchTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.*;
  * @author yh
  * @since 2022-04-17
  */
+@AllArgsConstructor
 @Api(tags = "定时任务管理")
 @RestController
 @RequestMapping("/tasks")
 public class SchTaskController {
 
-    @Autowired
-    private SchTaskService schTaskService;
+    private final SchTaskService schTaskService;
 
     @ApiOperation("获取定时任务分页")
     @GetMapping("/page")

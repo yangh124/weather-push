@@ -17,7 +17,6 @@ import org.redisson.api.RScript.Mode;
 import org.redisson.api.RScript.ReturnType;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.data.redis.core.script.RedisScript;
@@ -33,6 +32,7 @@ import java.util.stream.Collectors;
  * @author : yh
  * @date : 2021/11/21 14:34
  */
+
 @Service
 public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> implements HolidayService {
 
@@ -42,10 +42,13 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
     private Resource hmsetLua;
     @Value("classpath:lua/sadd.lua")
     private Resource saddLua;
-    @Autowired
-    private HolidayApiClient holidayApiClient;
-    @Autowired
-    private RedissonClient redissonClient;
+    private final HolidayApiClient holidayApiClient;
+    private final RedissonClient redissonClient;
+
+    public HolidayServiceImpl(HolidayApiClient holidayApiClient, RedissonClient redissonClient) {
+        this.holidayApiClient = holidayApiClient;
+        this.redissonClient = redissonClient;
+    }
 
 
     @Override
@@ -86,7 +89,8 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
                 }
                 Object[] args = argList.toArray();
                 RScript script = redissonClient.getScript();
-                script.eval(Mode.READ_ONLY, RedisScript.of(hmsetLua).getScriptAsString(), ReturnType.VALUE, Collections.singletonList(key), args);
+                script.eval(Mode.READ_ONLY, RedisScript.of(hmsetLua).getScriptAsString(), ReturnType.VALUE,
+                        Collections.singletonList(key), args);
             }
             return map.get(dateStr);
         } else {
@@ -111,7 +115,8 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
             argList.addAll(list);
             Object[] args = argList.toArray();
             RScript script = redissonClient.getScript();
-            script.eval(Mode.READ_ONLY, RedisScript.of(saddLua).getScriptAsString(), ReturnType.VALUE, Collections.singletonList(key), args);
+            script.eval(Mode.READ_ONLY, RedisScript.of(saddLua).getScriptAsString(), ReturnType.VALUE,
+                    Collections.singletonList(key), args);
             return list;
         } else {
             return new ArrayList<>(holidayRSet);

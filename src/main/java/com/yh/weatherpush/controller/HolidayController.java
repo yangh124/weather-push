@@ -5,7 +5,7 @@ import com.yh.weatherpush.entity.Holiday;
 import com.yh.weatherpush.service.HolidayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
  * @author yh
  * @since 2022-02-19
  */
+@AllArgsConstructor
 @Api(tags = "节假日")
 @RestController
 @RequestMapping("/holidays")
 public class HolidayController {
-    @Autowired
-    private HolidayService holidayService;
+    private final HolidayService holidayService;
 
     @ApiOperation("获取今年节假日")
     @GetMapping()
