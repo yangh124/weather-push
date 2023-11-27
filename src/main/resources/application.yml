@@ -1,20 +1,4 @@
-server:
-  port: 8080
 spring:
-  profiles:
-    active: dev
-  application:
-    name: weather-push
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&autoReconnect=true&allowMultiQueries=true
-    username: root
-    password: root
-  redis:
-    host: 127.0.0.1 # Redis服务器地址
-    database: 0 # Redis数据库索引（默认为0）
-    port: 6379 # Redis服务器连接端口
-    # password: # Redis服务器连接密码（默认为空）
-    timeout: 3000ms # 连接超时时间（毫秒）
   quartz:
     job-store-type: jdbc
     properties:

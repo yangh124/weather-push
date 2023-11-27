@@ -32,7 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-## yml
-application-*.yml
-
 .DS_Store
