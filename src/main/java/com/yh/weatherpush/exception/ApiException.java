@@ -1,10 +1,12 @@
 package com.yh.weatherpush.exception;
 
 import com.yh.weatherpush.enums.ResultCode;
+import lombok.Getter;
 
 /**
  * @author yh
  */
+@Getter
 public class ApiException extends RuntimeException {
     private ResultCode errorCode;
 
@@ -25,7 +27,4 @@ public class ApiException extends RuntimeException {
         super(message, cause);
     }
 
-    public ResultCode getErrorCode() {
-        return errorCode;
-    }
 }
