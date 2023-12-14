@@ -3,6 +3,7 @@ package com.yh.weatherpush.exception;
 import cn.dev33.satoken.exception.*;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.enums.ResultCode;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 全局异常处理

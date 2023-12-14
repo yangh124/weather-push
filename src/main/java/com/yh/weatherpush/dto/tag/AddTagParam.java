@@ -1,9 +1,10 @@
 package com.yh.weatherpush.dto.tag;
 
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Data
 public class AddTagParam implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5108658370936176324L;
 
     @ApiModelProperty(value = "标签id")

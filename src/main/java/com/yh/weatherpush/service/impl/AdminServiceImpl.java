@@ -40,7 +40,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Cacheable(value = {"admin"}, key = "#username")
     @Override
     public Admin getAdminByUsername(String username) {
-        return getAdmin(username);
+        Admin admin = getAdmin(username);
+        admin.setPassword("");
+        return admin;
     }
 
     private Admin getAdmin(String username) {

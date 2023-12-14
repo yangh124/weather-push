@@ -3,12 +3,13 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/weather?characterEncoding=utf-8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useSSL=false&autoReconnect=true&allowMultiQueries=true&rewriteBatchedStatements=true
     username: root
     password: root
-  redis:
-    host: 127.0.0.1 # Redis服务器地址
-    database: 0 # Redis数据库索引（默认为0）
-    port: 6379 # Redis服务器连接端口
-    password: root # Redis服务器连接密码（默认为空）
-    timeout: 3000ms # 连接超时时间（毫秒）
+  data:
+    redis:
+      host: 127.0.0.1 # Redis服务器地址
+      database: 0 # Redis数据库索引（默认为0）
+      port: 6379 # Redis服务器连接端口
+      password: root # Redis服务器连接密码（默认为空）
+      timeout: 3000ms # 连接超时时间（毫秒）
 
 sa-token:
   # jwt秘钥
@@ -25,6 +26,3 @@ qywx:
 
 hf-weather:
   key: ENC(E8D+neLnWOjo4L5zxztNhVH6eqPrMUFuFIn8PLrY8n+4AjWfVux+JmVoQ4XroGHRJy/4nWqO6I8tT6fS1aNgciJfwOGuplOPN2URzvlXq1U=)
-
-swagger:
-  enable: true

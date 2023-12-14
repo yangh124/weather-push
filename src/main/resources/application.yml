@@ -5,14 +5,6 @@ spring:
       org.quartz.scheduler.instance-id: AUTO
       org.quartz.scheduler.instance-name: weather_scheduler
       org.quartz.job-store.class: org.quartz.impl.jdbcjobstore.JobStoreTX
-  # 缓存
-  cache:
-    type: redis
-    redis:
-      time-to-live: 3600000
-      cache-null-values: true
-      use-key-prefix: true
-      key-prefix: cache_
 
 mybatis-plus:
   mapper-locations:
@@ -56,5 +48,8 @@ hf-weather:
 holiday:
   url: https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master
 
-swagger:
-  enable: true
+knife4j:
+  enable: false
+  setting:
+    custom-code: 500
+    enable-footer-custom: false

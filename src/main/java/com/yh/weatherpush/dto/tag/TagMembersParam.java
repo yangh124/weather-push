@@ -1,10 +1,11 @@
 package com.yh.weatherpush.dto.tag;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import java.util.List;
  */
 @Data
 public class TagMembersParam implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = -7506128416856466716L;
 
     @NotNull(message = "id不能为空")

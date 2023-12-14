@@ -1,8 +1,8 @@
 package com.yh.weatherpush.enums;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 枚举了一些常用code

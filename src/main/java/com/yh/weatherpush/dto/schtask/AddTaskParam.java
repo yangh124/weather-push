@@ -1,10 +1,11 @@
 package com.yh.weatherpush.dto.schtask;
 
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @Data
 public class AddTaskParam implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2918537822083452455L;
 
     @NotNull(message = "任务名称不能为空")

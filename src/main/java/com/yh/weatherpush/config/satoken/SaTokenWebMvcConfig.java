@@ -4,6 +4,9 @@ import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +18,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.List;
 
 @Slf4j
@@ -82,8 +82,6 @@ public class SaTokenWebMvcConfig implements WebMvcConfigurer {
 
     /**
      * requestParam方式的校验
-     *
-     * @return
      */
     @Bean
     public MethodValidationPostProcessor methodValidationPostProcessor() {

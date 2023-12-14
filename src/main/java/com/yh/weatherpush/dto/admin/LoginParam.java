@@ -2,9 +2,10 @@ package com.yh.weatherpush.dto.admin;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @ApiModel(description = "登录参数")
 public class LoginParam implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5842572793711251190L;
 
     @NotBlank(message = "用户名不能为空")
