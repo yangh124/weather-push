@@ -1,9 +1,10 @@
 package com.yh.weatherpush.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -14,11 +15,12 @@ import java.io.Serializable;
 @Setter
 public class PageParam implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5036818331610124320L;
 
-    @ApiModelProperty("当前页")
+    @Schema(description = "当前页")
     private Integer currentPage = 1;
 
-    @ApiModelProperty("每页大小")
+    @Schema(description = "每页大小")
     private Integer pageSize = 10;
 }

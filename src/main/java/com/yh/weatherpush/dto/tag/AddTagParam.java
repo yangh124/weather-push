@@ -1,6 +1,6 @@
 package com.yh.weatherpush.dto.tag;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -17,10 +17,10 @@ public class AddTagParam implements Serializable {
     @Serial
     private static final long serialVersionUID = 5108658370936176324L;
 
-    @ApiModelProperty(value = "标签id")
+    @Schema(description = "标签id")
     private Long tagId;
 
     @NotBlank
-    @ApiModelProperty(value = "标签名字")
+    @Schema(description = "标签名字")
     private String tagName;
 }

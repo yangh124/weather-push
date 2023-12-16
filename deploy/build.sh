@@ -5,7 +5,7 @@ if [ -z "$1" ];then
 fi
 # 设置环境变量
 export ENCRYPT=$1
-VERSION=`find ../target -name "*.jar" | awk -F- '{print $3 "-" $4}' | awk -F.jar '{print $1}'`
+VERSION=$(date "+%Y%m%d%H%M%S")
 echo '当前build版本：'$VERSION
 JAR_FILE_NAME=weather-push-$VERSION.jar
 TAG=registry.cn-hangzhou.aliyuncs.com/yh123/weather-push:$VERSION

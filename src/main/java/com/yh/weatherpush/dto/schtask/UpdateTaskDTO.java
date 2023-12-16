@@ -1,6 +1,6 @@
 package com.yh.weatherpush.dto.schtask;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -21,17 +21,17 @@ public class UpdateTaskDTO implements Serializable {
     private static final long serialVersionUID = 2612048948554994025L;
 
     @NotNull
-    @ApiModelProperty(value = "0-启动 1-停止")
+    @Schema(description = "0-启动 1-停止")
     private Integer status;
 
     @NotBlank
-    @ApiModelProperty(value = "cron表达式")
+    @Schema(description = "cron表达式")
     private String cronExp;
 
-    @ApiModelProperty("任务描述")
+    @Schema(description = "任务描述")
     private String taskDesc;
 
     @NotEmpty
-    @ApiModelProperty("关联地区")
+    @Schema(description = "关联地区")
     private List<Integer> tagIds;
 }

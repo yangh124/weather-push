@@ -3,8 +3,8 @@ package com.yh.weatherpush.controller;
 import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.entity.Holiday;
 import com.yh.weatherpush.service.HolidayService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,14 +24,14 @@ import java.util.stream.Collectors;
  * @author yh
  * @since 2022-02-19
  */
+@Tag(name = "节假日")
 @AllArgsConstructor
-@Api(tags = "节假日")
 @RestController
 @RequestMapping("/holidays")
 public class HolidayController {
     private final HolidayService holidayService;
 
-    @ApiOperation("获取今年节假日")
+    @Operation(summary = "获取今年节假日")
     @GetMapping()
     private Result<List<Holiday>> getAllHolidays() {
         List<Holiday> list = holidayService.redisHolidayList(LocalDate.now());
@@ -43,7 +43,7 @@ public class HolidayController {
      *
      * @return 1-休息 0-工作
      */
-    @ApiOperation("查询今日是否为节假日")
+    @Operation(summary = "查询今日是否为节假日")
     @GetMapping("/isFree")
     private Result<Integer> isFree() {
         // 1-休息 0-工作

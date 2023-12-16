@@ -4,8 +4,8 @@ import com.yh.weatherpush.dto.Result;
 import com.yh.weatherpush.dto.qywx.MemberDTO;
 import com.yh.weatherpush.dto.qywx.QywxAgentConfigDTO;
 import com.yh.weatherpush.manager.QywxManager;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,35 +19,35 @@ import java.util.List;
  * @date : 2022/3/12 11:19
  */
 @AllArgsConstructor
-@Api(tags = "成员管理")
+@Tag(name = "成员管理")
 @RestController
 @RequestMapping("/members")
 public class MemberController {
 
     private final QywxManager qywxManager;
 
-    @ApiOperation("获取加入企业二维码")
+    @Operation(summary = "获取加入企业二维码")
     @GetMapping("/qr_code")
     public Result<String> getJoinQrCode() {
         String joinQrCode = qywxManager.getJoinQrCode();
         return Result.success(joinQrCode);
     }
 
-    @ApiOperation("获取地区成员")
+    @Operation(summary = "获取地区成员")
     @GetMapping()
     public Result<List<MemberDTO>> userList(@RequestParam Long id) {
         List<MemberDTO> memberResps = qywxManager.userListByTag(id);
         return Result.success(memberResps);
     }
 
-    @ApiOperation("获取所有成员")
+    @Operation(summary = "获取所有成员")
     @GetMapping("/ids")
     public Result<List<String>> userIdList() {
         List<String> ids = qywxManager.userIdList();
         return Result.success(ids);
     }
 
-    @ApiOperation("获取企业微信配置（用于通讯录展示）")
+    @Operation(summary = "获取企业微信配置（用于通讯录展示）")
     @GetMapping("/agentConfig")
     public Result<QywxAgentConfigDTO> getQywxAgentConfig() {
         QywxAgentConfigDTO dto = qywxManager.getQywxAgentConfig();

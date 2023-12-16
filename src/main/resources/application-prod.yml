@@ -26,3 +26,8 @@ qywx:
 
 hf-weather:
   key: ENC(E8D+neLnWOjo4L5zxztNhVH6eqPrMUFuFIn8PLrY8n+4AjWfVux+JmVoQ4XroGHRJy/4nWqO6I8tT6fS1aNgciJfwOGuplOPN2URzvlXq1U=)
+
+knife4j:
+  # 开启生产环境屏蔽
+  production: true
+

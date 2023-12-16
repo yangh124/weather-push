@@ -7,8 +7,8 @@ import com.yh.weatherpush.dto.tag.TagDTO;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.dto.tag.TagPageParam;
 import com.yh.weatherpush.service.TagService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,49 +24,49 @@ import java.util.List;
  * @since 2022-02-19
  */
 @AllArgsConstructor
-@Api(tags = "标签管理")
+@Tag(name = "标签管理")
 @RestController
 @RequestMapping("/tags")
 public class TagController {
 
     private final TagService tagService;
 
-    @ApiOperation("创建标签")
+    @Operation(summary = "创建标签")
     @PostMapping()
     public Result<Void> create(@Validated @RequestBody AddTagParam param) {
         tagService.create(param);
         return Result.success();
     }
 
-    @ApiOperation("删除标签")
+    @Operation(summary = "删除标签")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable("id") Long id) {
         tagService.delete(id);
         return Result.success();
     }
 
-    @ApiOperation("获取标签分页")
+    @Operation(summary = "获取标签分页")
     @GetMapping("/page")
     public Result<IPage<TagDTO>> pageList(TagPageParam pageParam) {
         IPage<TagDTO> res = tagService.pageList(pageParam);
         return Result.success(res);
     }
 
-    @ApiOperation("获取所有标签")
+    @Operation(summary = "获取所有标签")
     @GetMapping()
     public Result<List<TagDTO>> pageList() {
         List<TagDTO> res = tagService.getAll();
         return Result.success(res);
     }
 
-    @ApiOperation("添加标签成员")
+    @Operation(summary = "添加标签成员")
     @PostMapping("/members")
     public Result<Void> addTagMembers(@Validated @RequestBody TagMembersParam param) {
         tagService.addTagMembers(param);
         return Result.success();
     }
 
-    @ApiOperation("删除标签成员")
+    @Operation(summary = "删除标签成员")
     @DeleteMapping("/members")
     public Result<Void> delTagMembers(@Validated @RequestBody TagMembersParam param) {
         tagService.delTagMembers(param);

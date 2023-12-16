@@ -8,8 +8,8 @@ import com.yh.weatherpush.dto.admin.LoginParam;
 import com.yh.weatherpush.dto.admin.UpdPwdParam;
 import com.yh.weatherpush.entity.Admin;
 import com.yh.weatherpush.service.AdminService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @author : yh
  * @date : 2022/3/8 22:08
  */
-@Api(tags = "系统用户")
+@Tag(name = "系统用户")
 @RestController
 @RequestMapping("/admin")
 @AllArgsConstructor
@@ -26,14 +26,14 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @ApiOperation("登录")
+    @Operation(summary = "登录")
     @PostMapping("/login")
     public Result<String> login(@Validated @RequestBody LoginParam param) {
         SaTokenInfo tokenInfo = adminService.login(param);
         return Result.success(tokenInfo.getTokenValue());
     }
 
-    @ApiOperation("获取用户信息")
+    @Operation(summary = "获取用户信息")
     @GetMapping("/info")
     public Result<JSONObject> info() {
         String username = (String) StpUtil.getLoginId();
@@ -44,13 +44,13 @@ public class AdminController {
         return Result.success(result);
     }
 
-    @ApiOperation("登出")
+    @Operation(summary = "登出")
     @PostMapping("/logout")
     public Result<JSONObject> logout() {
         return Result.success();
     }
 
-    @ApiOperation("修改密码")
+    @Operation(summary = "修改密码")
     @PostMapping("/updPwd")
     public Result<Void> updatePassword(@Validated @RequestBody UpdPwdParam updPwdParam) {
         String username = (String) StpUtil.getLoginId();

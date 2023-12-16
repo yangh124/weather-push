@@ -7,8 +7,8 @@ import com.yh.weatherpush.dto.schtask.AddTaskParam;
 import com.yh.weatherpush.dto.schtask.SchTaskPageDTO;
 import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
 import com.yh.weatherpush.service.SchTaskService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,35 +22,35 @@ import org.springframework.web.bind.annotation.*;
  * @since 2022-04-17
  */
 @AllArgsConstructor
-@Api(tags = "定时任务管理")
+@Tag(name = "定时任务管理")
 @RestController
 @RequestMapping("/tasks")
 public class SchTaskController {
 
     private final SchTaskService schTaskService;
 
-    @ApiOperation("获取定时任务分页")
+    @Operation(summary = "获取定时任务分页")
     @GetMapping("/page")
     public Result<IPage<SchTaskPageDTO>> pageList(PageParam pageParam) {
         IPage<SchTaskPageDTO> res = schTaskService.pageList(pageParam);
         return Result.success(res);
     }
 
-    @ApiOperation("创建定时任务")
+    @Operation(summary = "创建定时任务")
     @PostMapping()
     public Result<Void> create(@Validated @RequestBody AddTaskParam param) {
         schTaskService.create(param);
         return Result.success();
     }
 
-    @ApiOperation("修改定时任务")
+    @Operation(summary = "修改定时任务")
     @PatchMapping("/{id}")
     public Result<Void> updateStatus(@PathVariable Integer id, @Validated @RequestBody UpdateTaskDTO dto) {
         schTaskService.updateTask(id, dto);
         return Result.success();
     }
 
-    @ApiOperation("删除任务")
+    @Operation(summary = "删除任务")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Integer id) {
         schTaskService.delete(id);

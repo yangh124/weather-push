@@ -9,6 +9,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.HibernateValidator;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
@@ -18,17 +19,28 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Configuration
 public class SaTokenWebMvcConfig implements WebMvcConfigurer {
 
+    @Bean
+    @ConfigurationProperties(prefix = "white-list")
+    public List<String> whiteList() {
+        return new ArrayList<>();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> excludeUrlList =
-                CollUtil.newArrayList("/favicon.ico", "/**/*.html", "/**/*.css", "/**/*.js", "/swagger-resources/**",
-                        "/v2/api-docs", "/admin/login", "/error", "/holidays/**");
+                CollUtil.newArrayList("/**/*.ico", "/**/*.png", "/**/*.html", "/**/*.css", "/**/*.js",
+                        "/swagger-resources/**", "/v3/api-docs/**");
+        List<String> whiteList = whiteList();
+        if (CollUtil.isNotEmpty(whiteList)) {
+            excludeUrlList.addAll(whiteList);
+        }
         // 注册 Sa-Token 拦截器，校验规则为 StpUtil.checkLogin() 登录校验。
         registry.addInterceptor(new SaInterceptor(handle -> {
                     try {
