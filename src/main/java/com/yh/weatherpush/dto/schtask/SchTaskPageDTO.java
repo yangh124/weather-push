@@ -12,7 +12,7 @@ import java.util.List;
  * @author : yh
  * @date : 2022/4/25 21:58
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class SchTaskPageDTO extends SchTask {
 

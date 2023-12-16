@@ -80,7 +80,7 @@ public class QywxManager {
      */
     public void deleteTag(Integer tagId) {
         String token = getOtherToken();
-        QywxBaseRespDTO respDTO = qywxApiClient.deleteTag(token, tagId);
+        QywxRespDTO respDTO = qywxApiClient.deleteTag(token, tagId);
         if (null == respDTO) {
             throw new ApiException("删除标签失败!");
         }
@@ -274,7 +274,7 @@ public class QywxManager {
     public void addTagMembers(TagMembersParam param) {
         String token = getOtherToken();
         TagUsersReqDTO tagUsersReqDTO = IQywxMapper.INSTANCE.toTagUsersReqDTO(param);
-        QywxBaseRespDTO respDTO = qywxApiClient.addTagUsers(token, tagUsersReqDTO);
+        QywxRespDTO respDTO = qywxApiClient.addTagUsers(token, tagUsersReqDTO);
         if (null == respDTO) {
             throw new ApiException("添加失败!");
         }
@@ -292,7 +292,7 @@ public class QywxManager {
     public void delTagMembers(TagMembersParam param) {
         String token = getOtherToken();
         TagUsersReqDTO reqDTO = IQywxMapper.INSTANCE.toTagUsersReqDTO(param);
-        QywxBaseRespDTO respDTO = qywxApiClient.delTagUsers(token, reqDTO);
+        QywxRespDTO respDTO = qywxApiClient.delTagUsers(token, reqDTO);
         if (null == respDTO) {
             throw new ApiException("删除失败!");
         }

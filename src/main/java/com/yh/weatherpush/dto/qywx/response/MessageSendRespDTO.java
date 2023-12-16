@@ -1,8 +1,9 @@
 package com.yh.weatherpush.dto.qywx.response;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Data
 public class MessageSendRespDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7300379492963290423L;
 
     @JSONField(name = "errcode")

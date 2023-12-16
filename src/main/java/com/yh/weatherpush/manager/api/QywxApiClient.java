@@ -1,6 +1,6 @@
 package com.yh.weatherpush.manager.api;
 
-import com.yh.weatherpush.dto.qywx.QywxBaseRespDTO;
+import com.yh.weatherpush.dto.qywx.QywxRespDTO;
 import com.yh.weatherpush.dto.qywx.request.TagCreateReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TagUsersReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
@@ -54,7 +54,7 @@ public interface QywxApiClient {
      * @param tagId       标签id
      */
     @GetMapping("/tag/delete")
-    QywxBaseRespDTO deleteTag(@RequestParam("access_token") String accessToken, @RequestParam Integer tagId);
+    QywxRespDTO deleteTag(@RequestParam("access_token") String accessToken, @RequestParam Integer tagId);
 
     /**
      * 获取标签列表
@@ -100,7 +100,7 @@ public interface QywxApiClient {
      * @param reqDTO      参数
      */
     @PostMapping("/tag/addtagusers")
-    QywxBaseRespDTO addTagUsers(@RequestParam("access_token") String accessToken, @RequestBody TagUsersReqDTO reqDTO);
+    QywxRespDTO addTagUsers(@RequestParam("access_token") String accessToken, @RequestBody TagUsersReqDTO reqDTO);
 
     /**
      * 删除标签成员
@@ -109,7 +109,7 @@ public interface QywxApiClient {
      * @param reqDTO      参数
      */
     @PostMapping("/tag/deltagusers")
-    QywxBaseRespDTO delTagUsers(@RequestParam("access_token") String accessToken, @RequestBody TagUsersReqDTO reqDTO);
+    QywxRespDTO delTagUsers(@RequestParam("access_token") String accessToken, @RequestBody TagUsersReqDTO reqDTO);
 
 
     /**

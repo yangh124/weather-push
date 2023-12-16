@@ -1,7 +1,6 @@
 package com.yh.weatherpush.dto.tag;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.alibaba.fastjson.serializer.ToStringSerializer;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.yh.weatherpush.dto.qywx.QywxTagDTO;
 import com.yh.weatherpush.entity.Tag;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 @Data
 public class TagDTO implements Serializable {
 
-    @JSONField(serializeUsing = ToStringSerializer.class)
     private Integer id;
 
     @Schema(description = "企业微信tag_name（城市name）")

@@ -3,6 +3,7 @@ package com.yh.weatherpush.dto;
 import lombok.Data;
 import org.quartz.JobDataMap;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Data
 public class QuartzBean implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -230607488989139148L;
 
     private String id;

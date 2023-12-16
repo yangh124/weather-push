@@ -1,8 +1,9 @@
 package com.yh.weatherpush.dto.qywx;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Data
 public class MemberDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5767043043513141435L;
 
     @JSONField(name = "userid")

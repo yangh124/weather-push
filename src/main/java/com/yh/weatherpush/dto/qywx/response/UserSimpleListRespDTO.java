@@ -1,18 +1,20 @@
 package com.yh.weatherpush.dto.qywx.response;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.yh.weatherpush.dto.qywx.DeptUserDTO;
-import com.yh.weatherpush.dto.qywx.QywxBaseRespDTO;
+import com.yh.weatherpush.dto.qywx.QywxRespDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
-public class UserSimpleListRespDTO extends QywxBaseRespDTO implements Serializable {
+public class UserSimpleListRespDTO extends QywxRespDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5143568771873730136L;
 
     /**
