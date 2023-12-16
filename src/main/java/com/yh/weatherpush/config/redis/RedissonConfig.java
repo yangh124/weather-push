@@ -30,8 +30,8 @@ public class RedissonConfig {
         Config config = new Config();
         String address = "redis://" + host + ":" + port;
         config.useSingleServer().setAddress(address).setPingConnectionInterval(60000).setPassword(password);
-        FastJsonCodec fastJsonCodec = new FastJsonCodec();
-        config.setCodec(fastJsonCodec);
+        FastJson2Codec fastJson2Codec = new FastJson2Codec();
+        config.setCodec(fastJson2Codec);
         return Redisson.create(config);
     }
 
