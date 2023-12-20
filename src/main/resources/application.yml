@@ -43,7 +43,7 @@ qywx:
 hf-weather:
   base-url: https://devapi.qweather.com
   # 城市搜索
-  city-url: https://geoapi.qweather.com/v2/city/lookup?range=cn&location=cityName&key=${hf-weather.key}&number=1
+  city-url: https://geoapi.qweather.com
 
 holiday:
   url: https://cdn.jsdelivr.net/gh/NateScarlet/holiday-cn@master

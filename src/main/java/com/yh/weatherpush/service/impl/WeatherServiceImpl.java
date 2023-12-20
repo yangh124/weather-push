@@ -6,14 +6,13 @@ import com.yh.weatherpush.dto.hfweather.*;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.api.HfWeatherApiClient;
+import com.yh.weatherpush.manager.http.HfGeoApi;
 import com.yh.weatherpush.service.WeatherService;
 import lombok.AllArgsConstructor;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,7 +32,7 @@ public class WeatherServiceImpl implements WeatherService {
     private final RedissonClient redissonClient;
     private final HfWeatherApiClient hfWeatherApiClient;
     private final HfConfigPrProperties hfConfigPrProperties;
-    private final RestTemplate restTemplate;
+    private final HfGeoApi hfGeoApi;
 
     @Override
     public Map<Integer, String> getTodayWeather(List<Tag> tags) {
@@ -152,18 +151,16 @@ public class WeatherServiceImpl implements WeatherService {
 
     @Override
     public String getLocation(String name) {
-        String cityUrl = hfConfigPrProperties.getCityUrl();
-        cityUrl = cityUrl.replace("cityName", name);
-        ResponseEntity<HfCityResp> response = restTemplate.getForEntity(cityUrl, HfCityResp.class);
-        HfCityResp locations = response.getBody();
-        if (null == locations) {
+        String key = hfConfigPrProperties.getKey();
+        HfCityResp res = hfGeoApi.getLocation(name, key);
+        if (null == res) {
             throw new ApiException("获取地区信息失败!");
         }
-        String code = locations.getCode();
+        String code = res.getCode();
         if (!"200".equals(code)) {
-            throw new ApiException("获取地区信息失败! -> " + locations);
+            throw new ApiException("获取地区信息失败! -> " + res);
         }
-        Location location = locations.getLocation().get(0);
+        Location location = res.getLocation().get(0);
         return location.getId();
     }
 }

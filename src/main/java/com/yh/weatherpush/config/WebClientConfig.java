@@ -1,5 +1,6 @@
 package com.yh.weatherpush.config;
 
+import com.yh.weatherpush.manager.http.HfGeoApi;
 import com.yh.weatherpush.manager.http.HolidayApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,11 +14,20 @@ public class WebClientConfig {
 
     @Value("${holiday.url}")
     private String holidayUrl;
+    @Value("${hf-weather.city-url}")
+    private String cityUrl;
 
     @Bean
     public HolidayApi holidayApi(WebClient.Builder webClientBuilder) {
         WebClient webClient = webClientBuilder.baseUrl(holidayUrl).build();
         return HttpServiceProxyFactory.builder().clientAdapter(WebClientAdapter.forClient(webClient))
                 .build().createClient(HolidayApi.class);
+    }
+
+    @Bean
+    public HfGeoApi hfGeoApi(WebClient.Builder webClientBuilder) {
+        WebClient webClient = webClientBuilder.baseUrl(cityUrl).build();
+        return HttpServiceProxyFactory.builder().clientAdapter(WebClientAdapter.forClient(webClient))
+                .build().createClient(HfGeoApi.class);
     }
 }
