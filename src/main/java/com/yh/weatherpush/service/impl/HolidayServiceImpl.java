@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.entity.Holiday;
-import com.yh.weatherpush.manager.api.HolidayApiClient;
+import com.yh.weatherpush.manager.http.HolidayApi;
 import com.yh.weatherpush.mapper.HolidayMapper;
 import com.yh.weatherpush.service.HolidayService;
 import org.redisson.api.RMap;
@@ -42,11 +42,11 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
     private Resource hmsetLua;
     @Value("classpath:lua/sadd.lua")
     private Resource saddLua;
-    private final HolidayApiClient holidayApiClient;
+    private final HolidayApi holidayApi;
     private final RedissonClient redissonClient;
 
-    public HolidayServiceImpl(HolidayApiClient holidayApiClient, RedissonClient redissonClient) {
-        this.holidayApiClient = holidayApiClient;
+    public HolidayServiceImpl(HolidayApi holidayApi, RedissonClient redissonClient) {
+        this.holidayApi = holidayApi;
         this.redissonClient = redissonClient;
     }
 
@@ -124,7 +124,7 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
     }
 
     private List<Holiday> getHolidayFromGitHub(Integer year) {
-        String body = holidayApiClient.getHolidayFromGitHub(year);
+        String body = holidayApi.getHolidayFromGitHub(year);
         if (null != body) {
             JSONObject jsonObject = (JSONObject) JSONObject.parse(body);
             JSONArray days = jsonObject.getJSONArray("days");
