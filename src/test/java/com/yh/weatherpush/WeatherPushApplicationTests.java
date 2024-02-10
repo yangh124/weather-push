@@ -1,9 +1,7 @@
 package com.yh.weatherpush;
 
-import com.alibaba.fastjson2.JSONObject;
-import com.yh.weatherpush.config.property.QywxConfigProperties;
-import com.yh.weatherpush.dto.qywx.response.GetTokenRespDTO;
-import com.yh.weatherpush.manager.http.QywxApi;
+import cn.dev33.satoken.secure.SaSecureUtil;
+import com.yh.weatherpush.controller.AdminController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,14 +13,11 @@ import org.springframework.test.context.ActiveProfiles;
 class WeatherPushApplicationTests {
 
     @Autowired
-    private QywxApi qywxApi;
-    @Autowired
-    private QywxConfigProperties qywxConfig;
+    private AdminController adminController;
 
     @Test
     void contextLoads() {
-        // 24小时天气
-        GetTokenRespDTO token = qywxApi.getToken(qywxConfig.getCorpid(), qywxConfig.getOtherSecret());
-        System.out.println(JSONObject.toJSONString(token));
+        String s = SaSecureUtil.md5("As071602q");
+        System.out.println(s);
     }
 }

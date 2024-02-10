@@ -1,7 +1,9 @@
 package com.yh.weatherpush.service.impl;
 
+import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -17,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,8 +35,6 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements AdminService {
 
     private final AdminMapper adminMapper;
-
-    private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Cacheable(value = {"admin"}, key = "#username")
     @Override
@@ -58,7 +57,8 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         if (null == admin) {
             throw new ApiException("用户名或密码错误");
         }
-        if (!passwordEncoder.matches(param.getPassword(), admin.getPassword())) {
+        String s = SaSecureUtil.md5(param.getPassword());
+        if (!admin.getPassword().equals(s)) {
             throw new ApiException("密码不正确");
         }
         StpUtil.login(username);
@@ -70,8 +70,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
     @Override
     public void updatePassword(UpdPwdParam updPwdParam) {
         Admin admin = getAdmin(updPwdParam.getUsername());
-
-        boolean matches = passwordEncoder.matches(updPwdParam.getOldPassword(), admin.getPassword());
+        String oldPassword = SaSecureUtil.md5(updPwdParam.getOldPassword());
+        String password = admin.getPassword();
+        boolean matches = StrUtil.equals(oldPassword, password);
         if (!matches) {
             throw new ApiException("原密码错误");
         }
@@ -80,7 +81,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         if (!newPassword.equals(confirmPassword)) {
             throw new ApiException("确认密码与新密码不一致!");
         }
-        String pwd = passwordEncoder.encode(newPassword);
+        String pwd = SaSecureUtil.md5(newPassword);
         LambdaUpdateWrapper<Admin> updateWrapper =
                 new UpdateWrapper<Admin>().lambda().set(Admin::getPassword, pwd).eq(Admin::getId, admin.getId());
         update(updateWrapper);
