@@ -5,8 +5,8 @@ import com.yh.weatherpush.config.property.HfConfigPrProperties;
 import com.yh.weatherpush.dto.hfweather.*;
 import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
-import com.yh.weatherpush.manager.api.HfWeatherApiClient;
 import com.yh.weatherpush.manager.http.HfGeoApi;
+import com.yh.weatherpush.manager.http.HfWeatherApi;
 import com.yh.weatherpush.service.WeatherService;
 import lombok.AllArgsConstructor;
 import org.redisson.api.RBucket;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class WeatherServiceImpl implements WeatherService {
 
     private final RedissonClient redissonClient;
-    private final HfWeatherApiClient hfWeatherApiClient;
+    private final HfWeatherApi hfWeatherApi;
     private final HfConfigPrProperties hfConfigPrProperties;
     private final HfGeoApi hfGeoApi;
 
@@ -42,21 +42,22 @@ public class WeatherServiceImpl implements WeatherService {
             String tagname = tag.getTagName();
             String code = tag.getCode();
             // 实时天气
-            HfWeatherResp realTimeWeather = hfWeatherApiClient.getRealTimeWeather(code, hfConfigPrProperties.getKey());
+            HfWeatherResp realTimeWeather = hfWeatherApi.getRealTimeWeather(code, hfConfigPrProperties.getKey());
             if (null == realTimeWeather) {
                 throw new ApiException("获取天气异常！");
             }
             // 天气指数
-            HfWeatherIndexResp weatherIndex = hfWeatherApiClient.getWeatherIndex(3, code, hfConfigPrProperties.getKey());
+            HfWeatherIndexResp weatherIndex = hfWeatherApi.getWeatherIndex(3, code, hfConfigPrProperties.getKey());
             if (null == weatherIndex) {
                 throw new ApiException("获取天气指数异常！");
             }
             // 24小时天气
-            HfWeatherHourResp hourWeather = hfWeatherApiClient.getHourWeather(code, hfConfigPrProperties.getKey());
+            HfWeatherHourResp hourWeather = hfWeatherApi.getHourWeather(code, hfConfigPrProperties.getKey());
             if (null == hourWeather) {
                 throw new ApiException("获取天气指数异常！");
             }
-            String s = covertWeatherData(tagname, realTimeWeather.getNow(), weatherIndex.getDaily(), hourWeather.getHourly());
+            String s = covertWeatherData(tagname, realTimeWeather.getNow(), weatherIndex.getDaily(),
+                    hourWeather.getHourly());
             res.put(tagid, s);
         }
         return res;
@@ -70,21 +71,25 @@ public class WeatherServiceImpl implements WeatherService {
             String tagname = tag.getTagName();
             String code = tag.getCode();
             // 明日天气
-            HfWeatherDayResp dayWeather = hfWeatherApiClient.getDayWeather(code, hfConfigPrProperties.getKey());
-            if (null == dayWeather) {
-                throw new ApiException("获取3天天气异常！");
-            }
-            WeatherDay weatherDay = dayWeather.getDaily().get(1);
-            String str = "【明日天气】【" + tagname + "】\n\n" + weatherDay.getTextDay() + "\n"
-                    + "气温：" + weatherDay.getTempMin() + "~" + weatherDay.getTempMax()
-                    + "度\n\n"
-                    + "相对湿度：" + weatherDay.getHumidity() + "%\n"
-                    + "降水量：" + weatherDay.getPrecip() + " mm\n"
-                    + weatherDay.getWindDirDay() + " " + weatherDay.getWindScaleDay() + "级"
-                    + "\n";
+            HfWeatherDayResp dayWeather = hfWeatherApi.getDayWeather(code, hfConfigPrProperties.getKey());
+            String str = generateDesc(dayWeather, tagname);
             res.put(tagid, str);
         }
         return res;
+    }
+
+    private static String generateDesc(HfWeatherDayResp dayWeather, String tagname) {
+        if (null == dayWeather) {
+            throw new ApiException("获取3天天气异常！");
+        }
+        WeatherDay weatherDay = dayWeather.getDaily().get(1);
+        return "【明日天气】【" + tagname + "】\n\n" + weatherDay.getTextDay() + "\n"
+                + "气温：" + weatherDay.getTempMin() + "~" + weatherDay.getTempMax()
+                + "度\n\n"
+                + "相对湿度：" + weatherDay.getHumidity() + "%\n"
+                + "降水量：" + weatherDay.getPrecip() + " mm\n"
+                + weatherDay.getWindDirDay() + " " + weatherDay.getWindScaleDay() + "级"
+                + "\n";
     }
 
     @Override

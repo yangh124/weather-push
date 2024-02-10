@@ -14,7 +14,7 @@ import org.redisson.client.protocol.Encoder;
 
 import java.io.IOException;
 
-public class FastJson2Codec extends BaseCodec {
+class FastJson2Codec extends BaseCodec {
 
     private static final Filter autoTypeFilter = JSONReader.autoTypeFilter(
             // 按需加上需要支持自动类型的类名前缀，范围越小越安全

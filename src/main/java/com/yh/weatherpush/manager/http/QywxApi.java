@@ -1,22 +1,16 @@
-package com.yh.weatherpush.manager.api;
+package com.yh.weatherpush.manager.http;
 
 import com.yh.weatherpush.dto.qywx.QywxRespDTO;
 import com.yh.weatherpush.dto.qywx.request.TagCreateReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TagUsersReqDTO;
 import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
 import com.yh.weatherpush.dto.qywx.response.*;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.PostExchange;
 
-/**
- * @author yangh
- */
-@FeignClient(name = "qywx-api", url = "${qywx.base-url}")
-public interface QywxApiClient {
-
+public interface QywxApi {
 
     /**
      * 获取access_token
@@ -25,7 +19,7 @@ public interface QywxApiClient {
      * @param corpSecret 应用的凭证密钥，注意应用需要是启用状态
      * @return access_token
      */
-    @GetMapping("/gettoken")
+    @GetExchange("/gettoken")
     GetTokenRespDTO getToken(@RequestParam("corpid") String corpId, @RequestParam("corpsecret") String corpSecret);
 
     /**
@@ -34,7 +28,7 @@ public interface QywxApiClient {
      * @param accessToken accessToken
      * @param reqDTO      标签id、消息内容
      */
-    @PostMapping("/message/send")
+    @PostExchange("/message/send")
     MessageSendRespDTO messageSend(@RequestParam("access_token") String accessToken, @RequestBody TextMsgReqDTO reqDTO);
 
     /**
@@ -44,7 +38,7 @@ public interface QywxApiClient {
      * @param reqDTO      标签id 标签名称
      * @return 标签id
      */
-    @PostMapping("/tag/create")
+    @PostExchange("/tag/create")
     TagCreateRespDTO createTag(@RequestParam("access_token") String accessToken, @RequestBody TagCreateReqDTO reqDTO);
 
     /**
@@ -53,7 +47,7 @@ public interface QywxApiClient {
      * @param accessToken accessToken
      * @param tagId       标签id
      */
-    @GetMapping("/tag/delete")
+    @PostExchange("/tag/delete")
     QywxRespDTO deleteTag(@RequestParam("access_token") String accessToken, @RequestParam Integer tagId);
 
     /**
@@ -61,7 +55,7 @@ public interface QywxApiClient {
      *
      * @param accessToken accessToken
      */
-    @GetMapping("/tag/list")
+    @GetExchange("/tag/list")
     TagListRespDTO tagList(@RequestParam("access_token") String accessToken);
 
     /**
@@ -71,8 +65,9 @@ public interface QywxApiClient {
      * @param sizeType    qrcode尺寸类型，1: 171 x 171; 2: 399 x 399; 3: 741 x 741; 4: 2052 x 2052
      * @return
      */
-    @GetMapping("/corp/get_join_qrcode")
-    GetJoinQrCodeRespDTO getJoinQrCode(@RequestParam("access_token") String accessToken, @RequestParam("size_type") String sizeType);
+    @GetExchange("/corp/get_join_qrcode")
+    GetJoinQrCodeRespDTO getJoinQrCode(@RequestParam("access_token") String accessToken,
+                                       @RequestParam("size_type") String sizeType);
 
     /**
      * 获取部门成员
@@ -80,7 +75,7 @@ public interface QywxApiClient {
      * @param accessToken accessToken
      * @return
      */
-    @PostMapping("/user/list_id")
+    @PostExchange("/user/list_id")
     UserSimpleListRespDTO userSimpList(@RequestParam("access_token") String accessToken);
 
     /**
@@ -90,7 +85,7 @@ public interface QywxApiClient {
      * @param tagId       标签ID
      * @return 标签成员
      */
-    @GetMapping("/tag/get")
+    @GetExchange("/tag/get")
     TagGetRespDTO tagGet(@RequestParam("access_token") String accessToken, @RequestParam("tagid") Long tagId);
 
     /**
@@ -99,7 +94,7 @@ public interface QywxApiClient {
      * @param accessToken accessToken
      * @param reqDTO      参数
      */
-    @PostMapping("/tag/addtagusers")
+    @PostExchange("/tag/addtagusers")
     QywxRespDTO addTagUsers(@RequestParam("access_token") String accessToken, @RequestBody TagUsersReqDTO reqDTO);
 
     /**
@@ -108,7 +103,7 @@ public interface QywxApiClient {
      * @param accessToken accessToken
      * @param reqDTO      参数
      */
-    @PostMapping("/tag/deltagusers")
+    @PostExchange("/tag/deltagusers")
     QywxRespDTO delTagUsers(@RequestParam("access_token") String accessToken, @RequestBody TagUsersReqDTO reqDTO);
 
 
@@ -118,6 +113,7 @@ public interface QywxApiClient {
      * @param accessToken accessToken
      * @param type        类型 agent_config
      */
-    @GetMapping("/ticket/get")
-    JsApiTicketRespDTO getAgentConfig(@RequestParam("access_token") String accessToken, @RequestParam("type") String type);
+    @GetExchange("/ticket/get")
+    JsApiTicketRespDTO getAgentConfig(@RequestParam("access_token") String accessToken,
+                                      @RequestParam("type") String type);
 }

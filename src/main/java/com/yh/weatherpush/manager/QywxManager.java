@@ -12,7 +12,7 @@ import com.yh.weatherpush.dto.qywx.request.TextMsgReqDTO;
 import com.yh.weatherpush.dto.qywx.response.*;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.exception.ApiException;
-import com.yh.weatherpush.manager.api.QywxApiClient;
+import com.yh.weatherpush.manager.http.QywxApi;
 import com.yh.weatherpush.manager.mapstruct.IQywxMapper;
 import lombok.AllArgsConstructor;
 import org.redisson.api.RBucket;
@@ -31,7 +31,7 @@ public class QywxManager {
 
     private final QywxConfigProperties qywxConfig;
     private final RedissonClient redissonClient;
-    private final QywxApiClient qywxApiClient;
+    private final QywxApi qywxApi;
 
 
     /**
@@ -47,7 +47,7 @@ public class QywxManager {
             TextDTO text = new TextDTO(msg);
             TextMsgReqDTO reqDTO =
                     TextMsgReqDTO.builder().msgType("text").toTag(tagId).agentId(agentid).text(text).build();
-            qywxApiClient.messageSend(pushToken, reqDTO);
+            qywxApi.messageSend(pushToken, reqDTO);
         }
     }
 
@@ -63,7 +63,7 @@ public class QywxManager {
         TagCreateReqDTO reqDTO = new TagCreateReqDTO();
         reqDTO.setTagName(tagName);
         reqDTO.setTagId(tagId);
-        TagCreateRespDTO respDTO = qywxApiClient.createTag(token, reqDTO);
+        TagCreateRespDTO respDTO = qywxApi.createTag(token, reqDTO);
         if (null == respDTO) {
             throw new ApiException("创建标签失败!");
         }
@@ -80,7 +80,7 @@ public class QywxManager {
      */
     public void deleteTag(Integer tagId) {
         String token = getOtherToken();
-        QywxRespDTO respDTO = qywxApiClient.deleteTag(token, tagId);
+        QywxRespDTO respDTO = qywxApi.deleteTag(token, tagId);
         if (null == respDTO) {
             throw new ApiException("删除标签失败!");
         }
@@ -98,7 +98,7 @@ public class QywxManager {
      */
     public List<QywxTagDTO> getAllTags() {
         String token = getOtherToken();
-        TagListRespDTO respDTO = qywxApiClient.tagList(token);
+        TagListRespDTO respDTO = qywxApi.tagList(token);
         if (null == respDTO) {
             throw new ApiException("获取标签失败!");
         }
@@ -132,7 +132,7 @@ public class QywxManager {
             if (exists) {
                 token = accessToken.get();
             } else {
-                GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getPushSecret());
+                GetTokenRespDTO respDTO = qywxApi.getToken(qywxConfig.getCorpid(), qywxConfig.getPushSecret());
                 token = getTokenResult(accessToken, respDTO);
             }
         } finally {
@@ -156,7 +156,7 @@ public class QywxManager {
             if (exists) {
                 token = accessToken.get();
             } else {
-                GetTokenRespDTO respDTO = qywxApiClient.getToken(qywxConfig.getCorpid(), qywxConfig.getOtherSecret());
+                GetTokenRespDTO respDTO = qywxApi.getToken(qywxConfig.getCorpid(), qywxConfig.getOtherSecret());
                 token = getTokenResult(accessToken, respDTO);
             }
         } finally {
@@ -194,7 +194,7 @@ public class QywxManager {
             if (exists) {
                 ticket = jsapiTicket.get();
             } else {
-                JsApiTicketRespDTO respDTO = qywxApiClient.getAgentConfig(accessToken, "agent_config");
+                JsApiTicketRespDTO respDTO = qywxApi.getAgentConfig(accessToken, "agent_config");
                 if (null == respDTO) {
                     throw new ApiException("获取jsapi_ticket失败!");
                 }
@@ -218,7 +218,7 @@ public class QywxManager {
      */
     public String getJoinQrCode() {
         String token = getOtherToken();
-        GetJoinQrCodeRespDTO respDTO = qywxApiClient.getJoinQrCode(token, null);
+        GetJoinQrCodeRespDTO respDTO = qywxApi.getJoinQrCode(token, null);
         if (null == respDTO) {
             throw new ApiException("获取失败!");
         }
@@ -231,7 +231,7 @@ public class QywxManager {
 
     public List<String> userIdList() {
         String token = getOtherToken();
-        UserSimpleListRespDTO respDTO = qywxApiClient.userSimpList(token);
+        UserSimpleListRespDTO respDTO = qywxApi.userSimpList(token);
         if (null == respDTO) {
             throw new ApiException("获取失败!");
         }
@@ -255,7 +255,7 @@ public class QywxManager {
      */
     public List<MemberDTO> userListByTag(Long tagId) {
         String token = getOtherToken();
-        TagGetRespDTO respDTO = qywxApiClient.tagGet(token, tagId);
+        TagGetRespDTO respDTO = qywxApi.tagGet(token, tagId);
         if (null == respDTO) {
             throw new ApiException("获取失败!");
         }
@@ -274,7 +274,7 @@ public class QywxManager {
     public void addTagMembers(TagMembersParam param) {
         String token = getOtherToken();
         TagUsersReqDTO tagUsersReqDTO = IQywxMapper.INSTANCE.toTagUsersReqDTO(param);
-        QywxRespDTO respDTO = qywxApiClient.addTagUsers(token, tagUsersReqDTO);
+        QywxRespDTO respDTO = qywxApi.addTagUsers(token, tagUsersReqDTO);
         if (null == respDTO) {
             throw new ApiException("添加失败!");
         }
@@ -292,7 +292,7 @@ public class QywxManager {
     public void delTagMembers(TagMembersParam param) {
         String token = getOtherToken();
         TagUsersReqDTO reqDTO = IQywxMapper.INSTANCE.toTagUsersReqDTO(param);
-        QywxRespDTO respDTO = qywxApiClient.delTagUsers(token, reqDTO);
+        QywxRespDTO respDTO = qywxApi.delTagUsers(token, reqDTO);
         if (null == respDTO) {
             throw new ApiException("删除失败!");
         }
