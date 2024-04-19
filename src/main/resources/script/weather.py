@@ -1,10 +1,11 @@
+import os
+import sys
+import time
+
+import pymysql
+import redis
 import requests
 from lxml import etree
-import time
-import sys
-import os
-import redis
-import pymysql
 from xpinyin import Pinyin
 
 # 服务器ip
@@ -49,7 +50,7 @@ def save_redis(weather, connect, date_str):
 
 def select_tag_from_msql():
     conn = pymysql.connect(host=server_ip, port=30306, user='root', password='root', db='weather')
-    sql = "SELECT tag_id,tag_name,code FROM sys_tag;"
+    sql = "SELECT id,tag_name,code FROM sys_tag;"
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
