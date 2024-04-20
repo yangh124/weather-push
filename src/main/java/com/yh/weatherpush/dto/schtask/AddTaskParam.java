@@ -32,6 +32,6 @@ public class AddTaskParam implements Serializable {
 
     @NotEmpty(message = "关联地区不能为空")
     @Schema(description = "地区id")
-    private List<Integer> tagIds;
+    private List<Integer> locationIds;
 
 }

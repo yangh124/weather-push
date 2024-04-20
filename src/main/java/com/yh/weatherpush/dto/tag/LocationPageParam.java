@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class TagPageParam extends PageParam {
+public class LocationPageParam extends PageParam {
 
-    private String tagName;
+    private String locationName;
 }

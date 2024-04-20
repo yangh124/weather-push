@@ -2,6 +2,7 @@ package com.yh.weatherpush.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 企业微信标签
+ * 任务关联标签
  * </p>
  *
  * @author yh
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-@TableName("sys_tag")
-public class Tag implements Serializable {
+@TableName("sys_task_rel_location")
+public class TaskRelLocation implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,14 +29,14 @@ public class Tag implements Serializable {
     private Integer id;
 
     /**
-     * 企业微信tag_name（城市name）
+     * 任务id
      */
-    private String tagName;
+    private Integer taskId;
 
     /**
-     * 地区编码
+     * 标签id
      */
-    private String code;
+    private Integer locationId;
 
     /**
      * 创建时间
@@ -46,4 +47,7 @@ public class Tag implements Serializable {
      * 修改时间
      */
     private LocalDateTime utime;
+
+    @TableLogic
+    private Integer isDelete;
 }

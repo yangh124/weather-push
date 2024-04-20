@@ -1,7 +1,7 @@
 package com.yh.weatherpush.mapper;
 
-import com.yh.weatherpush.entity.Tag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yh.weatherpush.entity.Location;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author yh
  * @since 2022-02-19
  */
-public interface TagMapper extends BaseMapper<Tag> {
+public interface LocationMapper extends BaseMapper<Location> {
 
 }

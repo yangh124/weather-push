@@ -74,7 +74,7 @@ public class SaTokenWebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedOriginPatterns("*")
                 .allowedHeaders("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .maxAge(3600);
     }
     // cors->

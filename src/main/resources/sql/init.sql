@@ -196,18 +196,19 @@ CREATE TABLE `QRTZ_TRIGGERS` (
 DROP TABLE IF EXISTS `sys_admin`;
 CREATE TABLE `sys_admin` (
                              `id` int NOT NULL AUTO_INCREMENT,
-                             `username` varchar(64) DEFAULT NULL,
-                             `password` varchar(64) DEFAULT NULL,
-                             `avatar` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '头像',
+                             `username`  varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+                             `password`  varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+                             `avatar`    varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci         DEFAULT NULL COMMENT '头像',
                              `email` varchar(100) DEFAULT NULL COMMENT '邮箱',
                              `nick_name` varchar(200) DEFAULT NULL COMMENT '昵称',
                              `note` varchar(500) DEFAULT NULL COMMENT '备注信息',
+                             `status`    int                                                          NOT NULL DEFAULT '1' COMMENT '帐号启用状态：0->禁用；1->启用',
+                             `is_delete` tinyint(1)                                                   NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
                              `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-                             `login_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-                             `utime` timestamp NULL DEFAULT NULL,
-                             `status` int DEFAULT '1' COMMENT '帐号启用状态：0->禁用；1->启用',
+                             `utime`     timestamp                                                    NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
                              PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COMMENT='后台用户表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3 COMMENT ='后台用户表';
 
 -- ----------------------------
 -- Table structure for sys_holiday
@@ -232,39 +233,48 @@ DROP TABLE IF EXISTS `sys_sch_task`;
 CREATE TABLE `sys_sch_task` (
                                 `id` int NOT NULL AUTO_INCREMENT,
                                 `task_name` varchar(50) NOT NULL COMMENT '任务名称',
-                                `cron_exp` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'cron表达式',
+                                `cron_exp`  varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'cron表达式',
                                 `task_desc` varchar(255) DEFAULT NULL COMMENT '任务描述',
                                 `status` tinyint NOT NULL DEFAULT '0' COMMENT '0-启动 1-暂停',
+                                `is_delete` tinyint(1)                                                   NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
                                 `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
                                 `utime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
                                 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='定时任务';
 
 -- ----------------------------
--- Table structure for sys_tag
+-- Table structure for sys_location
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_tag`;
-CREATE TABLE `sys_tag` (
-                           `id` int NOT NULL AUTO_INCREMENT,
-                           `tag_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '企业微信tag_name（城市name）',
-                           `code` char(9) NOT NULL DEFAULT '' COMMENT '地区编码',
-                           `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-                           `utime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='企业微信标签';
+DROP TABLE IF EXISTS `sys_location`;
+CREATE TABLE `sys_location`
+(
+    `id`            int                                                          NOT NULL AUTO_INCREMENT,
+    `location_name` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '' COMMENT '地区id',
+    `code`          char(9)                                                      NOT NULL DEFAULT '' COMMENT '地区编码',
+    `tag_id`        int                                                          NOT NULL COMMENT '企业微信标签id',
+    `is_delete`     tinyint                                                      NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
+    `ctime`         timestamp                                                    NOT NULL COMMENT '创建时间',
+    `utime`         timestamp                                                    NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_code` (`code`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3 COMMENT ='地区信息';
 
 -- ----------------------------
--- Table structure for sys_task_rel_tag
+-- Table structure for sys_task_rel_location
 -- ----------------------------
-DROP TABLE IF EXISTS `sys_task_rel_tag`;
-CREATE TABLE `sys_task_rel_tag` (
-                                    `id`      int NOT NULL AUTO_INCREMENT,
-                                    `task_id` int NOT NULL COMMENT '任务id',
-                                    `tag_id`  int NOT NULL COMMENT '标签id',
-                                    `ctime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
-                                    `utime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-                                    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='任务关联标签';
+DROP TABLE IF EXISTS `sys_task_rel_location`;
+CREATE TABLE `sys_task_rel_location`
+(
+    `id`          int        NOT NULL AUTO_INCREMENT,
+    `task_id`     int        NOT NULL COMMENT '任务id',
+    `location_id` int        NOT NULL COMMENT '地区id',
+    `is_delete`   tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-正常 1-删除',
+    `ctime`       timestamp  NULL     DEFAULT NULL COMMENT '创建时间',
+    `utime`       timestamp  NULL     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3 COMMENT ='任务关联地区';
 
 SET FOREIGN_KEY_CHECKS = 1;
 

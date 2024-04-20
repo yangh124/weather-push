@@ -33,5 +33,5 @@ public class UpdateTaskDTO implements Serializable {
 
     @NotEmpty
     @Schema(description = "关联地区")
-    private List<Integer> tagIds;
+    private List<Integer> locationIds;
 }

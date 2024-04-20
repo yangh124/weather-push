@@ -2,11 +2,11 @@ package com.yh.weatherpush.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.Result;
-import com.yh.weatherpush.dto.tag.AddTagParam;
-import com.yh.weatherpush.dto.tag.TagDTO;
+import com.yh.weatherpush.dto.tag.AddLocationParam;
+import com.yh.weatherpush.dto.tag.LocationDTO;
+import com.yh.weatherpush.dto.tag.LocationPageParam;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
-import com.yh.weatherpush.dto.tag.TagPageParam;
-import com.yh.weatherpush.service.TagService;
+import com.yh.weatherpush.service.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -17,59 +17,59 @@ import java.util.List;
 
 /**
  * <p>
- * 企业微信标签 前端控制器
+ * 地区管理 前端控制器
  * </p>
  *
  * @author yh
  * @since 2022-02-19
  */
 @AllArgsConstructor
-@Tag(name = "标签管理")
+@Tag(name = "地区管理")
 @RestController
-@RequestMapping("/tags")
-public class TagController {
+@RequestMapping("/location")
+public class LocationController {
 
-    private final TagService tagService;
+    private final LocationService locationService;
 
-    @Operation(summary = "创建标签")
+    @Operation(summary = "创建地区")
     @PostMapping()
-    public Result<Void> create(@Validated @RequestBody AddTagParam param) {
-        tagService.create(param);
+    public Result<Void> create(@Validated @RequestBody AddLocationParam param) {
+        locationService.create(param);
         return Result.success();
     }
 
-    @Operation(summary = "删除标签")
+    @Operation(summary = "删除地区")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable("id") Long id) {
-        tagService.delete(id);
+        locationService.delete(id);
         return Result.success();
     }
 
-    @Operation(summary = "获取标签分页")
+    @Operation(summary = "获取地区分页")
     @GetMapping("/page")
-    public Result<IPage<TagDTO>> pageList(TagPageParam pageParam) {
-        IPage<TagDTO> res = tagService.pageList(pageParam);
+    public Result<IPage<LocationDTO>> pageList(LocationPageParam pageParam) {
+        IPage<LocationDTO> res = locationService.pageList(pageParam);
         return Result.success(res);
     }
 
-    @Operation(summary = "获取所有标签")
+    @Operation(summary = "获取所有地区")
     @GetMapping()
-    public Result<List<TagDTO>> pageList() {
-        List<TagDTO> res = tagService.getAll();
+    public Result<List<LocationDTO>> pageList() {
+        List<LocationDTO> res = locationService.getAll();
         return Result.success(res);
     }
 
-    @Operation(summary = "添加标签成员")
+    @Operation(summary = "添加地区成员")
     @PostMapping("/members")
     public Result<Void> addTagMembers(@Validated @RequestBody TagMembersParam param) {
-        tagService.addTagMembers(param);
+        locationService.addTagMembers(param);
         return Result.success();
     }
 
-    @Operation(summary = "删除标签成员")
+    @Operation(summary = "删除地区成员")
     @DeleteMapping("/members")
     public Result<Void> delTagMembers(@Validated @RequestBody TagMembersParam param) {
-        tagService.delTagMembers(param);
+        locationService.delTagMembers(param);
         return Result.success();
     }
 

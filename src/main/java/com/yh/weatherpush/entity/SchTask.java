@@ -2,6 +2,7 @@ package com.yh.weatherpush.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +47,9 @@ public class SchTask implements Serializable {
      * 0-启动 1-暂停
      */
     private Byte status;
+
+    @TableLogic
+    private Integer isDelete;
 
     /**
      * 创建时间

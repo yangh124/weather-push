@@ -3,7 +3,6 @@ package com.yh.weatherpush.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.yh.weatherpush.config.property.HfConfigPrProperties;
 import com.yh.weatherpush.dto.hfweather.*;
-import com.yh.weatherpush.entity.Tag;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.http.HfGeoApi;
 import com.yh.weatherpush.manager.http.HfWeatherApi;
@@ -35,11 +34,11 @@ public class WeatherServiceImpl implements WeatherService {
     private final HfGeoApi hfGeoApi;
 
     @Override
-    public Map<Integer, String> getTodayWeather(List<Tag> tags) {
+    public Map<Integer, String> getTodayWeather(List<com.yh.weatherpush.entity.Location> tags) {
         Map<Integer, String> res = new HashMap<>(tags.size());
-        for (Tag tag : tags) {
+        for (com.yh.weatherpush.entity.Location tag : tags) {
             Integer tagid = tag.getId();
-            String tagname = tag.getTagName();
+            String tagname = tag.getLocationName();
             String code = tag.getCode();
             // 实时天气
             HfWeatherResp realTimeWeather = hfWeatherApi.getRealTimeWeather(code, hfConfigPrProperties.getKey());
@@ -64,11 +63,11 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Map<Integer, String> getTomWeather(List<Tag> tags) {
+    public Map<Integer, String> getTomWeather(List<com.yh.weatherpush.entity.Location> tags) {
         Map<Integer, String> res = new HashMap<>(tags.size());
-        for (Tag tag : tags) {
+        for (com.yh.weatherpush.entity.Location tag : tags) {
             Integer tagid = tag.getId();
-            String tagname = tag.getTagName();
+            String tagname = tag.getLocationName();
             String code = tag.getCode();
             // 明日天气
             HfWeatherDayResp dayWeather = hfWeatherApi.getDayWeather(code, hfConfigPrProperties.getKey());
@@ -93,18 +92,18 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Map<Integer, String> getRedisWeather(List<Tag> tags) {
+    public Map<Integer, String> getRedisWeather(List<com.yh.weatherpush.entity.Location> tags) {
         Map<Integer, String> res = new HashMap<>();
         LocalDate now = LocalDate.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         StringCodec stringCodec = new StringCodec();
-        for (Tag tag : tags) {
-            Integer tagid = tag.getId();
-            String key = format + ":" + tagid;
+        for (com.yh.weatherpush.entity.Location tag : tags) {
+            Integer locationId = tag.getId();
+            String key = format + ":" + locationId;
             RBucket<String> bucket = redissonClient.getBucket(key, stringCodec);
             String s = bucket.get();
             if (null != s) {
-                res.put(tagid, s);
+                res.put(locationId, s);
             }
         }
         return res;

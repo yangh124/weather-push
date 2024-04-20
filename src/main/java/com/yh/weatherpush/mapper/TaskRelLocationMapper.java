@@ -1,7 +1,7 @@
 package com.yh.weatherpush.mapper;
 
-import com.yh.weatherpush.entity.TaskRelTag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yh.weatherpush.entity.TaskRelLocation;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author yh
  * @since 2022-04-25
  */
-public interface TaskRelTagMapper extends BaseMapper<TaskRelTag> {
+public interface TaskRelLocationMapper extends BaseMapper<TaskRelLocation> {
 
 }

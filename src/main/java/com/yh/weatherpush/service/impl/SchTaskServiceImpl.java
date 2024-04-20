@@ -13,15 +13,15 @@ import com.yh.weatherpush.dto.QuartzBean;
 import com.yh.weatherpush.dto.schtask.AddTaskParam;
 import com.yh.weatherpush.dto.schtask.SchTaskPageDTO;
 import com.yh.weatherpush.dto.schtask.UpdateTaskDTO;
+import com.yh.weatherpush.entity.Location;
 import com.yh.weatherpush.entity.SchTask;
-import com.yh.weatherpush.entity.Tag;
-import com.yh.weatherpush.entity.TaskRelTag;
+import com.yh.weatherpush.entity.TaskRelLocation;
 import com.yh.weatherpush.enums.TaskEnum;
 import com.yh.weatherpush.exception.ApiException;
-import com.yh.weatherpush.manager.TaskRelTagManager;
+import com.yh.weatherpush.manager.TaskRelLocationManager;
 import com.yh.weatherpush.manager.mapstruct.ISchTaskMapper;
+import com.yh.weatherpush.mapper.LocationMapper;
 import com.yh.weatherpush.mapper.SchTaskMapper;
-import com.yh.weatherpush.mapper.TagMapper;
 import com.yh.weatherpush.quartz.QuartzClient;
 import com.yh.weatherpush.service.SchTaskService;
 import lombok.AllArgsConstructor;
@@ -50,8 +50,8 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
 
     private final Scheduler scheduler;
     private final QuartzClient quartzClient;
-    private final TagMapper tagMapper;
-    private final TaskRelTagManager taskRelTagManager;
+    private final LocationMapper locationMapper;
+    private final TaskRelLocationManager taskRelLocationManager;
 
     @Override
     public IPage<SchTaskPageDTO> pageList(PageParam pageParam) {
@@ -62,12 +62,12 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         }
         List<SchTask> records = page.getRecords();
         List<Integer> taskIds = records.stream().map(SchTask::getId).collect(Collectors.toList());
-        Map<Integer, List<Tag>> map = getTaskTagMap(taskIds);
+        Map<Integer, List<Location>> map = getTaskTagMap(taskIds);
         return page.convert(record -> {
             SchTaskPageDTO dto = ISchTaskMapper.INSTANCE.toSchTaskPageDTO(record);
             Integer taskId = record.getId();
-            List<Tag> tagList = map.get(taskId);
-            dto.setTagList(tagList);
+            List<Location> locationList = map.get(taskId);
+            dto.setLocationList(locationList);
             String taskName = record.getTaskName();
             String desc = TaskEnum.getDescByName(taskName);
             dto.setTaskName(desc);
@@ -76,15 +76,15 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     }
 
 
-    private Map<Integer, List<Tag>> getTaskTagMap(List<Integer> taskIds) {
-        Map<Integer, List<Tag>> map = new HashMap<>(taskIds.size());
+    private Map<Integer, List<Location>> getTaskTagMap(List<Integer> taskIds) {
+        Map<Integer, List<Location>> map = new HashMap<>(taskIds.size());
         // 此处待优化
         for (Integer taskId : taskIds) {
-            List<TaskRelTag> list =
-                    taskRelTagManager.list(new QueryWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, taskId));
+            List<TaskRelLocation> list =
+                    taskRelLocationManager.list(new QueryWrapper<TaskRelLocation>().lambda().eq(TaskRelLocation::getTaskId, taskId));
             if (CollUtil.isNotEmpty(list)) {
-                List<Integer> tagIds = list.stream().map(TaskRelTag::getTagId).collect(Collectors.toList());
-                List<Tag> tagList = tagMapper.selectBatchIds(tagIds);
+                List<Integer> tagIds = list.stream().map(TaskRelLocation::getLocationId).collect(Collectors.toList());
+                List<Location> tagList = locationMapper.selectBatchIds(tagIds);
                 map.put(taskId, tagList);
             }
         }
@@ -98,8 +98,8 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         schTask.setCtime(LocalDateTime.now());
         super.save(schTask);
         Integer taskId = schTask.getId();
-        List<Integer> tagIds = param.getTagIds();
-        addBatch(taskId, tagIds);
+        List<Integer> locationIds = param.getLocationIds();
+        addBatch(taskId, locationIds);
         QuartzBean quartzBean = ISchTaskMapper.INSTANCE.toQuartzBean(schTask);
         quartzBean.setId(String.valueOf(taskId));
         quartzClient.create(scheduler, quartzBean);
@@ -115,16 +115,16 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateTask(Integer id, UpdateTaskDTO dto) {
-        SchTask task = super.getById(id);
         Integer status = dto.getStatus();
         String cronExp = dto.getCronExp();
-        List<Integer> tagIds = dto.getTagIds();
+        List<Integer> tagIds = dto.getLocationIds();
         if (ObjectUtil.isNull(status) || StrUtil.isBlank(cronExp) || CollUtil.isEmpty(tagIds)) {
             throw new ApiException("参数错误!");
         }
-        task = ISchTaskMapper.INSTANCE.toSchTaskFromUpdate(dto);
+        SchTask task = ISchTaskMapper.INSTANCE.toSchTaskFromUpdate(dto);
+        task.setId(id);
         super.updateById(task);
-        taskRelTagManager.remove(new UpdateWrapper<TaskRelTag>().lambda().eq(TaskRelTag::getTaskId, id));
+        taskRelLocationManager.remove(new UpdateWrapper<TaskRelLocation>().lambda().eq(TaskRelLocation::getTaskId, id));
         addBatch(id, tagIds);
 
         if (StrUtil.isNotBlank(cronExp)) {
@@ -142,16 +142,16 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         }
     }
 
-    private void addBatch(Integer id, List<Integer> tagIds) {
-        List<TaskRelTag> list = new ArrayList<>(tagIds.size());
-        for (Integer tagId : tagIds) {
-            TaskRelTag taskRelTag = new TaskRelTag();
-            taskRelTag.setTaskId(id);
-            taskRelTag.setTagId(tagId);
-            taskRelTag.setCtime(LocalDateTime.now());
-            list.add(taskRelTag);
+    private void addBatch(Integer id, List<Integer> locationIds) {
+        List<TaskRelLocation> list = new ArrayList<>(locationIds.size());
+        for (Integer locationId : locationIds) {
+            TaskRelLocation taskRelLocation = new TaskRelLocation();
+            taskRelLocation.setTaskId(id);
+            taskRelLocation.setLocationId(locationId);
+            taskRelLocation.setCtime(LocalDateTime.now());
+            list.add(taskRelLocation);
         }
-        taskRelTagManager.saveBatch(list);
+        taskRelLocationManager.saveBatch(list);
     }
 
 }

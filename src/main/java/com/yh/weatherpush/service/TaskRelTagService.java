@@ -1,7 +1,7 @@
 package com.yh.weatherpush.service;
 
-import com.yh.weatherpush.entity.TaskRelTag;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yh.weatherpush.entity.TaskRelLocation;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author yh
  * @since 2022-04-25
  */
-public interface TaskRelTagService extends IService<TaskRelTag> {
+public interface TaskRelTagService extends IService<TaskRelLocation> {
 
 }

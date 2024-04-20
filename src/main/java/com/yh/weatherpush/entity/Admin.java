@@ -2,6 +2,7 @@ package com.yh.weatherpush.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,10 +59,8 @@ public class Admin implements Serializable {
      */
     private LocalDateTime ctime;
 
-    /**
-     * 修改时间
-     */
-    private LocalDateTime loginTime;
+    @TableLogic
+    private Integer isDelete;
 
     private LocalDateTime utime;
 

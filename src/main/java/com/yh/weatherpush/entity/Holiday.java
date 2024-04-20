@@ -67,5 +67,5 @@ public class Holiday implements Serializable {
      * 0-正常 1-删除
      */
     @TableLogic
-    private Boolean isDelete;
+    private Integer isDelete;
 }

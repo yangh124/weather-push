@@ -12,15 +12,12 @@ import java.io.Serializable;
  * @date : 2022/2/26 14:04
  */
 @Data
-public class AddTagParam implements Serializable {
+public class AddLocationParam implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 5108658370936176324L;
 
-    @Schema(description = "标签id")
-    private Long tagId;
-
-    @NotBlank
-    @Schema(description = "标签名字")
-    private String tagName;
+    @NotBlank(message = "地区名字不能为空")
+    @Schema(description = "地区名字")
+    private String locationName;
 }

@@ -1,7 +1,7 @@
 package com.yh.weatherpush.dto.schtask;
 
+import com.yh.weatherpush.entity.Location;
 import com.yh.weatherpush.entity.SchTask;
-import com.yh.weatherpush.entity.Tag;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,5 +17,5 @@ import java.util.List;
 public class SchTaskPageDTO extends SchTask {
 
     @Schema(description = "地区")
-    private List<Tag> tagList;
+    private List<Location> locationList;
 }

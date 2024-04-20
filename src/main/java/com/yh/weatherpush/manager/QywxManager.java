@@ -54,15 +54,13 @@ public class QywxManager {
     /**
      * 创建标签
      *
-     * @param tagId   标签id
      * @param tagName 标签名称
      * @return 标签id
      */
-    public void createTag(Integer tagId, String tagName) {
+    public Integer createTag(String tagName) {
         String token = getOtherToken();
         TagCreateReqDTO reqDTO = new TagCreateReqDTO();
         reqDTO.setTagName(tagName);
-        reqDTO.setTagId(tagId);
         TagCreateRespDTO respDTO = qywxApi.createTag(token, reqDTO);
         if (null == respDTO) {
             throw new ApiException("创建标签失败!");
@@ -71,6 +69,7 @@ public class QywxManager {
         if (!errCode.equals(0)) {
             throw new ApiException("创建标签失败! -> " + respDTO.getErrMsg());
         }
+        return respDTO.getTagId();
     }
 
     /**
@@ -218,7 +217,7 @@ public class QywxManager {
      */
     public String getJoinQrCode() {
         String token = getOtherToken();
-        GetJoinQrCodeRespDTO respDTO = qywxApi.getJoinQrCode(token, null);
+        GetJoinQrCodeRespDTO respDTO = qywxApi.getJoinQrCode(token, "2");
         if (null == respDTO) {
             throw new ApiException("获取失败!");
         }
