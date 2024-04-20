@@ -89,7 +89,7 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
                 }
                 Object[] args = argList.toArray();
                 RScript script = redissonClient.getScript();
-                script.eval(Mode.READ_ONLY, RedisScript.of(hmsetLua).getScriptAsString(), ReturnType.VALUE,
+                script.eval(Mode.READ_WRITE, RedisScript.of(hmsetLua).getScriptAsString(), ReturnType.VALUE,
                         Collections.singletonList(key), args);
             }
             return map.get(dateStr);
@@ -115,7 +115,7 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
             argList.addAll(list);
             Object[] args = argList.toArray();
             RScript script = redissonClient.getScript();
-            script.eval(Mode.READ_ONLY, RedisScript.of(saddLua).getScriptAsString(), ReturnType.VALUE,
+            script.eval(Mode.READ_WRITE, RedisScript.of(saddLua).getScriptAsString(), ReturnType.VALUE,
                     Collections.singletonList(key), args);
             return list;
         } else {
