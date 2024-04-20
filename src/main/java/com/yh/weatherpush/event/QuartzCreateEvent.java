@@ -11,8 +11,8 @@ public class QuartzCreateEvent extends ApplicationEvent {
 
     private QuartzBean quartzBean;
 
-    public QuartzCreateEvent(QuartzBean quartzBean) {
-        super(quartzBean);
+    public QuartzCreateEvent(Object source, QuartzBean quartzBean) {
+        super(source);
+        this.quartzBean = quartzBean;
     }
-
 }

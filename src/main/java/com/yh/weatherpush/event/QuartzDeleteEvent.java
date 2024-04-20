@@ -10,8 +10,8 @@ public class QuartzDeleteEvent extends ApplicationEvent {
 
     private String id;
 
-    public QuartzDeleteEvent(String id) {
-        super(id);
+    public QuartzDeleteEvent(Object source, String id) {
+        super(source);
+        this.id = id;
     }
-
 }

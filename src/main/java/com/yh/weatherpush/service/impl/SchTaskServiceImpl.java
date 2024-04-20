@@ -101,7 +101,7 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         addBatch(taskId, locationIds);
         QuartzBean quartzBean = ISchTaskMapper.INSTANCE.toQuartzBean(schTask);
         quartzBean.setId(String.valueOf(taskId));
-        QuartzCreateEvent quartzCreateEvent = new QuartzCreateEvent(quartzBean);
+        QuartzCreateEvent quartzCreateEvent = new QuartzCreateEvent(this, quartzBean);
         applicationContext.publishEvent(quartzCreateEvent);
     }
 
@@ -109,7 +109,7 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     @Override
     public void delete(Integer id) {
         super.removeById(id);
-        QuartzDeleteEvent quartzDeleteEvent = new QuartzDeleteEvent(String.valueOf(id));
+        QuartzDeleteEvent quartzDeleteEvent = new QuartzDeleteEvent(this, String.valueOf(id));
         applicationContext.publishEvent(quartzDeleteEvent);
     }
 
@@ -132,16 +132,16 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
             QuartzBean quartzBean = new QuartzBean();
             quartzBean.setId(String.valueOf(id));
             quartzBean.setCronExp(cronExp);
-            QuartzUpdateEvent quartzUpdateEvent = new QuartzUpdateEvent(quartzBean);
+            QuartzUpdateEvent quartzUpdateEvent = new QuartzUpdateEvent(this, quartzBean);
             applicationContext.publishEvent(quartzUpdateEvent);
         }
         if (ObjectUtil.isNotNull(status)) {
             String idStr = String.valueOf(id);
             if (0 == status) {
-                QuartzStartEvent quartzStartEvent = new QuartzStartEvent(idStr);
+                QuartzStartEvent quartzStartEvent = new QuartzStartEvent(this, idStr);
                 applicationContext.publishEvent(quartzStartEvent);
             } else {
-                QuartzStopEvent quartzStopEvent = new QuartzStopEvent(idStr);
+                QuartzStopEvent quartzStopEvent = new QuartzStopEvent(this, idStr);
                 applicationContext.publishEvent(quartzStopEvent);
             }
         }

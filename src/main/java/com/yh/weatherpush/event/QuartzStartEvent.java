@@ -10,8 +10,8 @@ public class QuartzStartEvent extends ApplicationEvent {
 
     private String id;
 
-    public QuartzStartEvent(String id) {
-        super(id);
+    public QuartzStartEvent(Object source, String id) {
+        super(source);
+        this.id = id;
     }
-
 }

@@ -10,8 +10,8 @@ public class TagDeleteEvent extends ApplicationEvent {
 
     private Integer tagId;
 
-    public TagDeleteEvent(Integer tagId) {
-        super(tagId);
+    public TagDeleteEvent(Object source, Integer tagId) {
+        super(source);
+        this.tagId = tagId;
     }
-
 }

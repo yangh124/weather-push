@@ -68,7 +68,7 @@ public class LocationServiceImpl extends ServiceImpl<LocationMapper, Location> i
         }
         super.removeById(id);
         // 发出消息
-        applicationContext.publishEvent(new TagDeleteEvent(tag.getTagId()));
+        applicationContext.publishEvent(new TagDeleteEvent(this, tag.getTagId()));
     }
 
     @Override

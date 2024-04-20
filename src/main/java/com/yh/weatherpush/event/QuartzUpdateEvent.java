@@ -11,8 +11,8 @@ public class QuartzUpdateEvent extends ApplicationEvent {
 
     private QuartzBean quartzBean;
 
-    public QuartzUpdateEvent(QuartzBean quartzBean) {
-        super(quartzBean);
+    public QuartzUpdateEvent(Object source, QuartzBean quartzBean) {
+        super(source);
+        this.quartzBean = quartzBean;
     }
-
 }
