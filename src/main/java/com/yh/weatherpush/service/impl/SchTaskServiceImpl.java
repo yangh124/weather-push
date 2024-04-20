@@ -17,15 +17,15 @@ import com.yh.weatherpush.entity.Location;
 import com.yh.weatherpush.entity.SchTask;
 import com.yh.weatherpush.entity.TaskRelLocation;
 import com.yh.weatherpush.enums.TaskEnum;
+import com.yh.weatherpush.event.*;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.TaskRelLocationManager;
 import com.yh.weatherpush.manager.mapstruct.ISchTaskMapper;
 import com.yh.weatherpush.mapper.LocationMapper;
 import com.yh.weatherpush.mapper.SchTaskMapper;
-import com.yh.weatherpush.quartz.QuartzClient;
 import com.yh.weatherpush.service.SchTaskService;
 import lombok.AllArgsConstructor;
-import org.quartz.Scheduler;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,10 +48,9 @@ import java.util.stream.Collectors;
 @Service
 public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> implements SchTaskService {
 
-    private final Scheduler scheduler;
-    private final QuartzClient quartzClient;
     private final LocationMapper locationMapper;
     private final TaskRelLocationManager taskRelLocationManager;
+    private final ApplicationContext applicationContext;
 
     @Override
     public IPage<SchTaskPageDTO> pageList(PageParam pageParam) {
@@ -102,14 +101,16 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
         addBatch(taskId, locationIds);
         QuartzBean quartzBean = ISchTaskMapper.INSTANCE.toQuartzBean(schTask);
         quartzBean.setId(String.valueOf(taskId));
-        quartzClient.create(scheduler, quartzBean);
+        QuartzCreateEvent quartzCreateEvent = new QuartzCreateEvent(quartzBean);
+        applicationContext.publishEvent(quartzCreateEvent);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Integer id) {
         super.removeById(id);
-        quartzClient.delete(scheduler, String.valueOf(id));
+        QuartzDeleteEvent quartzDeleteEvent = new QuartzDeleteEvent(String.valueOf(id));
+        applicationContext.publishEvent(quartzDeleteEvent);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -131,13 +132,17 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
             QuartzBean quartzBean = new QuartzBean();
             quartzBean.setId(String.valueOf(id));
             quartzBean.setCronExp(cronExp);
-            quartzClient.update(scheduler, quartzBean);
+            QuartzUpdateEvent quartzUpdateEvent = new QuartzUpdateEvent(quartzBean);
+            applicationContext.publishEvent(quartzUpdateEvent);
         }
         if (ObjectUtil.isNotNull(status)) {
+            String idStr = String.valueOf(id);
             if (0 == status) {
-                quartzClient.start(scheduler, String.valueOf(id));
+                QuartzStartEvent quartzStartEvent = new QuartzStartEvent(idStr);
+                applicationContext.publishEvent(quartzStartEvent);
             } else {
-                quartzClient.stop(scheduler, String.valueOf(id));
+                QuartzStopEvent quartzStopEvent = new QuartzStopEvent(idStr);
+                applicationContext.publishEvent(quartzStopEvent);
             }
         }
     }

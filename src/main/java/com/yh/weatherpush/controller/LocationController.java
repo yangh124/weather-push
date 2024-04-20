@@ -2,9 +2,9 @@ package com.yh.weatherpush.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.yh.weatherpush.dto.Result;
-import com.yh.weatherpush.dto.tag.AddLocationParam;
-import com.yh.weatherpush.dto.tag.LocationDTO;
-import com.yh.weatherpush.dto.tag.LocationPageParam;
+import com.yh.weatherpush.dto.location.AddLocationParam;
+import com.yh.weatherpush.dto.location.LocationDTO;
+import com.yh.weatherpush.dto.location.LocationPageParam;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.service.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +40,7 @@ public class LocationController {
 
     @Operation(summary = "删除地区")
     @DeleteMapping("/{id}")
-    public Result<Void> delete(@PathVariable("id") Long id) {
+    public Result<Void> delete(@PathVariable("id") Integer id) {
         locationService.delete(id);
         return Result.success();
     }

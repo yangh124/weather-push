@@ -1,4 +1,4 @@
-package com.yh.weatherpush.dto.tag;
+package com.yh.weatherpush.dto.location;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.yh.weatherpush.dto.qywx.QywxTagDTO;

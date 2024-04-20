@@ -2,9 +2,9 @@ package com.yh.weatherpush.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.yh.weatherpush.dto.tag.AddLocationParam;
-import com.yh.weatherpush.dto.tag.LocationDTO;
-import com.yh.weatherpush.dto.tag.LocationPageParam;
+import com.yh.weatherpush.dto.location.AddLocationParam;
+import com.yh.weatherpush.dto.location.LocationDTO;
+import com.yh.weatherpush.dto.location.LocationPageParam;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.entity.Location;
 
@@ -22,7 +22,7 @@ public interface LocationService extends IService<Location> {
 
     void create(AddLocationParam param);
 
-    void delete(Long id);
+    void delete(Integer id);
 
     IPage<LocationDTO> pageList(LocationPageParam pageParam);
 

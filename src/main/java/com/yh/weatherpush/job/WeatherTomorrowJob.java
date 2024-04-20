@@ -1,4 +1,4 @@
-package com.yh.weatherpush.quartz.job;
+package com.yh.weatherpush.job;
 
 import cn.hutool.core.collection.CollUtil;
 import com.yh.weatherpush.entity.Location;

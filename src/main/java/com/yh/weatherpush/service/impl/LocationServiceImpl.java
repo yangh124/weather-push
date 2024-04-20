@@ -7,13 +7,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yh.weatherpush.dto.location.AddLocationParam;
+import com.yh.weatherpush.dto.location.LocationDTO;
+import com.yh.weatherpush.dto.location.LocationPageParam;
 import com.yh.weatherpush.dto.qywx.QywxTagDTO;
-import com.yh.weatherpush.dto.tag.AddLocationParam;
-import com.yh.weatherpush.dto.tag.LocationDTO;
-import com.yh.weatherpush.dto.tag.LocationPageParam;
 import com.yh.weatherpush.dto.tag.TagMembersParam;
 import com.yh.weatherpush.entity.Location;
 import com.yh.weatherpush.entity.TaskRelLocation;
+import com.yh.weatherpush.event.TagDeleteEvent;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.QywxManager;
 import com.yh.weatherpush.mapper.LocationMapper;
@@ -21,6 +22,7 @@ import com.yh.weatherpush.mapper.TaskRelLocationMapper;
 import com.yh.weatherpush.service.LocationService;
 import com.yh.weatherpush.service.WeatherService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,6 +45,8 @@ public class LocationServiceImpl extends ServiceImpl<LocationMapper, Location> i
     private final QywxManager qywxManager;
     private final WeatherService weatherService;
     private final TaskRelLocationMapper taskRelLocationMapper;
+    private final ApplicationContext applicationContext;
+
 
     @Override
     public void create(AddLocationParam param) {
@@ -57,13 +61,14 @@ public class LocationServiceImpl extends ServiceImpl<LocationMapper, Location> i
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         Location tag = super.getById(id);
         if (null == tag) {
             throw new ApiException("地区不存在");
         }
-        qywxManager.deleteTag(tag.getId());
         super.removeById(id);
+        // 发出消息
+        applicationContext.publishEvent(new TagDeleteEvent(tag.getTagId()));
     }
 
     @Override
@@ -108,13 +113,13 @@ public class LocationServiceImpl extends ServiceImpl<LocationMapper, Location> i
 
     @Override
     public List<Location> getTagListForJob(String taskId) {
-        List<Location> tagList = new ArrayList<>();
+        List<Location> locationList = new ArrayList<>();
         List<TaskRelLocation> trtList =
                 taskRelLocationMapper.selectList(new QueryWrapper<TaskRelLocation>().lambda().eq(TaskRelLocation::getTaskId, taskId));
         if (CollUtil.isNotEmpty(trtList)) {
             List<Integer> tagIdList = trtList.stream().map(TaskRelLocation::getLocationId).collect(Collectors.toList());
-            tagList = super.listByIds(tagIdList);
+            locationList = super.listByIds(tagIdList);
         }
-        return tagList;
+        return locationList;
     }
 }

@@ -1,10 +1,11 @@
-package com.yh.weatherpush.quartz;
+package com.yh.weatherpush.manager;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.yh.weatherpush.dto.QuartzBean;
 import com.yh.weatherpush.exception.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,15 +16,17 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class QuartzClient {
+public class QuartzManager {
+
+    @Autowired
+    private Scheduler scheduler;
 
     /**
      * 创建job
      *
-     * @param scheduler  调度器
      * @param quartzBean 任务信息
      */
-    public void create(Scheduler scheduler, QuartzBean quartzBean) {
+    public void create(QuartzBean quartzBean) {
         String id = quartzBean.getId();
         String taskName = quartzBean.getTaskName();
         String cronExp = quartzBean.getCronExp();
@@ -45,10 +48,9 @@ public class QuartzClient {
     /**
      * 停止任务
      *
-     * @param scheduler 调度器
-     * @param taskId    任务信息
+     * @param taskId 任务信息
      */
-    public void stop(Scheduler scheduler, String taskId) {
+    public void stop(String taskId) {
         JobKey jobKey = JobKey.jobKey(taskId);
         try {
             scheduler.pauseJob(jobKey);
@@ -60,10 +62,9 @@ public class QuartzClient {
     /**
      * 启动任务
      *
-     * @param scheduler 调度器
-     * @param taskId    任务信息
+     * @param taskId 任务信息
      */
-    public void start(Scheduler scheduler, String taskId) {
+    public void start(String taskId) {
         JobKey jobKey = JobKey.jobKey(taskId);
         try {
             scheduler.resumeJob(jobKey);
@@ -77,10 +78,9 @@ public class QuartzClient {
      * <p>
      * 只能修改执行时间
      *
-     * @param scheduler  调度器
      * @param quartzBean 任务信息
      */
-    public void update(Scheduler scheduler, QuartzBean quartzBean) {
+    public void update(QuartzBean quartzBean) {
         String id = quartzBean.getId();
         String cronExp = quartzBean.getCronExp();
         try {
@@ -97,10 +97,9 @@ public class QuartzClient {
     /**
      * 删除job
      *
-     * @param scheduler 调度器
-     * @param taskId    任务id
+     * @param taskId 任务id
      */
-    public void delete(Scheduler scheduler, String taskId) {
+    public void delete(String taskId) {
         try {
             JobKey jobKey = JobKey.jobKey(taskId);
             scheduler.deleteJob(jobKey);

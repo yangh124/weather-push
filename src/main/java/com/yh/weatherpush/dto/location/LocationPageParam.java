@@ -1,4 +1,4 @@
-package com.yh.weatherpush.dto.tag;
+package com.yh.weatherpush.dto.location;
 
 import com.yh.weatherpush.dto.PageParam;
 import lombok.Data;

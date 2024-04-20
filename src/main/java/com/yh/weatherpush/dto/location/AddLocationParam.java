@@ -1,4 +1,4 @@
-package com.yh.weatherpush.dto.tag;
+package com.yh.weatherpush.dto.location;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
