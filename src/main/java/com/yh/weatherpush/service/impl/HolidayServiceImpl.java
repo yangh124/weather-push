@@ -82,7 +82,7 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
                 map = list.stream().collect(Collectors.toMap(a -> a.getHolidayDate().format(formatter), a -> a));
                 List<Object> argList = new ArrayList<>();
                 argList.add(map.size() << 1 + 2);
-                argList.add(86400L);
+                argList.add(86400);
                 for (String s : map.keySet()) {
                     argList.add(s);
                     argList.add(map.get(s));
@@ -111,7 +111,7 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
             }
             List<Object> argList = new ArrayList<>();
             argList.add(list.size() + 2);
-            argList.add(86400L);
+            argList.add(86400);
             argList.addAll(list);
             Object[] args = argList.toArray();
             RScript script = redissonClient.getScript();
