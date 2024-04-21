@@ -89,8 +89,13 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
                 }
                 Object[] args = argList.toArray();
                 RScript script = redissonClient.getScript();
-                script.eval(Mode.READ_WRITE, RedisScript.of(hmsetLua).getScriptAsString(), ReturnType.VALUE,
-                        Collections.singletonList(key), args);
+                try {
+                    script.eval(Mode.READ_WRITE, RedisScript.of(hmsetLua).getScriptAsString(), ReturnType.VALUE,
+                            Collections.singletonList(key), args);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    holidayRMap.delete();
+                }
             }
             return map.get(dateStr);
         } else {
@@ -115,8 +120,13 @@ public class HolidayServiceImpl extends ServiceImpl<HolidayMapper, Holiday> impl
             argList.addAll(list);
             Object[] args = argList.toArray();
             RScript script = redissonClient.getScript();
-            script.eval(Mode.READ_WRITE, RedisScript.of(saddLua).getScriptAsString(), ReturnType.VALUE,
-                    Collections.singletonList(key), args);
+            try {
+                script.eval(Mode.READ_WRITE, RedisScript.of(saddLua).getScriptAsString(), ReturnType.VALUE,
+                        Collections.singletonList(key), args);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                holidayRSet.delete();
+            }
             return list;
         } else {
             return new ArrayList<>(holidayRSet);

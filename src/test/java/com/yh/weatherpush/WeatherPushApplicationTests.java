@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("dev")
 class WeatherPushApplicationTests {
 
+
     @Test
     void contextLoads() {
     }
