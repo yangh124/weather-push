@@ -18,7 +18,7 @@ public class HfCityResp implements Serializable {
 
     private String code;
 
-    private List<Location> location;
+    private List<LocationDTO> location;
 
     /**
      * 当前天气来源

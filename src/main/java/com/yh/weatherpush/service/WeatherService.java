@@ -4,6 +4,7 @@ import com.yh.weatherpush.entity.Location;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author : yh
@@ -30,10 +31,9 @@ public interface WeatherService {
     /**
      * 获取redis天气
      *
-     * @param tags
      * @return
      */
-    Map<Integer, String> getRedisWeather(List<Location> tags);
+    Map<Integer, String> getRedisWeather(Set<Integer> tagIds);
 
     /**
      * 通过地名查询 location code

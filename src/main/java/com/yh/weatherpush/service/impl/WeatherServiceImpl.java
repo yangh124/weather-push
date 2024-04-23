@@ -3,6 +3,7 @@ package com.yh.weatherpush.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.yh.weatherpush.config.property.HfConfigPrProperties;
 import com.yh.weatherpush.dto.hfweather.*;
+import com.yh.weatherpush.entity.Location;
 import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.http.HfGeoApi;
 import com.yh.weatherpush.manager.http.HfWeatherApi;
@@ -19,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author : yh
@@ -34,7 +36,7 @@ public class WeatherServiceImpl implements WeatherService {
     private final HfGeoApi hfGeoApi;
 
     @Override
-    public Map<Integer, String> getTodayWeather(List<com.yh.weatherpush.entity.Location> tags) {
+    public Map<Integer, String> getTodayWeather(List<Location> tags) {
         Map<Integer, String> res = new HashMap<>(tags.size());
         for (com.yh.weatherpush.entity.Location tag : tags) {
             Integer tagid = tag.getId();
@@ -63,7 +65,7 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Map<Integer, String> getTomWeather(List<com.yh.weatherpush.entity.Location> tags) {
+    public Map<Integer, String> getTomWeather(List<Location> tags) {
         Map<Integer, String> res = new HashMap<>(tags.size());
         for (com.yh.weatherpush.entity.Location tag : tags) {
             Integer tagid = tag.getId();
@@ -92,18 +94,17 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public Map<Integer, String> getRedisWeather(List<com.yh.weatherpush.entity.Location> tags) {
+    public Map<Integer, String> getRedisWeather(Set<Integer> tagIds) {
         Map<Integer, String> res = new HashMap<>();
         LocalDate now = LocalDate.now();
         String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         StringCodec stringCodec = new StringCodec();
-        for (com.yh.weatherpush.entity.Location tag : tags) {
-            Integer locationId = tag.getId();
-            String key = format + ":" + locationId;
+        for (Integer tagId : tagIds) {
+            String key = format + ":" + tagId;
             RBucket<String> bucket = redissonClient.getBucket(key, stringCodec);
             String s = bucket.get();
             if (null != s) {
-                res.put(locationId, s);
+                res.put(tagId, s);
             }
         }
         return res;
@@ -164,7 +165,7 @@ public class WeatherServiceImpl implements WeatherService {
         if (!"200".equals(code)) {
             throw new ApiException("获取地区信息失败! -> " + res);
         }
-        Location location = res.getLocation().get(0);
-        return location.getId();
+        LocationDTO locationDTO = res.getLocation().get(0);
+        return locationDTO.getId();
     }
 }

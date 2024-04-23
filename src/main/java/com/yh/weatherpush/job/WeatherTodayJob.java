@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 今日天气
@@ -45,7 +47,8 @@ public class WeatherTodayJob implements Job {
                 log.info("============= free day =============");
                 return;
             }
-            Map<Integer, String> map = weatherService.getRedisWeather(tagList);
+            Set<Integer> tagIds = tagList.stream().map(Location::getTagId).collect(Collectors.toSet());
+            Map<Integer, String> map = weatherService.getRedisWeather(tagIds);
             qywxManager.pushWeatherMsg(map);
             LocalDateTime now = LocalDateTime.now();
             String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
