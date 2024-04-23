@@ -50,7 +50,7 @@ def save_redis(weather, connect, date_str):
 
 def select_tag_from_msql():
     conn = pymysql.connect(host=server_ip, port=30306, user='root', password='root', db='weather')
-    sql = "SELECT id,tag_name,code FROM sys_tag;"
+    sql = "SELECT tag_id,location_name,code FROM sys_location;"
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
