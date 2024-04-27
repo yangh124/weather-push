@@ -98,7 +98,7 @@
 
 ## 数据库表结构
 
-![表结构](http://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2023/06/11/16864572674612.jpg)
+![表结构](http://yh-blog-files.oss-cn-hangzhou.aliyuncs.com/2024/04/27/ishot20240427095038.png)
 
 **待续...**
 
