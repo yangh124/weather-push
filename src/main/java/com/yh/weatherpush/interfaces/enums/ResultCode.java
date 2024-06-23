@@ -1,6 +1,7 @@
 package com.yh.weatherpush.interfaces.enums;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
@@ -9,6 +10,7 @@ import lombok.Getter;
  *
  * @author yh
  */
+@AllArgsConstructor
 @Getter
 public enum ResultCode {
     /**
@@ -24,10 +26,5 @@ public enum ResultCode {
 
     private final int code;
     private final String message;
-
-    ResultCode(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
 
 }

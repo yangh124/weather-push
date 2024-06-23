@@ -15,13 +15,4 @@ public class Notification {
 
     private String deliveryCronExpression;
 
-    private boolean isEnable;
-
-    public void enable() {
-        this.isEnable = true;
-    }
-
-    public void disable() {
-        this.isEnable = false;
-    }
 }

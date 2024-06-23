@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yh.weatherpush.application.event.*;
 import com.yh.weatherpush.application.service.SchTaskService;
+import com.yh.weatherpush.domain.model.vo.NotifyRule;
 import com.yh.weatherpush.infrastructure.exception.ApiException;
 import com.yh.weatherpush.infrastructure.manager.TaskRelLocationManager;
 import com.yh.weatherpush.infrastructure.manager.mapstruct.ISchTaskMapper;
@@ -23,7 +24,7 @@ import com.yh.weatherpush.interfaces.dto.QuartzBean;
 import com.yh.weatherpush.interfaces.dto.schtask.AddTaskParam;
 import com.yh.weatherpush.interfaces.dto.schtask.SchTaskPageDTO;
 import com.yh.weatherpush.interfaces.dto.schtask.UpdateTaskDTO;
-import com.yh.weatherpush.interfaces.enums.TaskEnum;
+import com.yh.weatherpush.interfaces.enums.NotifyTypeEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -68,8 +69,10 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
             List<Location> locationList = map.get(taskId);
             dto.setLocationList(locationList);
             String taskName = record.getTaskName();
-            String desc = TaskEnum.getDescByName(taskName);
-            dto.setTaskName(desc);
+            NotifyTypeEnum typeEnum = NotifyTypeEnum.getByName(taskName);
+            if (typeEnum != null) {
+                dto.setTaskName(typeEnum.getDesc());
+            }
             return dto;
         });
     }
@@ -93,6 +96,11 @@ public class SchTaskServiceImpl extends ServiceImpl<SchTaskMapper, SchTask> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void create(AddTaskParam param) {
+        String cronExp = param.getCronExp();
+        boolean valid = NotifyRule.isValid(cronExp);
+        if (!valid) {
+            throw new ApiException("表达式格式有误");
+        }
         SchTask schTask = ISchTaskMapper.INSTANCE.toSchTaskFromAdd(param);
         schTask.setCtime(LocalDateTime.now());
         super.save(schTask);

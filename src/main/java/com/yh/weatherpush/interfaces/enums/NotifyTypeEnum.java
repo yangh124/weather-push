@@ -1,14 +1,16 @@
 package com.yh.weatherpush.interfaces.enums;
 
 import cn.hutool.core.util.StrUtil;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * @author : yh
  * @date : 2022/5/1 16:58
  */
+@AllArgsConstructor
 @Getter
-public enum TaskEnum {
+public enum NotifyTypeEnum {
 
     WEATHER_TODAY("weatherTodayJob", "今日天气"),
 
@@ -18,19 +20,15 @@ public enum TaskEnum {
 
     private final String desc;
 
-    TaskEnum(String name, String desc) {
-        this.name = name;
-        this.desc = desc;
-    }
 
-    public static String getDescByName(String name) {
+    public static NotifyTypeEnum getByName(String name) {
         if (StrUtil.isNotBlank(name)) {
-            for (TaskEnum value : TaskEnum.values()) {
+            for (NotifyTypeEnum value : NotifyTypeEnum.values()) {
                 if (value.getName().equals(name)) {
-                    return value.getDesc();
+                    return value;
                 }
             }
         }
-        return "";
+        return null;
     }
 }
