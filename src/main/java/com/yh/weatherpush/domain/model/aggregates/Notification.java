@@ -2,12 +2,12 @@ package com.yh.weatherpush.domain.model.aggregates;
 
 import com.yh.weatherpush.domain.model.User;
 import com.yh.weatherpush.domain.model.vo.Location;
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class WeatherSubscription {
+@Builder
+public class Notification {
 
-    private Long subscriptionId;
+    private Long notificationId;
 
     private User user;
 
