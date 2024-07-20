@@ -19,6 +19,7 @@
         <log4j2.version>2.22.0</log4j2.version>
         <fastjson2.version>2.0.43</fastjson2.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <netty.version>4.1.107.Final</netty.version>
     </properties>
 
     <dependencies>
@@ -36,6 +37,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>netty-resolver-dns-native-macos</artifactId>
+                    <groupId>io.netty</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -81,7 +88,7 @@
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>3.17.0</version>
+            <version>3.33.0</version>
         </dependency>
         <!-- MyBatis-plus 生成器 -->
         <dependency>
@@ -172,6 +179,8 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <version>${netty.version}</version>
+            <scope>runtime</scope>
             <classifier>osx-aarch_64</classifier>
         </dependency>
 
