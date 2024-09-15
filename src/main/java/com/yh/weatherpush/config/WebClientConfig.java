@@ -1,7 +1,6 @@
 package com.yh.weatherpush.config;
 
 import com.alibaba.fastjson2.support.spring6.http.codec.Fastjson2Decoder;
-import com.alibaba.fastjson2.support.spring6.http.codec.Fastjson2Encoder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -47,7 +46,6 @@ public class WebClientConfig {
             MimeType mimeType = MimeType.valueOf(MediaType.APPLICATION_JSON_VALUE);
             CodecConfigurer.CustomCodecs customCodecs = configurer.customCodecs();
             customCodecs.register(new Fastjson2Decoder(customObjectMapper, mimeType));
-            customCodecs.register(new Fastjson2Encoder(customObjectMapper, mimeType));
         };
     }
 
