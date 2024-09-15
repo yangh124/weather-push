@@ -2,6 +2,7 @@ package com.yh.weatherpush.dto.hfweather;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 
@@ -11,6 +12,8 @@ import java.io.Serializable;
  */
 @Data
 public class WeatherNow implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = -5989466831882900523L;
 
     /**

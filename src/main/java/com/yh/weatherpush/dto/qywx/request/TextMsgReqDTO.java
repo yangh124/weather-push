@@ -5,6 +5,7 @@ import com.yh.weatherpush.dto.qywx.TextDTO;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @Builder
 public class TextMsgReqDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5442705499645354230L;
 
     /**

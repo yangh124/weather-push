@@ -2,6 +2,7 @@ package com.yh.weatherpush.dto.hfweather;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,6 +12,7 @@ import java.io.Serializable;
 @Data
 public class WeatherWarn implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3572715887987263852L;
 
     private String id;

@@ -2,11 +2,13 @@ package com.yh.weatherpush.dto.qywx.request;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 public class UserListIdReqDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4420845228624008393L;
 
     /**

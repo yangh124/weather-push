@@ -1,10 +1,9 @@
 package com.yh.weatherpush.dto.hfweather;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -14,6 +13,7 @@ import java.util.List;
 @Data
 public class HfWeatherIndexResp implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2905581155262671962L;
 
     private String code;

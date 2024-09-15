@@ -2,6 +2,7 @@ package com.yh.weatherpush.dto.hfweather;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import java.util.List;
  */
 @Data
 public class HfWeatherHourResp implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 6897882359003991958L;
 
     private String code;

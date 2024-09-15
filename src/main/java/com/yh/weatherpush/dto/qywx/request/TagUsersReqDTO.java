@@ -3,6 +3,7 @@ package com.yh.weatherpush.dto.qywx.request;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  */
 @Data
 public class TagUsersReqDTO implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7506128416856466716L;
 
     /**

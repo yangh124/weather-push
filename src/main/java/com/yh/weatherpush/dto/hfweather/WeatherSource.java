@@ -2,6 +2,7 @@ package com.yh.weatherpush.dto.hfweather;
 
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 public class WeatherSource implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3236263363777900168L;
     /**
      * 原始数据来源，或数据源说明，可能为空
