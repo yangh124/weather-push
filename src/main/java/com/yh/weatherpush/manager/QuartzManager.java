@@ -86,9 +86,9 @@ public class QuartzManager {
         try {
             TriggerKey triggerKey = TriggerKey.triggerKey(id);
             CronTrigger cronTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-            cronTrigger.getTriggerBuilder().withIdentity(triggerKey)
+            CronTrigger newCronTrigger = cronTrigger.getTriggerBuilder().withIdentity(triggerKey)
                     .withSchedule(CronScheduleBuilder.cronSchedule(cronExp)).build();
-            scheduler.rescheduleJob(triggerKey, cronTrigger);
+            scheduler.rescheduleJob(triggerKey, newCronTrigger);
         } catch (SchedulerException e) {
             throw new ApiException(e);
         }
