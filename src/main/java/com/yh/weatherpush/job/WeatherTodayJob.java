@@ -49,10 +49,14 @@ public class WeatherTodayJob implements Job {
             }
             Set<Integer> tagIds = tagList.stream().map(Location::getTagId).collect(Collectors.toSet());
             Map<Integer, String> map = weatherService.getRedisWeather(tagIds);
-            qywxManager.pushWeatherMsg(map);
-            LocalDateTime now = LocalDateTime.now();
-            String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            log.info("{} -> 天气推送成功", format);
+            boolean res = qywxManager.pushWeatherMsg(map);
+            if (res) {
+                LocalDateTime now = LocalDateTime.now();
+                String format = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                log.info("{} -> 天气推送成功", format);
+            } else {
+                log.error("天气推送失败");
+            }
         }
         log.info("============= WeatherTodayJob end =============");
     }

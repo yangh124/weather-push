@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
+import com.alibaba.fastjson2.JSONObject;
 import com.yh.weatherpush.config.property.QywxConfigProperties;
 import com.yh.weatherpush.dto.qywx.*;
 import com.yh.weatherpush.dto.qywx.request.TagCreateReqDTO;
@@ -15,6 +16,7 @@ import com.yh.weatherpush.exception.ApiException;
 import com.yh.weatherpush.manager.http.QywxApi;
 import com.yh.weatherpush.manager.mapstruct.IQywxMapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 @AllArgsConstructor
 @Component
 public class QywxManager {
@@ -39,7 +42,8 @@ public class QywxManager {
      *
      * @param tagMsgMap 标签id -> 消息内容
      */
-    public void pushWeatherMsg(Map<Integer, String> tagMsgMap) {
+    public boolean pushWeatherMsg(Map<Integer, String> tagMsgMap) {
+        boolean res = true;
         String pushToken = getPushToken();
         String agentid = qywxConfig.getAgentid();
         for (Integer tagId : tagMsgMap.keySet()) {
@@ -47,8 +51,15 @@ public class QywxManager {
             TextDTO text = new TextDTO(msg);
             TextMsgReqDTO reqDTO =
                     TextMsgReqDTO.builder().msgType("text").toTag(tagId).agentId(agentid).text(text).build();
-            qywxApi.messageSend(pushToken, reqDTO);
+            MessageSendRespDTO respDTO = qywxApi.messageSend(pushToken, reqDTO);
+            Integer errCode = respDTO.getErrCode();
+            if (0 != errCode) {
+                log.error(JSONObject.toJSONString(respDTO));
+                res = false;
+                break;
+            }
         }
+        return res;
     }
 
     /**
