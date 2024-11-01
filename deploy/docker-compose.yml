@@ -9,8 +9,6 @@ services:
     container_name: weather-push # 容器名称
     ports:
       - "8080:8080" # 映射容器的 8080 端口到主机的 8080 端口
-    environment:
-      - ENCRYPT=${ENCRYPT} # 传递环境变量
     depends_on:
       - mysql # 如果有数据库依赖，确保数据库先启动
       - redis
