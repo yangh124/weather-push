@@ -2,19 +2,20 @@
 volumes:
   db-data:
   redis-data:
-  rabbitmq-data:
 services:
   weather-push:
-    image: weather-push:latest # 构建后的镜像名称
+    image: registry.cn-hangzhou.aliyuncs.com/yh123/weather-push:lastest # 构建后的镜像名称
     container_name: weather-push # 容器名称
+    restart: unless-stopped
     ports:
       - "8080:8080" # 映射容器的 8080 端口到主机的 8080 端口
     depends_on:
       - mysql # 如果有数据库依赖，确保数据库先启动
       - redis
   weather-push-admin:
-    image: weather-push-admin:lastest
-    container_name: nginx
+    image: registry.cn-hangzhou.aliyuncs.com/yh123/weather-push-admin:lastest
+    container_name: weather-push-admin
+    restart: unless-stopped
     ports:
       - 80:80
   mysql:
@@ -44,6 +45,7 @@ services:
   redis:
     image: redis:latest
     container_name: redis
+    restart: unless-stop
     privileged: true
     command: redis-server --appendonly yes --requirepass "root"
     volumes:
