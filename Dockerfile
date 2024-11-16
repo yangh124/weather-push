@@ -7,7 +7,7 @@ ARG ENCRYPT
 
 # 环境变量
 ENV TZ=Asia/Shanghai LANG=C.UTF-8
-ENV PARAMS="--server.port=8080 --spring.profiles.active=prod --jasypt.encryptor.password=$ENCRYPT -Xms512m -Xmx512m"
+ENV PARAMS="--server.port=8080 --spring.profiles.active=prod --jasypt.encryptor.password=$ENCRYPT -Xms256m -Xmx256m"
 
 # 设置时区
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
